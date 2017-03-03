@@ -1,0 +1,251 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="css/main.css" >
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="JSFiles/main.js"></script>
+
+<script>
+
+$(document).ready(function () {
+
+  $("#myiframe").click(function(){
+    alert("I am caputring my event here.");
+  });
+});
+
+
+function getBasicInfo() {
+  alert("getting basic info" + $('#age_group_sel').val());
+  if ($('#event_name').val() == '') {
+    alert("no data event");
+    return false;
+  }
+  if ($('#age_group_sel').val() == "Choose your age group"){
+    alert("no data age");
+    return false;
+  }
+
+  if ($('#gender_sel').val() == "Choose your Gender"){
+    alert("no data gen");
+    return false;
+  }
+
+  if ($('#event_category_sel').val() == "Choose the even that you will be celebrating"){
+    alert("no data cat");
+    return false;
+  }
+
+  document.cookie="age_group=" + $('#age_group_sel').val() +'; Path=/;';
+  document.cookie="gender=" + $('#gender_sel').val() +'; Path=/;';
+  document.cookie="event_category=" + $('#event_category_sel').val() +'; Path=/;';
+  document.cookie="event_name=" + $('#event_name').val() +'; Path=/;';
+  document.getElementById("regForm").submit();
+}
+
+</script>
+  </head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="nav-container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand wide" href="/">bemygenie.com</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="/login">Login</a></li>
+                <li><a href="#contact">Find a registry</a></li>
+                <li><a href="#contact">Track your order</a></li>
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+        </nav>
+
+         <div class="container create_registry">
+
+           <div class="list-group-create-registry">
+             <form action="New-Cart.html" method="get" id="regForm">
+
+             <!-- Three columns of text below the carousel -->
+             <div class="row" >
+               <div class="col-sm-12" style="text-align:center">
+                 <div id="amazon_search_result">
+                     <h1> Create your gift registry! </h1>
+                     <p style="font-size:16px">
+                      Before we begin please fill out the following to let us know a bit more about you and the special event that you will be celebrating!
+                     </p>
+                 </div>
+               </div>
+             </div>
+             <br />
+             <br />
+              <div class="row" >
+                <div class="col-sm-4" style="text-align:right;font-size:20px">
+                  <div class="form-group" id="event_name_field">
+                  <label for="event_name">A name for your event:</label>
+                  </div>
+                </div>
+
+                <div class="col-sm-6" style="text-align:center">
+                  <input type="email" class="form-control" name="email" id="event_name" placeholder="eg. Buffy's birthday bash!" />
+                </div>
+                <div class="col-sm-2" style="text-align:center">
+                </div>
+              </div>
+              <div class="row" >
+                <div class="col-sm-4" style="text-align:right;font-size:20px">
+                  <div class="form-group" id="event_category">
+                    <label for="event_category">Celebrating your:</label>
+                  </div>
+                </div>
+                <div class="col-sm-6" style="text-align:left">
+                  <div class="form-group">
+                    <select class="form-control" id="event_category_sel">
+                      <option>Choose the even that you will be celebrating</option>
+                      <option>Birthday</option>
+                      <option>Baby Shower</option>
+                      <option>Anniversary</option>
+                      <option>Wedding</option>
+                      <option>Farewell</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-sm-2" style="text-align:center">
+                </div>
+             </div>
+             <div class="row" >
+               <div class="col-sm-4" style="text-align:right;font-size:20px">
+                 <div class="form-group" id="age_group">
+                   <label for="age_group">Age:</label>
+                 </div>
+               </div>
+               <div class="col-sm-6" style="text-align:left">
+                 <div class="form-group">
+                   <select class="form-control" id="age_group_sel" >
+                     <option>Choose your age group</option>
+                     <option>0 - 5</option>
+                     <option>6 - 10</option>
+                     <option>11 - 14</option>
+                     <option>15 - 17</option>
+                     <option>18 - 25</option>
+                     <option>26 - 34</option>
+                     <option>35 - 45</option>
+                     <option>46 - 55</option>
+                     <option> > 55 </option>
+                   </select>
+                 </div>
+               </div>
+               <div class="col-sm-2" style="text-align:center">
+               </div>
+            </div>
+            <div class="row" >
+              <div class="col-sm-4" style="text-align:right;font-size:20px">
+                <div class="form-group" id="gender">
+                  <label for="gender">Gender:</label>
+                </div>
+              </div>
+              <div class="col-sm-6" style="text-align:left">
+                <div class="form-group">
+                  <select class="form-control" id="gender_sel">
+                    <option>Choose your Gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-sm-2" style="text-align:center">
+              </div>
+           </div>
+
+               <button type="submit" class="btn btn-primary btn-lg" onclick="return getBasicInfo();">Create your registry!</button>
+               </form>
+             </div>
+           </div>
+             </div>
+             </div>
+
+           <footer>
+     <div class="footer" id="footer">
+         <div class="container">
+             <div class="row">
+                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                     <h3> bemygenie.com </h3>
+                     <ul>
+                         <li> <a href="#"> About Us </a> </li>
+                         <li> <a href="#"> Careers </a> </li>
+                         <li> <a href="#"> Advertise with us </a> </li>
+
+                     </ul>
+                 </div>
+                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                   <h3> Products & Services </h3>
+                   <ul>
+                         <li> <a href="#"> Gift Registers </a> </li>
+                         <li> <a href="#"> Sell your products on our site. </a> </li>
+                         <li> <a href="#"> Partner Login. </a> </li>
+                     </ul>
+                 </div>
+                 <div class="col-lg-2  col-md-3 col-sm-6 col-xs-12 ">
+                   <h3> Help </h3>
+                   <ul>
+                          <li> <a href="#"> FAQs </a> </li>
+                         <li> <a href="#"> Terms & Conditions </a> </li>
+                         <li> <a href="#"> Privacy Policy </a> </li>
+                         <li> <a href="#"> Shipping & Returns Policy </a> </li>
+                     </ul>
+                 </div>
+
+                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                     <h3> Join our newsletter </h3>
+                     <ul>
+                         <li>
+                             <div class="input-append newsletter-box text-center">
+                                 <input type="text" class="full text-center" placeholder="Email ">
+                                 <button class="btn btn-success" type="button"> Thank you! <i class="fa fa-long-arrow-right"> </i> </button>
+                             </div>
+                         </li>
+                     </ul>
+                     <ul class="social">
+                         <li> <a href="#"> <i class=" fa fa-facebook">   </i> </a> </li>
+                         <li> <a href="#"> <i class="fa fa-twitter">   </i> </a> </li>
+                         <li> <a href="#"> <i class="fa fa-pinterest">   </i> </a> </li>
+                         <li> <a href="#"> <i class="fa fa-youtube">   </i> </a> </li>
+                     </ul>
+                 </div>
+             </div>
+             <!--/.row-->
+         </div>
+         <!--/.container-->
+     </div>
+     <!--/.footer-->
+
+     <div class="footer-bottom">
+         <div class="container">
+             <p class="pull-left"> Copyright © bemygenie.com 2016 </p>
+             <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:trznt.technologies@gmail.com" style="color:#ffffff">trznt</a></a>.</p>
+         </div>
+     </div>
+     <!--/.footer-bottom-->
+ </footer>
+
+
+
+  </body>
+
+
+  </html>

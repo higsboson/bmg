@@ -1,0 +1,321 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="css/main.css" >
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <script src="JSFiles/main.js"></script>
+
+    <script>
+     $(document).ready(function () {
+         $("#searchbutton").click(function() {
+           var srchprod="";
+           srchprod = $("#searchitem").val();
+
+           if (srchprod!="") {
+               $.get( "/srchProductByName",{ProdNm:srchprod}, function( data, status ) {
+                 if (status == 'success'){
+                   var htmlStr = "";
+                   var endStr = "";
+                   htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
+
+                   $.each(data, function(key,doc){
+                     if (key%4 == 0){
+                       htmlStr = htmlStr + '<div class = "row">';
+                       endStr = endStr + '</div>';
+                     }
+                     htmlStr = htmlStr + '<div class="col-md-3">';
+                     htmlStr = htmlStr + doc.ProdLnk;
+                     htmlStr = htmlStr + '</div>'
+                   }) //for each
+
+                   htmlStr = htmlStr + endStr + "</div>";
+                   $('#carousel-wrapper').replaceWith(htmlStr);
+                }
+                else {
+                 alert("Error in fetching data from server");
+                }
+              });
+            }
+         });//searchbutton
+
+
+         $("#chkGenre").change(function() {
+           alert("Genre Clicked");
+           var genreStr = [];
+           var priceStr = [];
+           var srchStr = "";
+           $.each($("input[name='chkValGen']:checked"), function(){
+                alert("Inside Genre checked");
+                genreStr.push($(this).val());
+            });
+            for (i=0; i < genreStr.length ; i++) {
+              if (i==0) {
+                srchStr = srchStr + "Genre";
+              }
+              srchStr = srchStr + ";";
+              srchStr = srchStr + genreStr[i];
+            }
+
+            $.each($("input[name='chkValPrc']:checked"), function(){
+                 alert("Inside Price checked");
+                 priceStr.push($(this).val());
+             });
+             for (i=0; i < priceStr.length ; i++) {
+               if (i==0) {
+                 srchStr = srchStr + "#Price";
+               }
+               srchStr = srchStr + ";";
+               srchStr = srchStr + priceStr[i];
+             }
+
+            if (srchStr != "") {
+              $.get( "/getProdByCatg",{Catg:srchStr}, function( data, status ) {
+                if (status == 'success'){
+                  var htmlStr = "";
+                  var endStr = "";
+                  htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
+
+                  $.each(data, function(key,doc){
+                    if (key%4 == 0){
+                      htmlStr = htmlStr + '<div class = "row">';
+                      endStr = endStr + '</div>';
+                    }
+                    htmlStr = htmlStr + '<div class="col-md-3">';
+                    htmlStr = htmlStr + doc.ProdLnk;
+                    htmlStr = htmlStr + '</div>'
+                  }) //for each
+
+                  htmlStr = htmlStr + endStr + "</div>";
+                  $('#carousel-wrapper').replaceWith(htmlStr);
+               }
+               else {
+                alert("Error in fetching data from server");
+               }
+             });
+            }
+
+         });
+
+     }); //ready
+     </script>
+  </head>
+
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="nav-container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand wide" href="#">bemygenie.com</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li>Planning event</li>
+                <li><a href="#show-cart">Cart</a></li>
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+    </nav> <!--Navigation bar -->
+
+    <!-- Carousel
+           ================================================== -->
+    <div class = "container-fluid" style="padding-top:100px"> <!-- This is the carousel holder - Being added to accomodate a wider Nav Bar-->
+
+        <!--div class = "container-fluid"-->
+          <!--Quick filters-->
+          <div class = "col-sm-2">
+            <div class = "panel-group">
+              <div class = "panel panel-default">
+                <div class = "panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapseGenre">Genre</a></h4>
+                </div> <!--Panel heading-->
+                <div id="collapseGenre" class="panel-collapse collapse">
+                  <form>
+                    <div class = "checkbox" id = "chkGenre">
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Books">Books</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Toys">Toys</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Apparel">Apparel</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Sports Goods">Sports Goods</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Experiences">Experiences</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Vouchers">Gift Vouchers</label>
+                    </div>
+                  </form>
+                </div><!--Panel items-->
+              </div> <!--Panel Genre-->
+
+              <div class = "panel panel-default">
+                <div class = "panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapsePrice">Price</a></h4>
+                </div> <!--Panel heading-->
+                <div id="collapsePrice" class="panel-collapse collapse">
+                  <form>
+                    <div class = "checkbox">
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="0FiveH">0 - 500</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="500Th">500 - 1000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="1000TwoTh">1000 - 2000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="2000ThreeTh">2000 - 3000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="3000Above"> 3000 - More </label><br>
+                    </div>
+                  </form>
+                </div><!--Panel items-->
+              </div> <!--Panel Genre-->
+
+            </div><!--Panel group-->
+          </div>
+          <!--Category Carousel & Thumbnails-->
+          <div class = "col-sm-10">
+            <div class = "row">
+              <form class = "form-inline">
+                <div class="form-group">
+                  <!--p style="color:#FFFFFF;font-size:72px"> Search</p-->
+                 <label for="search-item" style="color:#000000;font-size:18px" class = "control-label">Search for a product:</label>
+                 <input type="text" class="form-control" id="searchitem">
+                 <button type="button" class = "btn btn-primary" id="searchbutton"><span class="glyphicon glyphicon-search"></span></button>
+               </div>
+             </form>
+           </div> <!-- Search product row -->
+            <div class = "row" style="padding-top:10px">
+              <div class = "carousel-wrapper" id="carousel-wrapper">
+              <div id="carousel-genre" class ="carousel slide" data-ride="carousel">
+                <ol class ="carousel-indicators">
+                  <li data-target="#carousel-genre" data-slide-to="0" class="active"></li>
+                  <li data-target="#carousel-genre" data-slide-to="1"></li>
+                  <li data-target="#carousel-genre" data-slide-to="2"></li>
+                  <li data-target="#carousel-genre" data-slide-to="3"></li>
+                </ol>
+                <div class="carousel-inner" role="listbox">
+                  <div class="item active">
+                    <img class="first-slide" src="images/toys.png" alt="First slide">
+                    <div class="container">
+                      <div class="carousel-caption" >
+                        <p><a class="btn btn-lg btn-primary btn-block active" href="#" role = "button" style="color:#8F8C92;font-size:24px">Toys</a></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="item">
+                    <img class="second-slide" src="images/books.png" alt="Second slide">
+                    <div class="container">
+                      <div class="carousel-caption" style="height:200">
+                        <p><a class="btn btn-lg btn-primary btn-block active" href="#" role = "button" style="color:#8F8C92;font-size:24px">Books</a></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="item">
+                    <img class="third-slide" src="images/sportitems.png" alt="Third slide">
+                    <div class="container">
+                      <div class="carousel-caption" style="height:200">
+                        <p><a class="btn btn-lg btn-primary btn-block active" href="#" role = "button" style="color:#8F8C92;font-size:24px">Sports Goods</a></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="item">
+                    <img class="third-slide" src="images/apparel.png" alt="Third slide">
+                    <div class="container">
+                      <div class="carousel-caption" style="height:200">
+                        <p><a class="btn btn-lg btn-primary btn-block active" href="#" role = "button" style="color:#8F8C92;font-size:24px">Kids Apparel</a></p>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <a class="left carousel-control" href="#carousel-genre" role="button" data-slide="prev">
+                  <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#carousel-genre" role="button" data-slide="next">
+                  <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+
+              </div> <!-- Carouel -->
+            </div> <!--carousel-wrapper -->
+            </div> <!-- Carousel row -->
+          </div>
+        <!--/div-->
+       </div> <!-- /.carousel holder -->
+
+
+
+     <footer>
+       <div class="footer" id="footer">
+         <div class="container">
+             <div class="row">
+                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                     <h3> bemygenie.com </h3>
+                     <ul>
+                         <li> <a href="#"> About Us </a> </li>
+                         <li> <a href="#"> Careers </a> </li>
+                         <li> <a href="#"> Advertise with us </a> </li>
+
+                     </ul>
+                 </div>
+                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                   <h3> Products & Services </h3>
+                   <ul>
+                         <li> <a href="#"> Gift Registers </a> </li>
+                         <li> <a href="#"> Sell your products on our site. </a> </li>
+                         <li> <a href="#"> Partner Login. </a> </li>
+                     </ul>
+                 </div>
+                 <div class="col-lg-2  col-md-3 col-sm-6 col-xs-12 ">
+                   <h3> Help </h3>
+                   <ul>
+                          <li> <a href="#"> FAQs </a> </li>
+                         <li> <a href="#"> Terms & Conditions </a> </li>
+                         <li> <a href="#"> Privacy Policy </a> </li>
+                         <li> <a href="#"> Shipping & Returns Policy </a> </li>
+                     </ul>
+                 </div>
+
+                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                     <h3> Join our newsletter </h3>
+                     <ul>
+                         <li>
+                             <div class="input-append newsletter-box text-center">
+                                 <input type="text" class="full text-center" placeholder="Email ">
+                                 <button class="btn btn-success" type="button"> Thank you! <i class="fa fa-long-arrow-right"> </i> </button>
+                             </div>
+                         </li>
+                     </ul>
+                     <ul class="social">
+                         <li> <a href="#"> <i class=" fa fa-facebook">   </i> </a> </li>
+                         <li> <a href="#"> <i class="fa fa-twitter">   </i> </a> </li>
+                         <li> <a href="#"> <i class="fa fa-pinterest">   </i> </a> </li>
+                         <li> <a href="#"> <i class="fa fa-youtube">   </i> </a> </li>
+                     </ul>
+                 </div>
+             </div>
+             <!--/.row-->
+         </div>
+         <!--/.container-->
+     </div>
+     <!--/.footer-->
+
+     <div class="footer-bottom">
+         <div class="container">
+             <p class="pull-left"> Copyright © bemygenie.com 2016 </p>
+             <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:trznt.technologies@gmail.com" style="color:#ffffff">trznt</a></a>.</p>
+         </div>
+     </div>
+     <!--/.footer-bottom-->
+ </footer>
+
+
+
+  </body>
+
+
+  </html>

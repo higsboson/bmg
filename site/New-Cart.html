@@ -1,0 +1,472 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="css/main.css" >
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <script src="JSFiles/main.js"></script>
+
+    <script>
+     $(document).ready(function () {
+       var cookieStr = getCookie("ProdID");
+       var prodArr = []; var cartLngth = 0;
+       if (cookieStr != "") {
+         if (cookieStr.indexOf(",") >= 0) {prodArr = cookieStr.split(',');cartLngth=prodArr.length}
+         else {cartLngth=1};
+       }
+       document.getElementById("CartId").innerHTML="Cart ("+cartLngth+")";
+
+
+
+       $("#CartId").click(function() {
+         cookieStr = getCookie("ProdID");
+         prodArr = [];
+         if (cookieStr != "") {
+           if (cookieStr.indexOf(",") >= 0) {prodArr = cookieStr.split(',')}
+           else {prodArr[0]=cookieStr};
+
+           $.get("/fetchCartProducts",{ProdID:prodArr}, function(data,status){
+             if (status == 'success'){
+               var htmlStr = "";
+               var endStr = "";
+               var flg ="";
+               var cnt =0;
+               htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
+               htmlStr = htmlStr+'<div class="row"><div class="col-md-8"><p style="font-size:18px">Your selected products</p></div><div class="col-md-2">';
+               htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="loadNewCart()">Search more products</button></div><div class="col-md-2">';
+               htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" id="checkout">Proceed to save wishlist</button></div></div>';
+               htmlStr = htmlStr+'<hr>';
+               $.each(data, function(key,doc){
+                 try {
+                   flg = doc.ProdNm;
+                   if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+                   htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
+                   htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href="'+doc.ProdDsc+'">';
+                   htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
+                   htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p>';
+                   htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div></a>';
+                   htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-block btn-link" id="deleteFrmCart_'+cnt+'" onclick=deletefrmcart("'+doc.ProdID+'")>Delete</button></p>';
+                   htmlStr = htmlStr + '</div></div>';
+                   cnt++;
+                   if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+                }
+                catch (e) {}
+               }) //for each
+               if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
+               htmlStr = htmlStr + '<hr></div>';
+               //alert(htmlStr);
+               //alert("htmlStr" + htmlStr);
+
+               $('#mainContentPage').replaceWith(htmlStr);
+            }
+            else {alert("Error in fetching data from server")}
+           })}
+         else {
+           htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
+           htmlStr = htmlStr+'<div class="row"><div class="col-sm-9"><p style="font-size:18px">Your selected products</p></div><div class="col-sm-3">';
+           htmlStr = htmlStr+'<button type="button" class = "btn btn-block" onclick="loadNewCart()">Search more products</button></div></div>';
+           htmlStr = htmlStr+'<hr>';
+           htmlStr = htmlStr+'<p>You do not have any products in the wishlist</p>'
+           $('#mainContentPage').replaceWith(htmlStr);
+
+         }
+       })
+
+       $("#searchbutton").click(function() {
+         var srchprod="";
+         srchprod = $("#searchitem").val();
+
+         if (srchprod!="") {
+             $.get( "/srchProductByName",{ProdNm:srchprod}, function( data, status ) {
+               if (status == 'success'){
+                 var htmlStr = "";
+                 var endStr = "";
+                 var flg ="";
+                 var cnt =0;
+                 htmlStr = '<hr><div class = "carousel-wrapper" id="carousel-wrapper">';
+                 $.each(data, function(key,doc){
+                   try {
+                     flg = doc.ProdNm;
+                     if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+                     htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
+                     htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+'>';
+                     htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
+                     htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p>';
+                     htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div></a>';
+                     htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick=AddToCart("'+doc.ProdID+'","'+doc.MRP+'","'+doc.ProdGrp+'")>Add to wishlist</button></p>';
+                     htmlStr = htmlStr + '</div></div>'
+                     cnt++;
+                     if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+                  }
+                  catch (e) {}
+                 }) //for each
+                 if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
+                 htmlStr = htmlStr + '<hr></div>';
+                 //alert(htmlStr);
+                 $('#carousel-wrapper').replaceWith(htmlStr);
+              }
+              else {
+               alert("Error in fetching data from server");
+              }
+            });
+          }
+       });//searchbutton
+       $("#chkGenre").change(function() {searchCatg()});
+       $("#chkEvntType").change(function() {searchCatg()});
+       $("#chkPrice").change(function() {searchCatg()});
+       $("#searchToys").click(function() {document.getElementById("genreToys").checked = true;searchCatg()});
+       $("#searchApparel").click(function() {document.getElementById("genreApparel").checked = true;searchCatg()});
+       $("#searchSports").click(function() {document.getElementById("genreSports").checked = true;searchCatg()});
+       $("#searchBooks").click(function() {document.getElementById("genreBooks").checked = true;searchCatg()});
+
+       function searchCatg() {
+          var genreStr = [];
+          var priceStr = [];
+          var gStr = [];
+          var gpStr = [];
+          var evntTypeStr = [];
+          var srchStr = [];
+          var chkCnt = 0;
+          var cnt = 0;
+
+          var genreAll = ['A','C','Y','U','B','D','E','V','H','G','J','L','M','N','O','P','S','F','R','T','I','W'];
+          var priceAll = ['0','5','1','2','3'];
+          var eventAll = ['B','S','A','W','@','C','T','X','U','Y','P','V','Q','R','L'];
+
+          $.each($("input[name='chkValGen']:checked"), function(){genreStr.push($(this).val());chkCnt++});
+          if (chkCnt > 0) {for (i=0;i<genreStr.length;i++) {gStr[i]=genreStr[i]}}
+          else {for (i=0;i<genreAll.length;i++) {gStr[i]=genreAll[i]}}
+
+          chkCnt = 0;
+          $.each($("input[name='chkValPrc']:checked"), function(){priceStr.push($(this).val());chkCnt++});
+          for (i=0;i<gStr.length;i++){
+             if (chkCnt > 0) {for (j=0;j<priceStr.length;j++) {gpStr[cnt] = gStr[i] + priceStr[j];cnt++}}
+             else {for (j=0;j<priceAll.length;j++) {gpStr[cnt] = gStr[i] + priceAll[j];cnt++}}
+          }
+
+          chkCnt = 0;
+          cnt = 0;
+          $.each($("input[name='chkValEventType']:checked"), function(){evntTypeStr.push($(this).val());chkCnt++});
+          var eventArr = [];
+          var evntCombStr = "";
+
+          evntTypeStr.sort();
+          for (i=0;i<evntTypeStr.length;i++) {evntCombStr = evntCombStr + evntTypeStr[i]}
+          switch (evntCombStr) {
+            case 'B': eventArr = ['B','C','U','Y','V','@','R'];break;
+            case 'A': eventArr = ['A','C','T','X','V','@','Q'];break;
+            case 'S': eventArr = ['S','T','U','P','V','Q','R'];break;
+            case 'W': eventArr = ['W','X','Y','P','@','Q','R'];break;
+            case 'AB': eventArr = ['A','B','C','T','U','Y','X','V','@','R','Q'];break;
+            case 'AS': eventArr = ['A','S','C','T','U','Y','P','V','@','R','Q'];break;
+            case 'AW': eventArr = ['A','W','C','T','Y','X','V','P','@','R','Q'];break;
+            case 'BS': eventArr = ['B','S','C','T','U','Y','V','@','R','P','Q'];break;
+            case 'BW': eventArr = ['B','C','U','Y','V','@','R','W','X','P','Q'];break;
+            case 'SW': eventArr = ['S','T','U','P','V','Q','R','W','X','Y','@'];break;
+            case 'ABS': eventArr = ['A','B','C','T','U','Y','X','V','@','R','Q','S','P'];break;
+            case 'ASW': eventArr = ['A','S','C','T','U','Y','P','V','@','R','Q','W','X'];break;
+            case 'BSW': eventArr = ['B','S','C','T','U','Y','V','@','R','P','Q','W','X'];break;
+            default: eventArr = ['B','S','A','W','@','C','T','X','U','Y','P','V','Q','R','L'];
+          }
+
+          for (i=0;i<gpStr.length;i++){
+              if (chkCnt > 0 && chkCnt != 4) {for (j=0;j<eventArr.length;j++) {srchStr[cnt] = eventArr[j] + gpStr[i];cnt++}}
+              else {for (j=0;j<eventAll.length;j++) {srchStr[cnt] = eventAll[j] + gpStr[i];cnt++}}
+          }
+          //alert("category string"+srchStr);
+          if (cnt > 0) {
+             $.get( "/getProdByCatg",{Catg:srchStr}, function( data, status ) {
+              if (status == 'success'){ //changed since last version on 24 Jan.. fix no records returned issue
+                var htmlStr = "";
+                var endStr = "";
+                htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
+
+                $.each(data, function(key,doc){
+                  try {
+                    flg = doc.ProdNm;
+                    if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+                    htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
+                    htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+'>';
+                    htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
+                    htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p>';
+                    htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div></a>';
+                    htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick=AddToCart("'+doc.ProdID+'",'+doc.MRP+')>Add to wishlist</button></p>';
+                    htmlStr = htmlStr + '</div></div>'
+                    cnt++;
+                    if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+                 }
+                 catch (e) {}
+                }) //for each
+                if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
+                htmlStr = htmlStr + endStr + "</div>";
+                $('#carousel-wrapper').replaceWith(htmlStr);
+             }
+             else { //This code below is causing issue when no product found
+               htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
+               htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
+               htmlStr = "</div></div>";
+               $('#carousel-wrapper').replaceWith(htmlStr);
+             }
+           });
+         }
+       }
+
+     }); //ready
+
+
+     </script>
+  </head>
+
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="nav-container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand wide" href="#">bemygenie.com</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li>Planning event</li>
+                <li><a id="CartId">Cart</a></li>
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+    </nav> <!--Navigation bar -->
+
+    <!-- Carousel
+           ================================================== -->
+    <div class = "container-fluid" style="padding-top:100px" id="mainContentPage"> <!-- This is the carousel holder - Being added to accomodate a wider Nav Bar-->
+
+        <!--div class = "container-fluid"-->
+          <!--Quick filters-->
+          <div class = "col-sm-2">
+            <div class = "panel-group">
+
+              <div class = "panel panel-default">
+                <div class = "panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#eventType">Event Type</a></h4>
+                </div> <!--Panel heading-->
+                <div id="eventType" class="panel-collapse collapse">
+                  <form>
+                    <div class = "checkbox" id="chkEvntType">
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValEventType" value="B">Birthday</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValEventType" value="S">Baby Shower</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValEventType" value="A">Anniversary</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValEventType" value="W">Wedding</label><br>
+                    </div>
+                  </form>
+                </div><!--Panel items-->
+              </div> <!--Panel Genre-->
+
+
+              <div class = "panel panel-default">
+                <div class = "panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapseGenre">Genre</a></h4>
+                </div> <!--Panel heading-->
+                <div id="collapseGenre" class="panel-collapse collapse">
+                  <form>
+                    <div class = "checkbox" id = "chkGenre">
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id="genreApparel" value="A">Apparel</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="C">Automobile</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Y">Baby Items</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="U">Beauty Products</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreBooks" value="B">Books</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="D">DVD</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="E">Electronics</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="E">Experiences</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="V">Gift Cards</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="H">Health & Personal Care</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="G">Home & Garden</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="L">Luggage</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="M">Music</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="N">Musical Instruments</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="O">Office Products</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="P">PC Hardware</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="S">Shoes</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="F">Software</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreSports" value="R">Sports Goods</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreToys" value="T">Toys</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="I">Video Games</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="W">Watches</label>
+                    </div>
+                  </form>
+                </div><!--Panel items-->
+              </div> <!--Panel Genre-->
+
+              <div class = "panel panel-default">
+                <div class = "panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapsePrice">Price</a></h4>
+                </div> <!--Panel heading-->
+                <div id="collapsePrice" class="panel-collapse collapse">
+                  <form>
+                    <div class = "checkbox" id="chkPrice">
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="0">0 - 500</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="5">500 - 1000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="1">1000 - 2000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="2">2000 - 3000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="3"> 3000 - More </label><br>
+                    </div>
+                  </form>
+                </div><!--Panel items-->
+              </div> <!--Panel Genre-->
+
+            </div><!--Panel group-->
+          </div>
+          <!--Category Carousel & Thumbnails-->
+          <div class = "col-sm-10">
+            <div class = "row">
+              <form class = "form-inline">
+                <div class="form-group">
+                  <!--p style="color:#FFFFFF;font-size:72px"> Search</p-->
+                 <label for="search-item" style="color:#000000;font-size:18px" class = "control-label">Search for a product:</label>
+                 <input type="text" class="form-control" id="searchitem">
+                 <button type="button" class = "btn btn-primary active" id="searchbutton"><span class="glyphicon glyphicon-search"></span></button>
+               </div>
+             </form>
+           </div> <!-- Search product row -->
+            <div class = "row" style="padding-top:10px">
+              <div class = "carousel-wrapper" id="carousel-wrapper">
+              <div id="carousel-genre" class ="carousel slide" data-ride="carousel">
+                <ol class ="carousel-indicators">
+                  <li data-target="#carousel-genre" data-slide-to="0" class="active"></li>
+                  <li data-target="#carousel-genre" data-slide-to="1"></li>
+                  <li data-target="#carousel-genre" data-slide-to="2"></li>
+                  <li data-target="#carousel-genre" data-slide-to="3"></li>
+                </ol>
+                <div class="carousel-inner" role="listbox">
+                  <div class="item active">
+                    <img class="first-slide" src="images/toys.png" alt="First slide">
+                    <div class="container">
+                      <div class="carousel-caption" >
+                        <p><a class="btn btn-lg btn-primary btn-block active" id="searchToys" role = "button" style="color:#8F8C92;font-size:24px">Toys</a></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="item">
+                    <img class="second-slide" src="images/books.png" alt="Second slide">
+                    <div class="container">
+                      <div class="carousel-caption" style="height:200">
+                        <p><a class="btn btn-lg btn-primary btn-block active" id="searchBooks" role = "button" style="color:#8F8C92;font-size:24px">Books</a></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="item">
+                    <img class="third-slide" src="images/sportitems.png" alt="Third slide">
+                    <div class="container">
+                      <div class="carousel-caption" style="height:200">
+                        <p><a class="btn btn-lg btn-primary btn-block active" id="searchSports" role = "button" style="color:#8F8C92;font-size:24px">Sports Goods</a></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="item">
+                    <img class="third-slide" src="images/apparel.png" alt="Third slide">
+                    <div class="container">
+                      <div class="carousel-caption" style="height:200">
+                        <p><a class="btn btn-lg btn-primary btn-block active" id="searchApparel" role = "button" style="color:#8F8C92;font-size:24px">Apparel</a></p>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <a class="left carousel-control" href="#carousel-genre" role="button" data-slide="prev">
+                  <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#carousel-genre" role="button" data-slide="next">
+                  <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+
+              </div> <!-- Carouel -->
+            </div> <!--carousel-wrapper -->
+            </div> <!-- Carousel row -->
+          </div>
+        <!--/div-->
+       </div> <!-- /.carousel holder -->
+
+
+
+     <footer>
+       <div class="footer" id="footer">
+         <div class="container">
+             <div class="row">
+                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                     <h3> bemygenie.com </h3>
+                     <ul>
+                         <li> <a href="#"> About Us </a> </li>
+                         <li> <a href="#"> Careers </a> </li>
+                         <li> <a href="#"> Advertise with us </a> </li>
+
+                     </ul>
+                 </div>
+                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                   <h3> Products & Services </h3>
+                   <ul>
+                         <li> <a href="#"> Gift Registers </a> </li>
+                         <li> <a href="#"> Sell your products on our site. </a> </li>
+                         <li> <a href="#"> Partner Login. </a> </li>
+                     </ul>
+                 </div>
+                 <div class="col-lg-2  col-md-3 col-sm-6 col-xs-12 ">
+                   <h3> Help </h3>
+                   <ul>
+                          <li> <a href="#"> FAQs </a> </li>
+                         <li> <a href="#"> Terms & Conditions </a> </li>
+                         <li> <a href="#"> Privacy Policy </a> </li>
+                         <li> <a href="#"> Shipping & Returns Policy </a> </li>
+                     </ul>
+                 </div>
+
+                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                     <h3> Join our newsletter </h3>
+                     <ul>
+                         <li>
+                             <div class="input-append newsletter-box text-center">
+                                 <input type="text" class="full text-center" placeholder="Email ">
+                                 <button class="btn btn-success" type="button"> Thank you! <i class="fa fa-long-arrow-right"> </i> </button>
+                             </div>
+                         </li>
+                     </ul>
+                     <ul class="social">
+                         <li> <a href="#"> <i class=" fa fa-facebook">   </i> </a> </li>
+                         <li> <a href="#"> <i class="fa fa-twitter">   </i> </a> </li>
+                         <li> <a href="#"> <i class="fa fa-pinterest">   </i> </a> </li>
+                         <li> <a href="#"> <i class="fa fa-youtube">   </i> </a> </li>
+                     </ul>
+                 </div>
+             </div>
+             <!--/.row-->
+         </div>
+         <!--/.container-->
+     </div>
+     <!--/.footer-->
+
+     <div class="footer-bottom">
+         <div class="container">
+             <p class="pull-left"> Copyright © bemygenie.com 2016 </p>
+             <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:trznt.technologies@gmail.com" style="color:#ffffff">trznt</a></a>.</p>
+         </div>
+     </div>
+     <!--/.footer-bottom-->
+ </footer>
+
+
+
+  </body>
+
+
+  </html>

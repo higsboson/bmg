@@ -1,0 +1,526 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="css/main.css" >
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="JSFiles/main.js"></script>
+  <script>
+
+function showAmazon() {
+  $('#search_intro').text("");
+  $('#amazon').css({"visibility":"visible"});
+}
+
+function showDirectVendor(){
+  $('#search_intro').text("");
+  $('#vendor').css({"visibility":"visible"});
+}
+
+
+
+
+  function validate_product_entry(){
+    var valid = true;
+    if ($('#image_link').val() == "") {
+      valid = false;
+    }
+    if ($('#text_link').val() == "") {
+      valid = false;
+    }
+    if ($('#text_link').val() == "") {
+      valid = false;
+    }
+
+    alert("I am validating product entry!" + $('#image_link').val());
+    $('#preview').html($('#image_link').val());
+  }
+
+  function selectQueriedProduct(i) {
+    if ($('#select_item_' + i).text() === "Select Item") {
+      $('#select_item_' + i).text("Un-Select");
+      $("#item" + i).css("background-color", "#92C7C7");
+      $("#eventTypeCheckProdB" + i).prop("disabled", false);
+      $("#eventTypeCheckProdS" + i).prop("disabled", false);
+      $("#eventTypeCheckProdA" + i).prop("disabled", false);
+      $("#eventTypeCheckProdW" + i).prop("disabled", false);
+    } else {
+      $('#select_item_' + i).text("Select Item");
+      $("#item" + i).css("background-color", "#FFFFFF");
+      $("#eventTypeCheckProdB" + i).prop("disabled", true);
+      $("#eventTypeCheckProdS" + i).prop("disabled", true);
+      $("#eventTypeCheckProdA" + i).prop("disabled", true);
+      $("#eventTypeCheckProdW" + i).prop("disabled", true);
+      $("#eventTypeCheckProdB" + i).prop("checked", false);
+      $("#eventTypeCheckProdS" + i).prop("checked", false);
+      $("#eventTypeCheckProdA" + i).prop("checked", false);
+      $("#eventTypeCheckProdW" + i).prop("checked", false);
+    }
+  }
+
+  function getCatg(genre,price,event_type) {
+     var error;
+     var i;
+     try {
+       var genMap = [];genMap["Apparel"] = "A";genMap["Automotive"]="C";genMap["Baby"]="Y";genMap["Beauty"]="U";genMap["Books"]="B";
+       genMap["DVD"]="D";genMap["Electronics"]="E";genMap["Gift Cards"]="V";genMap["Health and Personal Care"]="H";
+       genMap["Home and Garden"]="G";genMap["Jewelry"]="J";genMap["Kindle Store"]="K";genMap["Luggage"]="L";genMap["Music"]="M";
+       genMap["Musical Instruments"]="N";genMap["Office Products"]="O";genMap["PC Hardware"]="P";genMap["Shoes"]="S";genMap["Software"]="F";
+       genMap["Sporting Goods"]="R";genMap["Toys"]="T";genMap["Video Game"]="I";genMap["Watches"]="W";
+
+       var sCatg = genMap[genre];
+       var prc = Math.floor(price/500);
+       switch (prc) {
+         case 0:sCatg = sCatg + "0";break;
+         case 1:sCatg = sCatg + "5";break;
+         case 2:case 3:sCatg = sCatg + "1";break;
+         case 4:case 5:sCatg = sCatg + "2";break;
+         default:sCatg = sCatg + "3";
+       }
+       var evTypOrd=0;
+       if (event_type.length == 4) {sCatg = "L"+sCatg}
+       else {
+         for (i=0;i<event_type.length;i++) {
+           if (event_type[i] == "Baby Shower") {evTypOrd = evTypOrd + (event_type[i].charCodeAt(5)-64)}
+           else {evTypOrd = evTypOrd + (event_type[i].charCodeAt(0)-64)}
+         }
+         sCatg = String.fromCharCode(64+evTypOrd%26) + sCatg;
+       }
+    }
+    catch (e) {error = e}
+    return sCatg;
+   }
+
+
+function load_to_db() {
+    var productArray = [];
+    if ($('#amazon_search').text() === "Add to DB and view more") {
+      //alert("adding to db");
+      var j = 0;
+      var i;
+      for (i = 0; i < 10; i++) {
+        if(typeof $('#select_item_' + i).text() !== 'undefined') {
+          if ($('#select_item_' + i).text() === "Un-Select") {
+            //alert("Selecting: " + $('#product_name' + i).val() + " with price: " + $('#product_price' + i).val() + " with desc: " +
+        //  $('#product_desc' + i).val());
+          //  alert('{ "prod_name":\"' + $('#product_name' + i).val() + '\","prod_price":\"' + $('#product_price' + i).val() +
+          //  '\","prod_desc":\"' + $('#product_desc' + i).val() + '\"}');
+            //alert(j);
+            var catArr = [];
+            var k = 0;
+            if ( $("#eventTypeCheckProdB" + i).prop( "checked" ) ) {
+              //alert("bday");
+              catArr[k] = 'Birthday';
+              k++;
+            }
+            if ( $("#eventTypeCheckProdS" + i).prop( "checked" ) ) {
+              //alert("baby");
+              catArr[k] = 'Baby Shower';
+              k++;
+            }
+            if ( $("#eventTypeCheckProdA" + i).prop( "checked" ) ) {
+              //alert("aniv");
+              catArr[k] = 'Anniversary';
+              k++;
+            }
+            if ( $("#eventTypeCheckProdW" + i).prop( "checked" ) ) {
+              //alert("wed");
+              catArr[k] = 'Wedding';
+              k++;
+            }
+            if (k == 0) {
+              alert("Event type is missing for atleast one product. Please check");
+              return;
+            }
+            //alert(catArr[0] + catArr[1] + catArr[2] + catArr[3] + "lenght " + catArr.lenght);
+            var cat = getCatg($('#amazon_search_cat').val(),parseInt($('#product_price' + i).val())/100,catArr);
+            //alert("cat is " + cat);
+            //alert ("i is " + i);
+            productArray[j] = '{ "ProdID":\"BMG' + $('#product_id' + i).val() + '\","ProdNm":\"' + $('#product_name' + i).val() + '\","MRP":\"' + parseInt($('#product_price' + i).val())/100 +
+            '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"Catg":\"' + cat  + '\"}';
+            //alert(productArray[j]);
+            j++;
+          }
+        }
+      }
+      var test = "";
+      for (i = 0; i < productArray.length; i++) {
+        if (i > 0) {
+          test += ",";
+        }
+        test += productArray[i];
+      }
+      //alert (test);
+      alert ('{"values": [' + test + ']}');
+      var tempJson = '{"values": [' + test + ']}';
+
+      //var values = {"values": tempJson};
+
+      $.ajax({
+            type: 'POST',
+            url: '/load_to_db',
+            data: {"array":tempJson},
+            success: function (data) { alert('data returned is: ' + data);run();}
+        });
+      /*$.ajax({
+        url:"/load_to_db",
+        type:"POST",
+        data: productArray[0],
+        contentType:"application/json;",
+        dataType:"json",
+        success: function(msg){
+          alert(msg)
+        }
+      });*/
+    } else {
+      run();
+    }
+
+}
+
+
+
+  function run(){
+    var searchIndex = '';
+    if ($('#amazon_search_cat').val() === "") {
+      $.each($("input[name='prod_cat']:checked"),function(){searchIndex = $(this).val()});
+      $('#amazon_search_cat').val(searchIndex);
+      $('#amazon_product_category').text("");
+    }
+    else {
+      searchIndex = $('#amazon_search_cat').val();
+    }
+    window.scrollTo(0, 0);
+    $('#preview').html('<i class="fa fa-circle-o-notch fa-spin" style="font-size:48px;"></i>');
+    $.get(
+      "/get_amazon",{pageNumber: $('#amazon_search_page').val(),searchString: $('#search_product').val(), searchCat: searchIndex},
+      function(data) {
+          if (data === "error") {
+            $('#preview').html('');
+            alert("There has been an error loading the search results. Please try again");
+          } else {
+            txt = "";
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(data,"text/xml");
+            txt += '<div class="row"><p> There are a total of ' + xmlDoc.getElementsByTagName("Items")[0].getElementsByTagName("TotalResults")[0].childNodes[0].nodeValue + ' result(s).</p><br /><br /> </div>';
+            if (xmlDoc.getElementsByTagName("IsValid")[0].childNodes[0].nodeValue !== "True") {
+              $('#preview').html('');
+              alert("The amazon search request was invalid." + xmlDoc.getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+            } else {
+              if (typeof xmlDoc.getElementsByTagName("Error")[0] !== 'undefined') {
+                $('#preview').html('');
+                alert(xmlDoc.getElementsByTagName("Error")[0].getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+              } else {
+                var page = $('#amazon_search_page').val();
+                page = parseInt(page) + 1;
+                $('#amazon_search_page').val(page);
+                x = xmlDoc.getElementsByTagName("Item");
+                txt += '<div class="row">';
+                for (i = 0; i < x.length; i++) {
+                  var image_url = "";
+                    if (typeof x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0] !== 'undefined' ||
+                    x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0] === null) {
+                      if (i % 3 == 0 && i != 0)
+                        txt += '</div><br /><div class="row">';
+                      txt += '<div class="col-sm-3 prod_load_item" id="item' + i + '">';
+                      txt += '<a href="' + x[i].getElementsByTagName("DetailPageURL")[0].childNodes[0].nodeValue + '" target="_blank">';
+                      txt += x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Title")[0].childNodes[0].nodeValue + '<br>';
+                      if (typeof x[i].getElementsByTagName("MediumImage")[0] !== 'undefined' || x[i].getElementsByTagName("MediumImage")[0] === null) {
+                          txt += '<br /><img src="' + x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue + '" /></a><br />';
+                          image_url = x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue;
+                      } else {
+                        txt += '</a><br /><br /><div>No Image Available.</div><br />';
+                        image_url = 'No Image Available'
+                      }
+                      txt += '<div class="prod_load_item price">' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0].getElementsByTagName("FormattedPrice")[0].childNodes[0].nodeValue + '</div>';
+                      txt += '<button type="button" id="select_item_' + i + '"  class="btn btn-default" onclick="selectQueriedProduct(' + i + ')">Select Item</button>';
+                      txt += '<input type="hidden" name="product_name' + i + '" id="product_name' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Title")[0].childNodes[0].nodeValue + "\">";
+                      txt += '<input type="hidden" name="product_price' + i + '" id="product_price' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0].getElementsByTagName("Amount")[0].childNodes[0].nodeValue + "\">";
+                      txt += '<input type="hidden" name="product_desc' + i + '" id="product_desc' + i + '" value="' + x[i].getElementsByTagName("DetailPageURL")[0].childNodes[0].nodeValue + "\">";
+                      txt += '<input type="hidden" name="product_id' + i + '" id="product_id' + i + '" value="' + x[i].getElementsByTagName("ASIN")[0].childNodes[0].nodeValue + "\">";
+                      txt += '<input type="hidden" name="image_url' + i + '" id="image_url' + i + '" value="' + image_url + "\">";
+                      txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0].childNodes[0].nodeValue + "\">";
+                      txt += '<div class = "checkbox" id="eventTypeProd' + i + '" style="padding:10px;text-align:left">';
+                      txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdB' + i + '" value="B" disabled="true">Birthday</label><br />';
+                      txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdS' + i + '" value="S" disabled="true">Baby Shower</label><br />';
+                      txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdA' + i + '" value="A" disabled="true">Anniversary</label><br />';
+                      txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdW' + i + '" value="W" disabled="true">Wedding</label><br />';
+                      txt += '</div></div><div class="col-sm-1"></div>';
+                    } else {
+                      if (i % 3 == 0 && i != 0)
+                        txt += '</div><br /><div class="row">';
+                      //txt += '<div class="col-sm-3 prod_load_item" id="item' + i + '">';
+                      //txt += 'Product is not displayed as it is listed on Amazon with an offer price that can be variable.';
+                      //txt += '</div><div class="col-sm-1"></div>';
+                      if (typeof x[i].getElementsByTagName("OfferSummary")[0].getElementsByTagName("LowestNewPrice")[0] !== 'undefined' ||
+                        x[i].getElementsByTagName("OfferSummary")[0].getElementsByTagName("LowestNewPrice")[0] === null) {
+                          if (i % 3 == 0 && i != 0)
+                            txt += '</div><br /><div class="row">';
+                          txt += '<div class="col-sm-3 prod_load_item" id="item' + i + '">';
+                          txt += '<a href="' + x[i].getElementsByTagName("DetailPageURL")[0].childNodes[0].nodeValue + '" target="_blank">';
+                          txt += x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Title")[0].childNodes[0].nodeValue + '<br>';
+                          if (typeof x[i].getElementsByTagName("MediumImage")[0] !== 'undefined' || x[i].getElementsByTagName("MediumImage")[0] === null) {
+                              txt += '<br /><img src="' + x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue + '" /></a><br />';
+                              image_url = x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue;
+                          } else {
+                            txt += '</a><br /><br /><div>No Image Available.</div><br />';
+                            image_url = 'No Image Available';
+                          }
+                          txt += '<div class="prod_load_item price">' + x[i].getElementsByTagName("OfferSummary")[0].getElementsByTagName("LowestNewPrice")[0].getElementsByTagName("FormattedPrice")[0].childNodes[0].nodeValue + '</div>';
+                          txt += '<button type="button" id="select_item_' + i + '"  class="btn btn-default" onclick="selectQueriedProduct(' + i + ')">Select Item</button>';
+                          txt += '<input type="hidden" name="product_name' + i + '" id="product_name' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Title")[0].childNodes[0].nodeValue + "\">";
+                          txt += '<input type="hidden" name="product_price' + i + '" id="product_price' + i + '" value="' + x[i].getElementsByTagName("OfferSummary")[0].getElementsByTagName("LowestNewPrice")[0].getElementsByTagName("Amount")[0].childNodes[0].nodeValue + "\">";
+                          txt += '<input type="hidden" name="product_desc' + i + '" id="product_desc' + i + '" value="' + x[i].getElementsByTagName("DetailPageURL")[0].childNodes[0].nodeValue + "\">";
+                          txt += '<input type="hidden" name="product_id' + i + '" id="product_id' + i + '" value="' + x[i].getElementsByTagName("ASIN")[0].childNodes[0].nodeValue + "\">";
+                          txt += '<input type="hidden" name="image_url' + i + '" id="image_url' + i + '" value="' + image_url + "\">";
+                          txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0].childNodes[0].nodeValue + "\">";
+                          txt += '<div class = "checkbox" id="eventTypeProd' + i + '" style="padding:10px;text-align:left">';
+                          txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdB' + i + '" value="B" disabled="true">Birthday</label><br />';
+                          txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdS' + i + '" value="S" disabled="true">Baby Shower</label><br />';
+                          txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdA' + i + '" value="A" disabled="true">Anniversary</label><br />';
+                          txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdW' + i + '" value="W" disabled="true">Wedding</label><br />';
+                          txt += '</div></div><div class="col-sm-1"></div>';
+                      }
+                      else {
+                        txt += '<div class="col-sm-3 prod_load_item" id="item' + i + '">';
+                        txt += 'Product is not displayed as it is listed on Amazon with an offer price that can be variable.';
+                        txt += '</div><div class="col-sm-1"></div>';
+                      }
+                    }
+                }
+                if (i % 3 != 0)
+                  txt += '</div><br />';
+                $('#preview').html(txt);
+                window.scrollTo(0, 0);
+                $('#amazon_search').text("Add to DB and view more");
+                $('#amazon_search').prop("onclick",'alert("tester");');
+                $('#search_product').prop("disabled",true);
+              }
+
+            }
+          }
+      });
+  }
+
+  </script>
+</head>
+<body class="admin-body">
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+      <div class="nav-container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand wide" href="#">bemygenie.com - Admin Console</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/product_loader">Add New Product</a></li>
+            <li><a href="/admin_help">Help</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container admin">
+      <div id="search_intro">
+
+        <div class="list-group">
+
+
+      <div class="row" >
+        <div class="col-sm-12" style="text-align:center">
+          <div id="amazon_search_result">
+              <h1> Add a new Product to the bemygenie(c) database. </h1>
+              <p>
+                 You can choose to add a product either from amazon or directly from the vendor.
+              </p>
+          </div>
+        </div>
+      </div>
+      <br />
+      <br />
+      <div class="row" style="text-align: center">
+        <div class="col-sm-6">
+          <button type="button" id="amazon_button" class="btn btn-info btn-lg" onclick="showAmazon();"><br />Amazon Fulfilled Product<br /><br /></button>
+        </div>
+        <div class="col-sm-6">
+          <button type="button" id="vendor_button" class="btn btn-success btn-lg" onclick="showDirectVendor();"><br />Direct from Vendor<br /><br /></button>
+        </div>
+      </div>
+    </div>
+    </div>
+
+       <div id="amazon" style="visibility: hidden;">
+         <div class="list-group">
+        <div class="row" >
+          <div class="col-sm-12">
+              <h1> Add a new Amazon Product </h1>
+
+                <div class="form-group" id="Image Link" style="text-align:left">
+                  <label for="search_product" >Product Name:</label>
+                  <input type="text" class="form-control" id="search_product" name="search_product" placeholder="Search for a product" />
+                </div>
+                <br />
+              </div>
+                <div class="form-group" id="amazon_product_category" style="text-align:left">
+                  <label for="amazon_product_category" >Amazon Product Category:</label>
+                  <div class = "radio" >
+                    <div class="col-sm-3">
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Apparel">Apparel</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Automotive">Automotive</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Baby">Baby</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Beauty">Beauty</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Books">Books</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="DVD">DVD</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Electronics">Electronics</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="GiftCards">Gift Cards</label><br>
+                    </div>
+                    <div class="col-sm-3">
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="HealthPersonalCare">Health and Personal Care</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="HomeGarden">Home and Garden</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Jewelry">Jewelry</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="KindleStore">Kindle Store</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Luggage">Luggage</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Music">Music</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="MusicalInstruments">Musical Instruments</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="OfficeProducts">Office Products</label><br>
+                    </div>
+                    <div class="col-sm-3">
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="PCHardware">PC Hardware</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Shoes">Shoes</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Software">Software</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="SportingGoods">Sporting Goods</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Toys">Toys</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="VideoGames">Video Games</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Watches">Watches</label><br>
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Watches">All (keywords need to be specific)</label><br>
+                    </div>
+                    <div class="col-sm-3">
+
+                    </div>
+                  </div>
+
+
+
+
+
+
+                  </div>
+              </div>
+              <br /><br /><br />
+              <div class="row">
+                <div class="col-sm-12" style="text-align:center">
+                  <div id="preview" style="text-align: center;padding:20px">
+
+
+                </div>
+
+              </div>
+              </div>
+              <div class="row">
+          <div class="col-sm-12" style="text-align:center">
+            <div >
+              <form method="GET" action="/get_amazon" onsubmit="load_to_db();return false;">
+
+                <button type="Search in Amazon" id="amazon_search"  class="btn btn-default">Amazon Search</button>
+                <input type="hidden" name="amazon_search_page" id="amazon_search_page"  value="1"/>
+                <input type="hidden" name="amazon_search_cat" id="amazon_search_cat"  value=""/>
+              </form>
+            </div>
+          </div>
+            </div>
+
+      </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+<div id="vendor" style="visibility: hidden;">
+      <form method="POST" action="/addProduct" id="add_product"  onsubmit="validate_product_entry();return false;">
+      <div class="row">
+        <div class="col-sm-12">
+          <h3> Add a new Product: </h3>
+
+              <div class="form-group" id="Image Link">
+                <label for="image_link">Image Only Link:</label>
+                <input type="text" class="form-control" id="image_link" name="image_link" placeholder="Paste the Image Link Here" />
+              </div>
+              <div class="form-group" id="Text Link">
+                <label for="text_link">Text Only Link:</label>
+                <input type="text" class="form-control" name="text_link" id="text_link" placeholder="Paste the Name Link of the Product" />
+              </div>
+              <div class="form-group" id="Both">
+                <label for="iframe_link">Image and Text Link:</label>
+                <input type="text" class="form-control" name="iframe_link" id="iframe_link" placeholder="Paste the Iframe Link of the Product" />
+              </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">
+              <div class="form-group" id="Price Range">
+                <label for="price_range">Price Range:</label>
+                <div class = "radio" >
+                      <label style="font-size:16px"><input type="radio" name = "chkValPrc" value="0">0 - 500</label><br>
+                      <label style="font-size:16px"><input type="radio" name = "chkValPrc" value="5">500 - 1000</label><br>
+                      <label style="font-size:16px"><input type="radio" name = "chkValPrc" value="1">1000 - 2000</label><br>
+                      <label style="font-size:16px"><input type="radio" name = "chkValPrc" value="2">2000 - 3000</label><br>
+                      <label style="font-size:16px"><input type="radio" name = "chkValPrc" value="3"> 3000 - More </label><br>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group" id="Gift Category">
+                <label for="gift_category">Gift Category:</label>
+                <div class = "radio" >
+                  <label style="font-size:16px"><input type="radio" name = "chkValGen" value="B">Books</label><br>
+                  <label style="font-size:16px"><input type="radio" name = "chkValGen" value="T">Toys</label><br>
+                  <label style="font-size:16px"><input type="radio" name = "chkValGen" value="A">Apparel</label><br>
+                  <label style="font-size:16px"><input type="radio" name = "chkValGen" value="S">Sports Goods</label><br>
+                  <label style="font-size:16px"><input type="radio" name = "chkValGen" value="E">Experiences</label><br>
+                  <label style="font-size:16px"><input type="radio" name = "chkValGen" value="V">Gift Vouchers</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group" id="Gifting Event">
+                <label for="gifting_event">Gifting Event:</label>
+                <div class = "checkbox" id="chkEvntType">
+                  <label style="font-size:16px"><input type="checkbox" name = "chkValEventType" value="B">Birthday</label><br>
+                  <label style="font-size:16px"><input type="checkbox" name = "chkValEventType" value="S">Baby Shower</label><br>
+                  <label style="font-size:16px"><input type="checkbox" name = "chkValEventType" value="A">Anniversary</label><br>
+                  <label style="font-size:16px"><input type="checkbox" name = "chkValEventType" value="W">Wedding</label><br>
+                </div>
+              </div>
+            </div>
+          </div>
+
+            <div class="row">
+              <div class="col-sm-12">
+                <button type="Submit"   class="btn btn-default">Preview Product and Add</button>
+              </div>
+            </div>
+
+
+        </div>
+      </div>
+      </div>
+        </form>
+    </div>
+</body>
+</html>
