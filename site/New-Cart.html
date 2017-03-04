@@ -18,6 +18,9 @@
          else {cartLngth=1};
        }
        document.getElementById("CartId").innerHTML="Cart ("+cartLngth+")";
+       var eventName = getCookie("event_name");
+       if (eventName != "") {document.getElementById("eventHeader").innerHTML = "Welcome, You are planning event : "+eventName}
+       else {document.getElementById("eventHeader").innerHTML = "Welcome, You are planning a new event"}
 
 
 
@@ -176,18 +179,19 @@
               if (chkCnt > 0 && chkCnt != 4) {for (j=0;j<eventArr.length;j++) {srchStr[cnt] = eventArr[j] + gpStr[i];cnt++}}
               else {for (j=0;j<eventAll.length;j++) {srchStr[cnt] = eventAll[j] + gpStr[i];cnt++}}
           }
-          //alert("category string"+srchStr);
           if (cnt > 0) {
+             if (cnt == (genreAll.length*priceAll.length*eventAll.length)) {srchStr="KKK"};
              $.get( "/getProdByCatg",{Catg:srchStr}, function( data, status ) {
               if (status == 'success'){ //changed since last version on 24 Jan.. fix no records returned issue
                 var htmlStr = "";
                 var endStr = "";
+                var loop = 0;
                 htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
 
                 $.each(data, function(key,doc){
                   try {
                     flg = doc.ProdNm;
-                    if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+                    if (loop%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
                     htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
                     htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+'>';
                     htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
@@ -195,13 +199,14 @@
                     htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div></a>';
                     htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick=AddToCart("'+doc.ProdID+'",'+doc.MRP+')>Add to wishlist</button></p>';
                     htmlStr = htmlStr + '</div></div>'
-                    cnt++;
-                    if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+                    loop++;
+                    if (loop%4 == 0){htmlStr = htmlStr + "</div>"};
                  }
                  catch (e) {}
                 }) //for each
-                if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
+                if (loop%4 != 0) {htmlStr = htmlStr + "</div>"};
                 htmlStr = htmlStr + endStr + "</div>";
+                //alert(htmlStr);
                 $('#carousel-wrapper').replaceWith(htmlStr);
              }
              else { //This code below is causing issue when no product found
@@ -212,8 +217,10 @@
              }
            });
          }
-       }
+         else {
 
+         }
+       }
      }); //ready
 
 
@@ -237,7 +244,7 @@
               <ul class="nav navbar-nav">
               </ul>
               <ul class="nav navbar-nav navbar-right">
-                <li>Planning event</li>
+                <li><a href="#" id="eventHeader">Planning event</a></li>
                 <li><a id="CartId">Cart</a></li>
               </ul>
             </div><!--/.nav-collapse -->

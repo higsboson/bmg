@@ -54,14 +54,22 @@ app.get('/getProdByCatg',function(req,res){
   try {
     var prdCollection = bmgDB.collection('Product');
     var qryStr = req.query.Catg;
-
-    prdCollection.find({Catg:{$in:qryStr}}).toArray(function(err,docs){
-      if (!err){
-        if (docs.length == 0) {res.send()}
-        else {res.format({'application/json': function(){res.send(docs)}})}
-      }
-      else {res.send("Error in fetching documents")}
-    });
+    if (qryStr == "KKK") {
+      prdCollection.find({}).toArray(function(err,docs){
+        if (!err){
+          if (docs.length == 0) {res.send()}
+          else {res.format({'application/json': function(){res.send(docs)}})}
+        }
+        else {res.send("Error in fetching documents")}
+      })}
+    else {
+      prdCollection.find({Catg:{$in:qryStr}}).toArray(function(err,docs){
+        if (!err){
+          if (docs.length == 0) {res.send()}
+          else {res.format({'application/json': function(){res.send(docs)}})}
+        }
+        else {res.send("Error in fetching documents")}
+      })}
   }
   catch (e) {console.log("getProdByCatg -->"+e.message)}
 });
