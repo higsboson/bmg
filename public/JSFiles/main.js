@@ -88,6 +88,7 @@
 
  function getCatg(genre,price,event_type,callback) {
    var error;
+   var sCatg = [];
    try {
      var genMap = [];genMap["Apparel"] = "A";genMap["Automotive"]="C";genMap["Baby"]="Y";genMap["Beauty"]="U";genMap["Books"]="B";
      genMap["DVD"]="D";genMap["Electronics"]="E";genMap["Gift Cards"]="V";genMap["Health and Personal Care"]="H";
@@ -95,7 +96,7 @@
      genMap["Musical Instruments"]="N";genMap["Office Products"]="O";genMap["PC Hardware"]="P";genMap["Shoes"]="S";genMap["Software"]="F";
      genMap["Sporting Goods"]="R";genMap["Toys"]="T";genMap["Video Game"]="I";genMap["Watches"]="W";
 
-     var sCatg = genMap[genre];
+     sCatg = genMap[genre];
      var prc = Math.floor(price/500);
      switch (prc) {
        case 0:sCatg = sCatg + "0";break;
