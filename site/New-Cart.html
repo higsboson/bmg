@@ -35,7 +35,7 @@
              if (status == 'success'){
                var htmlStr = "";
                var endStr = "";
-               var flg ="";
+               var prdName ="";
                var cnt =0;
                htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
                htmlStr = htmlStr+'<div class="row"><div class="col-md-8"><p style="font-size:18px">Your selected products</p></div><div class="col-md-2">';
@@ -44,12 +44,12 @@
                htmlStr = htmlStr+'<hr>';
                $.each(data, function(key,doc){
                  try {
-                   flg = doc.ProdNm;
+                   prdName = doc.ProdNm;
                    if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
                    htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
                    htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href="'+doc.ProdDsc+'" target="_blank">';
                    htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
-                   htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p>';
+                   htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p>';
                    htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div></a>';
                    htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-block btn-link" id="deleteFrmCart_'+cnt+'" onclick=deletefrmcart("'+doc.ProdID+'")>Delete</button></p>';
                    htmlStr = htmlStr + '</div></div>';
@@ -87,17 +87,17 @@
                if (status == 'success'){
                  var htmlStr = "";
                  var endStr = "";
-                 var flg ="";
+                 var prdName ="";
                  var cnt =0;
                  htmlStr = '<hr><div class = "carousel-wrapper" id="carousel-wrapper">';
                  $.each(data, function(key,doc){
                    try {
-                     flg = doc.ProdNm;
+                     prdName = doc.ProdNm;
                      if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
                      htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
                      htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
                      htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
-                     htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p>';
+                     htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p>';
                      htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div></a>';
                      htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick=AddToCart("'+doc.ProdID+'","'+doc.MRP+'","'+doc.ProdGrp+'")>Add to wishlist</button></p>';
                      htmlStr = htmlStr + '</div></div>'
@@ -185,17 +185,18 @@
               if (status == 'success'){ //changed since last version on 24 Jan.. fix no records returned issue
                 var htmlStr = "";
                 var endStr = "";
+                var prdName = "";
                 var loop = 0;
                 htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
 
                 $.each(data, function(key,doc){
                   try {
-                    flg = doc.ProdNm;
+                    prdName = doc.ProdNm;
                     if (loop%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
                     htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
                     htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
                     htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
-                    htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p>';
+                    htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p>';
                     htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div></a>';
                     htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick=AddToCart("'+doc.ProdID+'",'+doc.MRP+')>Add to wishlist</button></p>';
                     htmlStr = htmlStr + '</div></div>'
