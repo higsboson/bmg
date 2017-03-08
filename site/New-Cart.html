@@ -40,7 +40,7 @@
                htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
                htmlStr = htmlStr+'<div class="row"><div class="col-md-8"><p style="font-size:18px">Your selected products</p></div><div class="col-md-2">';
                htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="loadNewCart()">Search more products</button></div><div class="col-md-2">';
-               htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" id="checkout">Proceed to save wishlist</button></div></div>';
+               htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="saveWishlist()">Proceed to save wishlist</button></div></div>';
                htmlStr = htmlStr+'<hr>';
                $.each(data, function(key,doc){
                  try {

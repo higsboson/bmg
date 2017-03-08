@@ -16,7 +16,6 @@ window.onload = function() {
         htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
         htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p>';
         htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div></a>';
-        htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-block btn-link" id="deleteFrmCart_'+cnt+'" onclick=deletefrmcart("'+doc.ProdID+'")>Delete</button></p>';
         htmlStr = htmlStr + '</div></div>';
         cnt++;
         if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
