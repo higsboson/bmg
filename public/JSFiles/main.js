@@ -1,4 +1,4 @@
-  function getCookie(cname) {
+  function getCookie(cnae) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
