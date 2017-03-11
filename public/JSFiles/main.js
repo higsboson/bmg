@@ -1,4 +1,4 @@
-  function getCookie(cnae) {
+  function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
@@ -28,13 +28,13 @@
    htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
    htmlStr = htmlStr+'<div class="row"><div class="col-md-2">';
    htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="loadNewCart()">Search more products</button></div></div><hr>';
-   htmlStr = htmlStr+'<div class="row"><div class="container save_wishlist"><div class="list-group-create-registry"><form class="form">';
+   htmlStr = htmlStr+'<div class="row"><div class="container save_wishlist"><div class="list-group-create-registry"><form class="form" name="save_wishlist_form">';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "event_name">Name of the event: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="event_name" value="'+eventName+'"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "fullname">Full name: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="fullname" placeholder="e.g. Will Smith"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "cellphnum">Mobile number: </label></div></div>';
-   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="cellphnum" class="form-control" id="cellphnum" placeholder="e.g. +919845012345"></div></div>';
+   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="input-medium bfh-phone" data-format="+91 ddddd-ddddd" id="cellphnum" placeholder="e.g. 9845012345"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "emailaddr">Email address: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="email" class="form-control" id="emailaddr" placeholder="e.g. will.smith@gmail.com"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "password">Password: </label></div></div>';
