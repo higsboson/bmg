@@ -21,20 +21,22 @@
       document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
   }
 
- function saveWishlist() {
+ function getCustomerDetails() {
    var htmlStr = "";
    var eventName = getCookie("event_name");
    //alert("Inside Save Wishlist, event Name :"+eventName);
    htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
    htmlStr = htmlStr+'<div class="row"><div class="col-md-2">';
    htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="loadNewCart()">Search more products</button></div></div><hr>';
-   htmlStr = htmlStr+'<div class="row"><div class="container save_wishlist"><div class="list-group-create-registry"><form class="form" name="save_wishlist_form">';
+   htmlStr = htmlStr+'<div class="row"><div class="container save_wishlist"><div class="list-group-create-registry"><form class="form" name="save_wishlist_form" action="/saveWishlist.html" method="POST" onsubmit="saveWishlist();return false;">';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "event_name">Name of the event: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="event_name" value="'+eventName+'"></div></div>';
-   htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "fullname">Full name: </label></div></div>';
-   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="fullname" placeholder="e.g. Will Smith"></div></div>';
+   htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "hostfullname">Your name: </label></div></div>';
+   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="hostfullname" placeholder="e.g. Will Smith"></div></div>';
+   htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "receiver">Gift receiver\'s name: </label></div></div>';
+   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="rcvrname" placeholder="e.g. John Doe"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "cellphnum">Mobile number: </label></div></div>';
-   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="input-medium bfh-phone" data-format="+91 ddddd-ddddd" id="cellphnum" placeholder="e.g. 9845012345"></div></div>';
+   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="cellphnum" placeholder="e.g. 9845012345"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "emailaddr">Email address: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="email" class="form-control" id="emailaddr" placeholder="e.g. will.smith@gmail.com"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "password">Password: </label></div></div>';
@@ -45,6 +47,23 @@
    $('#mainContentPage').replaceWith(htmlStr);
    //$("#event_name").val() = eventName;
  }
+
+ function saveWishlist() {
+   var eventType = getCookie("event_category");
+   var selProducts = getCookie("ProdID");
+   var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
+   wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+$("#password").val()+'"}';
+   $.ajax({
+     type : 'POST',
+     url :"/saveWishlist",
+     data : {"Wishlist":wishList},
+     success : function(res) {alert(res)},
+     error : function(res) {alert("Error in saving wishlist!")}
+   })
+
+
+ }
+
 
  function AddToCart(Id,MRP,PrdGrp) {
    try {

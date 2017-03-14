@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="css/main.css" >
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="JSFiles/main.js"></script>
-    <!--script src="JSFiles/formValidator.js"></script-->
 
     <script>
      $(document).ready(function () {
@@ -41,7 +40,7 @@
                htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
                htmlStr = htmlStr+'<div class="row"><div class="col-md-8"><p style="font-size:18px">Your selected products</p></div><div class="col-md-2">';
                htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="loadNewCart()">Search more products</button></div><div class="col-md-2">';
-               htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="saveWishlist()">Proceed to save wishlist</button></div></div>';
+               htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="getCustomerDetails()">Proceed to save wishlist</button></div></div>';
                htmlStr = htmlStr+'<hr>';
                $.each(data, function(key,doc){
                  try {
