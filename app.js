@@ -63,6 +63,7 @@ app.get('/getProdByCatg',function(req,res){
         else {res.send("Error in fetching documents")}
       })}
     else {
+      //console.log(qryStr);
       prdCollection.find({Catg:{$in:qryStr}}).toArray(function(err,docs){
         if (!err){
           if (docs.length == 0) {res.send()}
@@ -113,19 +114,24 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
   try {
     var wishlistCollection = bmgDB.collection('WishList');
     var prdCollection = bmgDB.collection('Product');
-    console.log("Body Wishlist:" +req.body.Wishlist);
     var wishlistToBeAdded = JSON.parse(req.body.Wishlist);
     var prdIdArr = wishlistToBeAdded.ProductIDs.split(",");
-    console.log(prdIdArr);
-    /*console.log("ProdID : "+prdToBeAdded.ProdID);
-    prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
-      if (docs.length != 0) {res.send("Already Present in DB")}
+    var wishList = {};
+    prdCollection.find({ProdID:{$in:prdIdArr}}).toArray(function(err,docs){
+      if (docs.length == 0) {res.send("Fatal error! Products not found in database")}
       else {
-        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp});
-        if (!err) {res.send("Success")}
+        wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
+                    "HostName":wishlistToBeAdded.HostName,"RcvrName":wishlistToBeAdded.ContactName,
+                    "HostPhone":wishlistToBeAdded.HostPhone,"HostEmail":wishlistToBeAdded.HostEmail,
+                    "Products":docs};
+        //Include password string insertion here
+        wishlistCollection.insert(wishList);
+        if (!err) {
+          //we need to send back the link
+          res.send("Wishlist saved successfully")}
         else {res.send("Error")}
       }
-    })*/
+    })
   }
   catch (e) {console.log(e);res.send("Error in saving wishlist!")}
 })
