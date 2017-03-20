@@ -9,6 +9,7 @@ var ejs = require("ejs");
 var crypto = require('crypto');
 var http = require("http");
 var parseString = require("xml2js").parseString;
+var ObjectId = require('mongodb').ObjectID;
 
 var amazon_end_point = "http://webservices.amazon.in";
 var end_point = "webservices.amazon.in";
@@ -16,6 +17,7 @@ var uri = "/onca/xml";
 var aws_access_key_id = "";
 var aws_secret_key = "";
 var associate_tag = "";
+var urlHost = "localhost:8080";
 
 
 var urlencodedParser = bodyParser.urlencoded({extended:true});
@@ -125,11 +127,14 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                     "HostPhone":wishlistToBeAdded.HostPhone,"HostEmail":wishlistToBeAdded.HostEmail,
                     "Products":docs};
         //Include password string insertion here
-        wishlistCollection.insert(wishList);
-        if (!err) {
-          //we need to send back the link
-          res.send("Wishlist saved successfully")}
-        else {res.send("Error")}
+        wishlistCollection.insert(wishList, function(err,insertedObj) {
+          if (!err) {
+            //we need to send back the link
+            var wishListId = insertedObj["ops"][0]["_id"];
+            res.send("Wishlist inserted successfully.\nTo share the wishlist with your invitees, copy and paste the below link :\nhttp://"+urlHost+"/showWishList?eventID="+wishListId)}
+          else {res.send("Error in saving wishlist. Please try again later")}
+
+        });
       }
     })
   }
@@ -253,13 +258,16 @@ app.get('/filterWishListByCatg',function(req,res){
 app.get('/showListProducts',function(req,res){
   var wishList = bmgDB.collection('WishList');
   var qryStr = req.query.eventID;
-  wishList.find({"EventID" : qryStr},{_id:0,Products:1}).toArray(function(err,docs) {
-    if (!err){
-    if (docs.length == 0) {res.send()}
-    else {res.format({'application/json': function(){res.send(docs[0].Products)}})}
-    }
-    else {res.send("Error in fetching documents")}
-  });
+  try {
+    wishList.find({"_id" : new ObjectId(qryStr)},{_id:0,Products:1}).toArray(function(err,docs) {
+      if (!err){
+      if (docs.length == 0) {res.send("Unable to find the desired wishlist")}
+      else {res.format({'application/json': function(){res.send(docs[0].Products)}})}
+      }
+      else {res.send("Error in fetching documents")}
+    });
+  }
+  catch (e) {res.send(e)}
 }); //showListProducts
 
 var server = app.listen(8080,function(){
