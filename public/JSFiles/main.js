@@ -41,6 +41,8 @@
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="email" class="form-control" id="emailaddr" placeholder="e.g. will.smith@gmail.com"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "password">Password: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="password" class="form-control" id="password"></div></div>';
+   htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "retype-password">Re-Type Password: </label></div></div>';
+   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="password" class="form-control" id="retype-password"></div></div>';
    htmlStr = htmlStr+'<button type="submit" class="btn btn-primary btn-lg" onclick="">Save your Wishlist!</button></form>';
    htmlStr = htmlStr+'</div></div><div class="row"><div class="col-sm-12"><hr></div></div>'
    htmlStr = htmlStr+'</div>';
