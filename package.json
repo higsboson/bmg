@@ -1,0 +1,29 @@
+{
+  "name": "bmg",
+  "version": "1.0.0",
+  "description": "BMG is a product of platnetjoy",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/higsboson/bmg.git"
+  },
+  "author": "higsboson and trznt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/higsboson/bmg/issues"
+  },
+  "homepage": "https://github.com/higsboson/bmg#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "crypto": "0.0.3",
+    "ejs": "^2.5.6",
+    "express": "^4.15.2",
+    "http": "0.0.0",
+    "mongodb": "^2.2.25",
+    "url": "^0.11.0",
+    "xml2js": "^0.4.17"
+  }
+}
