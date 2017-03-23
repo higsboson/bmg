@@ -11,6 +11,10 @@ var http = require("http");
 var parseString = require("xml2js").parseString;
 var ObjectId = require('mongodb').ObjectID;
 
+// 3/23/2017 - setting up variable rand for csprng package.
+// This will be used to generate a salt on which password will be hashed.
+var rand = require('csprng');
+
 var amazon_end_point = "http://webservices.amazon.in";
 var end_point = "webservices.amazon.in";
 var uri = "/onca/xml";
@@ -125,6 +129,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
         wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
                     "HostName":wishlistToBeAdded.HostName,"RcvrName":wishlistToBeAdded.ContactName,
                     "HostPhone":wishlistToBeAdded.HostPhone,"HostEmail":wishlistToBeAdded.HostEmail,
+                    "KEY":wishlistToBeAdded.Password,"UPPU":wishlistToBeAdded.Uppu,
                     "Products":docs};
         //Include password string insertion here
         wishlistCollection.insert(wishList, function(err,insertedObj) {
@@ -277,6 +282,10 @@ var server = app.listen(8080,function(){
 app.get('/new_registry', function (req,res){
   res.sendFile(__dirname + "/site/new_registry.html");
   console.log("call made to new_registry.html");
+});
+
+app.post('/getsalt',urlencodedParser,function(req,res) {
+  res.end(rand(160,36));
 });
 
 app.get('/product_loader',function(req,res){

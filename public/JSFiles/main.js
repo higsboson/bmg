@@ -55,13 +55,32 @@
    var selProducts = getCookie("ProdID");
    var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
    wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+$("#password").val()+'"}';
+
    $.ajax({
-     type : 'POST',
-     url :"/saveWishlist",
-     data : {"Wishlist":wishList},
-     success : function(res) {alert(res)},
-     error : function(res) {alert("Error in saving wishlist!")}
+     type: 'POST',
+     url: '/getsalt',
+     success: function (salt) {
+      alert(salt);
+      var sha256 = new jsSHA('SHA-256', 'TEXT');
+      sha256.update($("#password").val() + salt);
+      var hash = sha256.getHash("HEX");
+      alert("Hashed val" + hash);
+      var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
+      wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+ hash +'", "Uppu": "' + salt + '"}';
+      $.ajax({
+          type : 'POST',
+          url :"/saveWishlist",
+          data : {"Wishlist":wishList},
+          success : function(res) {alert(res)},
+          error : function(res) {alert("Error in saving wishlist!")}
+        })
+     },
+     error: function (err) {
+       alert("Unable to save wishlist")
+     }
    })
+
+/*  */
 
 
  }
