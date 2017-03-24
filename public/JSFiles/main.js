@@ -71,7 +71,12 @@
           type : 'POST',
           url :"/saveWishlist",
           data : {"Wishlist":wishList},
-          success : function(res) {alert(res)},
+          success : function(res) {
+            //The following alert will need to be replaced by a modal dialog
+                alert(res);
+            //redirecting the user to /home
+                window.location.href = "/home";
+          },
           error : function(res) {alert("Error in saving wishlist!")}
         })
      },

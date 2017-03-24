@@ -11,6 +11,10 @@ var http = require("http");
 var parseString = require("xml2js").parseString;
 var ObjectId = require('mongodb').ObjectID;
 
+//3/24/2017 - Setting up a variable for database sessions
+//This will help bmg with session management
+var usersession = require('client-sessions');
+
 // 3/23/2017 - setting up variable rand for csprng package.
 // This will be used to generate a salt on which password will be hashed.
 var rand = require('csprng');
@@ -29,6 +33,19 @@ app.use(express.static("public")); //define static directory
 app.use(bodyParser.json()); //to parse application-json
 app.use(urlencodedParser); // for parsing application/x-www-form-urlencoded
 app.set('view engine','ejs');
+
+// Making user of npm package client-sessions.
+// Setting the app to make use of sessions.
+// Ideally the random string that goes here will
+// need to be recreated after every restart of the application server
+
+app.use(usersession({
+  cookieName: 'session',
+  //The secret key will need to come from the database
+  secret: 'random_string_goes_here',
+  duration: 30 * 60 * 1000,
+  activeDuration: 5 * 60 * 1000,
+}));
 
 mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
   if (!err){
@@ -55,6 +72,9 @@ app.get('/', function(req,res) {
   res.sendFile(__dirname + "/site/index.html");
   console.log("call made to index.html");
 });
+
+
+
 
 app.get('/getProdByCatg',function(req,res){
   try {
@@ -131,6 +151,10 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                     "HostPhone":wishlistToBeAdded.HostPhone,"HostEmail":wishlistToBeAdded.HostEmail,
                     "KEY":wishlistToBeAdded.Password,"UPPU":wishlistToBeAdded.Uppu,
                     "Products":docs};
+        // Creating a session variable named 'user' which will hold the email.
+        // The variable 'user' will be used to validate if the session exists.
+         req.session.user = wishlistToBeAdded.HostEmail;
+
         //Include password string insertion here
         wishlistCollection.insert(wishList, function(err,insertedObj) {
           if (!err) {
@@ -145,6 +169,23 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
   }
   catch (e) {console.log(e);res.send("Error in saving wishlist!")}
 })
+
+
+//3/24/2017 - Created a get to /home.
+app.get('/home', function (req,res) {
+  // Checking if a valid session exists.
+  if (req.session && req.session.user) {
+    //rendering Home page with user ID
+    // On load of the ejs file, it will use the user ID reference
+    // To pick information about the user.
+    res.render(__dirname + "/site/home.ejs",{userID : req.session.user});
+    console.log("call made to home.html with valid session " + req.session.user);
+  } else {
+    // If this is not a valid session then the user gets a message that the
+    // session is not valid
+    res.end("A session does not exist");
+  }
+});
 
 
 app.get('/srchProductByName',function(req,res){
