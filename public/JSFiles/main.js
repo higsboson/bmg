@@ -39,9 +39,9 @@
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="cellphnum" placeholder="e.g. 9845012345"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "emailaddr">Email address: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="email" class="form-control" id="emailaddr" placeholder="e.g. will.smith@gmail.com"></div></div>';
-   htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "password">Password: </label></div></div>';
+   htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group" id="form_group"><label for "password">Password: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="password" class="form-control" id="password"></div></div>';
-   htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "retype-password">Re-Type Password: </label></div></div>';
+   htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group" id="form_group"><label for "retype-password">Re-Type Password: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="password" class="form-control" id="retype-password"></div></div>';
    htmlStr = htmlStr+'<button type="submit" class="btn btn-primary btn-lg" onclick="">Save your Wishlist!</button></form>';
    htmlStr = htmlStr+'</div></div><div class="row"><div class="col-sm-12"><hr></div></div>'
@@ -50,41 +50,54 @@
    //$("#event_name").val() = eventName;
  }
 
+function validFields() {
+  var valid = true;
+  if ($('#passowrd').val() != $('#retype-password').val()) {
+    alert ('Passwords dont match');
+    //$('#password').addClass('has-error');
+    //$('#retype-password').addClass('has-error');
+    valid = false;
+  }
+  return valid;
+}
+
  function saveWishlist() {
-   var eventType = getCookie("event_category");
-   var selProducts = getCookie("ProdID");
-   var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
-   wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+$("#password").val()+'"}';
+   if (validFields())
+   {
+     var eventType = getCookie("event_category");
+     var selProducts = getCookie("ProdID");
+     var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
+     wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+$("#password").val()+'"}';
 
-   $.ajax({
-     type: 'POST',
-     url: '/getsalt',
-     success: function (salt) {
-      alert(salt);
-      var sha256 = new jsSHA('SHA-256', 'TEXT');
-      sha256.update($("#password").val() + salt);
-      var hash = sha256.getHash("HEX");
-      alert("Hashed val" + hash);
-      var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
-      wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+ hash +'", "Uppu": "' + salt + '"}';
-      $.ajax({
-          type : 'POST',
-          url :"/saveWishlist",
-          data : {"Wishlist":wishList},
-          success : function(res) {
-            //The following alert will need to be replaced by a modal dialog
-                alert(res);
-            //redirecting the user to /home
-                window.location.href = "/home";
-          },
-          error : function(res) {alert("Error in saving wishlist!")}
-        })
-     },
-     error: function (err) {
-       alert("Unable to save wishlist")
-     }
-   })
-
+     $.ajax({
+       type: 'POST',
+       url: '/getsalt',
+       success: function (salt) {
+        alert(salt);
+        var sha256 = new jsSHA('SHA-256', 'TEXT');
+        sha256.update($("#password").val() + salt);
+        var hash = sha256.getHash("HEX");
+        alert("Hashed val" + hash);
+        var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
+        wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+ hash +'", "Uppu": "' + salt + '"}';
+        $.ajax({
+            type : 'POST',
+            url :"/saveWishlist",
+            data : {"Wishlist":wishList},
+            success : function(res) {
+              //The following alert will need to be replaced by a modal dialog
+                  alert(res);
+              //redirecting the user to /home
+                  window.location.href = "/home";
+            },
+            error : function(res) {alert("Error in saving wishlist!")}
+          })
+       },
+       error: function (err) {
+         alert("Unable to save wishlist")
+       }
+     })
+   }
 /*  */
 
 

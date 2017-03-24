@@ -183,6 +183,7 @@ app.get('/home', function (req,res) {
   } else {
     // If this is not a valid session then the user gets a message that the
     // session is not valid
+    // At a later time, this should be a login page
     res.end("A session does not exist");
   }
 });
