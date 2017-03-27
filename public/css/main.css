@@ -137,10 +137,15 @@
 	font-size: 1.5em;
 }
 
+
+
+
 .navbar-default {
   background-color: #5E7D7E;
   border-color: #98a7c6;
 }
+
+
 .navbar-default .navbar-brand {
   color: #ffffff;
 }
@@ -150,8 +155,10 @@
   font-size: 30px;
   font-weight:bold;
 }
+
+
 .navbar-default .navbar-brand:hover,
-.navbar-default .navbar-brand:focus {
+.navbar-default .navbar-brand:focus{
   color: #fed900;
 }
 .navbar-default .wide{    /* Added temporarily to make the brand stick to the middle of the top bar */
@@ -186,10 +193,18 @@
 .navbar-default .navbar-toggle .icon-bar {
   background-color: #ffffff;
 }
+
 .navbar-default .navbar-collapse,
-.navbar-default .navbar-form {
+.navbar-default .navbar-form .user{
+  background-color: #616D7E;
   border-color: #ffffff;
 }
+
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form{
+  border-color: #ffffff;
+}
+
 .navbar-default .navbar-link {
   color: #ffffff;
 }
@@ -198,7 +213,7 @@
 }
 /* The following is set to that the menu items stay at the right and there's padding from the right edge of the window*/
 .navbar-default .navbar-right {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
   padding: 20px;
 

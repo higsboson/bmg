@@ -144,8 +144,27 @@ function validFields() {
      })
    }
 /*  */
+ }
 
 
+//27/3/2017 - trznt
+ // The following function gets called from the Dashboards page to load user information
+ // Things to load:
+ //   1. Open and Completed WishLists
+ //   2. User Profile information
+ //   3. User Service Requests
+ function getUserWishLists(user) {
+   alert("getting wishlist");
+   $.ajax({
+       type : 'GET',
+       url :"/getUserWishLists",
+       data : {"userid":user},
+       success : function(res) {
+         //The following alert will need to be replaced by a modal dialog
+             alert(JSON.stringify(res));
+       },
+       error : function(res) {alert("Error in retrieving user informaton!")}
+     })
  }
 
 

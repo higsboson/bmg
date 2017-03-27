@@ -143,19 +143,33 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
     var wishlistToBeAdded = JSON.parse(req.body.Wishlist);
     var prdIdArr = wishlistToBeAdded.ProductIDs.split(",");
     var wishList = {};
+
     prdCollection.find({ProdID:{$in:prdIdArr}}).toArray(function(err,docs){
       if (docs.length == 0) {res.send("Fatal error! Products not found in database")}
       else {
-        wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
-                    "HostName":wishlistToBeAdded.HostName,"RcvrName":wishlistToBeAdded.ContactName,
-                    "HostPhone":wishlistToBeAdded.HostPhone,"HostEmail":wishlistToBeAdded.HostEmail,
-                    "KEY":wishlistToBeAdded.Password,"UPPU":wishlistToBeAdded.Uppu,
-                    "Products":docs};
-        // Creating a session variable named 'user' which will hold the email.
-        // The variable 'user' will be used to validate if the session exists.
-         req.session.user = wishlistToBeAdded.HostEmail;
+        // Making the below check to see if this wishlist was being saved as a logged in user
+        // If the user is not logged in then we set the wishlist record to primary.
+        // A Primary record will store user informtation such as the user's name. phone, etc
+        if (!(req.session && req.session.user)) {
+          wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
+                      "HostName":wishlistToBeAdded.HostName,"RcvrName":wishlistToBeAdded.ContactName,
+                      "HostPhone":wishlistToBeAdded.HostPhone,"HostEmail":wishlistToBeAdded.HostEmail,
+                      "KEY":wishlistToBeAdded.Password,"UPPU":wishlistToBeAdded.Uppu,"Primary":1,
+                      // Event status 1 means open wishlist, 0 means closed wishlist
+                      "EventStatus":1,
+                      "Products":docs};
+          // Creating a session variable named 'user' which will hold the email.
+          // The variable 'user' will be used to validate if the session exists.
+          req.session.user = wishlistToBeAdded.HostEmail;
+          req.session.name = wishlistToBeAdded.HostName;
+        } else {
+          wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
+                      "RcvrName":wishlistToBeAdded.ContactName,"HostEmail":wishlistToBeAdded.HostEmail,
+                      // Event status 1 means open wishlist, 0 means closed wishlist
+                      "EventStatus":1,
+                      "Products":docs};
+        }
 
-        //Include password string insertion here
         wishlistCollection.insert(wishList, function(err,insertedObj) {
           if (!err) {
             //we need to send back the link
@@ -178,7 +192,7 @@ app.get('/home', function (req,res) {
     //rendering Home page with user ID
     // On load of the ejs file, it will use the user ID reference
     // To pick information about the user.
-    res.render(__dirname + "/site/home.ejs",{userID : req.session.user});
+    res.render(__dirname + "/site/home.ejs",{userID : req.session.user,username: req.session.name});
     console.log("call made to home.html with valid session " + req.session.user);
   } else {
     // If this is not a valid session then the user gets a message that the
@@ -188,6 +202,19 @@ app.get('/home', function (req,res) {
   }
 });
 
+
+app.get('/getUserWishLists', function (req,res) {
+  var wishlistCollection = bmgDB.collection('WishList');
+  console.log("getting wishlist for " + req.query.userid);
+  //We only return pertinent information such as the event names, types and open/closed registries
+  wishlistCollection.find({"HostEmail": req.query.userid},{"_id":1,"EventName":1,"EventType":1,"EventStatus":1}).toArray(function(err,docs){
+    if (!err) {
+      if (docs.length) {
+        res.format({'application/json': function(){res.send(docs)}})
+      }
+    }
+  });
+});
 
 app.get('/srchProductByName',function(req,res){
   try {
