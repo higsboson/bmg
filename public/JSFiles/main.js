@@ -153,7 +153,7 @@ function validFields() {
  //   1. Open and Completed WishLists
  //   2. User Profile information
  //   3. User Service Requests
- function getUserWishLists(user) {
+ function getUserWishLists(user,div) {
    alert("getting wishlist");
    $.ajax({
        type : 'GET',
@@ -162,6 +162,7 @@ function validFields() {
        success : function(res) {
          //The following alert will need to be replaced by a modal dialog
              alert(JSON.stringify(res));
+             $('#' + div).text("Event Name: " + res[0].EventName);
        },
        error : function(res) {alert("Error in retrieving user informaton!")}
      })

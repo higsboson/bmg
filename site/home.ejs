@@ -15,7 +15,8 @@
   $(document).ready(function() {
 
       alert("hi there" + $('#user').val());
-      getUserWishLists($('#user').val());
+      getUserWishLists($('#user').val(),'active_lists');
+
 
   })
 
@@ -49,14 +50,21 @@
       </div>
     </nav>
 
-    <div class="container admin">
-    </div>
-  </body>
 
+
+  <div class="container user">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="user-active-list" id="active_lists">
+
+        </div>
+      </div>
+    </div>
+  </div>
 
 <p>
    Viewing Dashboard of user <%=userID%>.
    <input type="hidden" name="user" value="<%=userID%>" id="user">
 </p>
-
+</body>
 </html>

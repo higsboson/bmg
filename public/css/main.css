@@ -202,6 +202,7 @@
 
 .navbar-default .navbar-collapse,
 .navbar-default .navbar-form{
+  background-color: #5E7D7E;
   border-color: #ffffff;
 }
 
@@ -320,6 +321,10 @@
   background: #D1D0CE;
 }
 
+.user {
+  background: #FFFFFF;
+}
+
 .create_registry {
   padding-top: 150px;
   padding-bottom: 150px;
@@ -341,6 +346,15 @@
   background: #FFFFFF;
   border-radius: 20px
 }
+
+.user-active-list {
+  padding-top: 150px;
+  color: #87AFC7;
+  text-align: center;
+  background: #FFFFFF;
+  border-radius: 20px
+}
+
 
 .list-group {
   padding: 40px;
