@@ -7,11 +7,14 @@
   <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
   <link rel="stylesheet" href="css/main.css" >
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="JSFiles/main.js"></script>
 
 <script>
 
 $(document).ready(function () {
+  $('#datepicker').datepicker({format: 'dd/mm/yyyy'});
 
   $("#myiframe").click(function(){
     alert("I am caputring my event here.");
@@ -33,6 +36,24 @@ function getBasicInfo() {
   if ($('#gender_sel').val() == "Choose your Gender"){
     alert("no data gen");
     return false;
+  }
+
+  if ($('#datepicker').val() == "") {
+    alert("there is no date");
+    return false;
+  } else {
+    var date = new Date($('#datepicker').val());
+    var today = new Date();
+    if (dateDifferenceInDays(date,today) <= 0) {
+      alert("You seem to have selected a date that is not in the future. BMG requires that your event be scheduled atleast two weeks in the future to ensure on time delivery of gifts.");
+      return false;
+    }
+    date.setDate(date.getDate()-14);
+
+
+    if (dateDifferenceInDays(date,today) < 0) {
+      alert("Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.")
+    }
   }
 
   if ($('#event_category_sel').val() == "Choose the even that you will be celebrating"){
@@ -127,6 +148,24 @@ function getBasicInfo() {
                 </div>
                 <div class="col-sm-2" style="text-align:center">
                 </div>
+             </div>
+             <div class="row" >
+               <div class="col-sm-4" style="text-align:right;font-size:20px">
+                 <div class="form-group" id="event_date_field">
+                 <label for="event_date">On (date):</label>
+                 </div>
+               </div>
+
+               <div class="col-sm-6" style="text-align:center">
+                 <div class="input-group date" data-provide="datepicker">
+                    <input type="text" class="form-control" id="datepicker">
+                    <div class="input-group-addon">
+                        <a href="#" onclick="$('#datepicker').focus();"><span class="glyphicon glyphicon-th"></span></a>
+                    </div>
+                </div>
+               </div>
+               <div class="col-sm-2" style="text-align:center">
+               </div>
              </div>
              <div class="row" >
                <div class="col-sm-4" style="text-align:right;font-size:20px">

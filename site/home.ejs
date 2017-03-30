@@ -5,8 +5,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
-  <link rel="stylesheet" href="css/main.css" >
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="css/main.css" >
   <script src="JSFiles/main.js"></script>
 
   <script>
@@ -27,8 +27,8 @@
 <body class="admin-body">
 
 
-<nav class="navbar user navbar-default navbar-fixed-top">
-      <div class="nav-container">
+<nav class="navbar navbar-default navbar-fixed-top">
+      <div class="nav-container ">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -38,7 +38,7 @@
           </button>
           <a class="navbar-brand wide" href="#">bemygenie.com - Hello, <%=username%> !</a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
+        <div id="navbar" class="navbar-collapse collapse user-header">
           <ul class="nav navbar-nav">
 
           </ul>
@@ -52,7 +52,7 @@
 
 
 
-  <div class="container user">
+  <div class="container user-dashboard">
     <div class="row">
       <div class="col-sm-12">
         <div class="user-active-list" id="active_lists">
@@ -63,7 +63,6 @@
   </div>
 
 <p>
-   Viewing Dashboard of user <%=userID%>.
    <input type="hidden" name="user" value="<%=userID%>" id="user">
 </p>
 </body>

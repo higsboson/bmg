@@ -171,12 +171,7 @@
 .navbar-default .navbar-nav > li > a:focus {
   color: #fed900;
 }
-.navbar-default .navbar-nav > .active > a,
-.navbar-default .navbar-nav > .active > a:hover,
-.navbar-default .navbar-nav > .active > a:focus {
-  color: #fed900;
-  background-color: #98a7c6;
-}
+
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
@@ -194,15 +189,16 @@
   background-color: #ffffff;
 }
 
-.navbar-default .navbar-collapse,
-.navbar-default .navbar-form .user{
-  background-color: #616D7E;
+
+
+.navbar-default .navbar-collapse
+.navbar-default .navbar-form{
+  background-color: #5E7D7E;
   border-color: #ffffff;
 }
 
-.navbar-default .navbar-collapse,
-.navbar-default .navbar-form{
-  background-color: #5E7D7E;
+.user-header{
+  background-color: #616D7E;
   border-color: #ffffff;
 }
 
@@ -321,9 +317,6 @@
   background: #D1D0CE;
 }
 
-.user {
-  background: #FFFFFF;
-}
 
 .create_registry {
   padding-top: 150px;
@@ -347,11 +340,16 @@
   border-radius: 20px
 }
 
-.user-active-list {
+.user-dashboard {
   padding-top: 150px;
-  color: #87AFC7;
-  text-align: center;
-  background: #FFFFFF;
+}
+
+.user-active-list {
+  padding: 40px;
+  color: #FFFFFF;
+  text-align: left;
+  font-size: 20px;
+  background: #79BAEC;
   border-radius: 20px
 }
 
