@@ -30,6 +30,13 @@
       document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
   }
 
+
+  //3/31/2017 -trznt- Delete cookie function
+
+  function deleteCookie(name) {
+      document.cookie = name +'=;path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+
  function getCustomerDetails() {
    var htmlStr = "";
    var eventName = getCookie("event_name");
@@ -143,6 +150,16 @@ function validFields() {
             success : function(res) {
               //The following alert will need to be replaced by a modal dialog
                   alert(res);
+
+              //3/31/2017 - trznt - Deleting cookies as they have now been stored in the database.
+              deleteCookie('ProdID');
+              deleteCookie('age_group');
+              deleteCookie('event_date');
+              deleteCookie('event_category');
+              deleteCookie('event_name');
+              deleteCookie('gender');
+
+
               //redirecting the user to /home
                   window.location.href = "/home";
             },

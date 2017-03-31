@@ -43,14 +43,13 @@ function getBasicInfo() {
     return false;
   } else {
     var date = new Date($('#datepicker').val());
+    var origDate = new Date($('#datepicker').val());
     var today = new Date();
     if (dateDifferenceInDays(date,today) <= 0) {
       alert("You seem to have selected a date that is not in the future. BMG requires that your event be scheduled atleast two weeks in the future to ensure on time delivery of gifts.");
       return false;
     }
     date.setDate(date.getDate()-14);
-
-
     if (dateDifferenceInDays(date,today) < 0) {
       alert("Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.")
     }
@@ -61,11 +60,13 @@ function getBasicInfo() {
     return false;
   }
 
+  var dISO = origDate.toISOString();
+  alert(dISO);
   document.cookie="age_group=" + $('#age_group_sel').val() +'; Path=/;';
   document.cookie="gender=" + $('#gender_sel').val() +'; Path=/;';
   document.cookie="event_category=" + $('#event_category_sel').val() +'; Path=/;';
   document.cookie="event_name=" + $('#event_name').val() +'; Path=/;';
-  document.cookie="event_date=" + $('#datepicker').val() +'; Path=/;';
+  document.cookie="event_date=" + dISO +'; Path=/;';
   document.getElementById("regForm").submit();
 }
 
