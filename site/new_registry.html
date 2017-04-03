@@ -62,11 +62,11 @@ function getBasicInfo() {
 
   var dISO = origDate.toISOString();
   alert(dISO);
-  document.cookie="age_group=" + $('#age_group_sel').val() +'; Path=/;';
-  document.cookie="gender=" + $('#gender_sel').val() +'; Path=/;';
-  document.cookie="event_category=" + $('#event_category_sel').val() +'; Path=/;';
-  document.cookie="event_name=" + $('#event_name').val() +'; Path=/;';
-  document.cookie="event_date=" + dISO +'; Path=/;';
+  setCookie("age_group",$('#age_group_sel').val(),2);
+  setCookie("gender",$('#gender_sel').val(),2);
+  setCookie("event_category",$('#event_category_sel').val(),2);
+  setCookie("event_name",$('#event_name').val(),2);
+  setCookie("event_date",dISO,2);
   document.getElementById("regForm").submit();
 }
 
