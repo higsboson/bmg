@@ -152,6 +152,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
         // A Primary record will store user informtation such as the user's name. phone, etc
         if (!(req.session && req.session.user)) {
           wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
+                      "EventDate":wishlistToBeAdded.EventDate,
                       "HostName":wishlistToBeAdded.HostName,"RcvrName":wishlistToBeAdded.ContactName,
                       "HostPhone":wishlistToBeAdded.HostPhone,"HostEmail":wishlistToBeAdded.HostEmail,
                       "KEY":wishlistToBeAdded.Password,"UPPU":wishlistToBeAdded.Uppu,"Primary":1,
@@ -160,11 +161,13 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                       "Products":docs};
           // Creating a session variable named 'user' which will hold the email.
           // The variable 'user' will be used to validate if the session exists.
+          console.log("Wishlist is inserted for " + wishlistToBeAdded.HostEmail + " and " + wishlistToBeAdded.HostName );
           req.session.user = wishlistToBeAdded.HostEmail;
           req.session.name = wishlistToBeAdded.HostName;
         } else {
           wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
                       "RcvrName":wishlistToBeAdded.ContactName,"HostEmail":wishlistToBeAdded.HostEmail,
+                      "EventDate":wishlistToBeAdded.EventDate,
                       // Event status 1 means open wishlist, 0 means closed wishlist
                       "EventStatus":1,
                       "Products":docs};
@@ -174,6 +177,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
           if (!err) {
             //we need to send back the link
             var wishListId = insertedObj["ops"][0]["_id"];
+            console.log("Wishlist is inserted in database");
             res.send("Wishlist inserted successfully.\nTo share the wishlist with your invitees, copy and paste the below link :\nhttp://"+urlHost+"/showWishList?eventID="+wishListId)}
           else {res.send("Error in saving wishlist. Please try again later")}
 
@@ -186,7 +190,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
 
 
 //3/24/2017 - Created a get to /home.
-app.get('/home', function (req,res) {
+app.post('/home',urlencodedParser, function (req,res) {
   // Checking if a valid session exists.
   if (req.session && req.session.user) {
     //rendering Home page with user ID
@@ -302,6 +306,7 @@ function getProductsFrmAmzn(req,callback) {
 
 app.get('/New-Cart.html',function(req,res){
   res.sendFile(__dirname+"/site/New-Cart.html");
+  console.log("Accessing New-Cart.html");
 });
 
 app.get('/showWishList',function(req,res) {
@@ -354,6 +359,8 @@ app.get('/new_registry', function (req,res){
 });
 
 app.post('/getsalt',urlencodedParser,function(req,res) {
+  req.session.email = null;
+  req.session.user = null;
   res.end(rand(160,36));
 });
 

@@ -21,7 +21,20 @@ $(document).ready(function () {
 
 
 
+
+
 });
+
+function checkEvents() {
+  alert(getCookie("event_name"));
+  if(getCookie("event_name") == "") {
+    window.location.href = "/new_registry";
+    // Just a fail safe for deleteing ProdID
+    deleteCookie('ProdID');
+  }
+  else
+    window.location.href = "/New-Cart.html";
+}
 
 </script>
   </head>
@@ -84,7 +97,7 @@ $(document).ready(function () {
                    <div class="carousel-caption">
                      <p style="color:#FFFFFF;font-size:72px">It's definitely time to celebrate.</p>
                      <p style="color:#FFFFFF;font-size:36px">Welcome to Bengaluru's first ever gift registry!</p>
-                     <p><a class="btn btn-lg btn-primary" href="/new_registry" role="button">Start Creating You're Gift Registry!</a></p>
+                     <p><a class="btn btn-lg btn-primary" href="#" role="button" onclick="checkEvents();">Start Creating You're Gift Registry!</a></p>
                    </div>
                  </div>
                </div>

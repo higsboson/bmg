@@ -30,14 +30,21 @@
       document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
   }
 
+
+  //3/31/2017 -trznt- Delete cookie function
+
+  function deleteCookie(name) {
+      document.cookie = name +'=;path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
+
  function getCustomerDetails() {
    var htmlStr = "";
    var eventName = getCookie("event_name");
    //alert("Inside Save Wishlist, event Name :"+eventName);
    htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
-   htmlStr = htmlStr+'<div class="row"><div class="col-md-2">';
+   htmlStr = htmlStr+'<form class="form" name="save_wishlist_form" action="/home" method="POST" id="signup" onsubmit="saveWishlist();return false;" ><div class="row"><div class="col-md-2">';
    htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="loadNewCart()">Search more products</button></div></div><hr>';
-   htmlStr = htmlStr+'<div class="row"><div class="container save_wishlist"><div class="list-group-create-registry"><form class="form" name="save_wishlist_form" action="/saveWishlist.html" method="POST" onsubmit="saveWishlist();return false;">';
+   htmlStr = htmlStr+'<div class="row"><div class="container save_wishlist"><div class="list-group-create-registry">';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "event_name">Name of the event: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="event_name" value="'+eventName+'"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "hostfullname">Your name: </label></div></div>';
@@ -52,8 +59,8 @@
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><div class="form-group" id="form_group_password"><input type="password" class="form-control" id="password"></div></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group" id="form_group"><label for "retype-password">Re-Type Password: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><div class="form-group" id="form_group_retype_password"><input type="password" class="form-control" id="retype-password"></div></div></div>';
-   htmlStr = htmlStr+'<button type="submit" class="btn btn-primary btn-lg" onclick="">Save your Wishlist!</button></form>';
-   htmlStr = htmlStr+'</div></div><div class="row"><div class="col-sm-12"><hr></div></div>'
+   htmlStr = htmlStr+'<button type="submit" class="btn btn-primary btn-lg">Save your Wishlist!</button></form>';
+   htmlStr = htmlStr+'</div></div><div class="row"><div class="col-sm-12"><hr></div></div></form>'
    htmlStr = htmlStr+'</div>';
    $('#mainContentPage').replaceWith(htmlStr);
    //$("#event_name").val() = eventName;
@@ -118,10 +125,12 @@ function validFields() {
  function saveWishlist() {
    if (validFields())
    {
+     var eventDate = getCookie("event_date");
      var eventType = getCookie("event_category");
      var selProducts = getCookie("ProdID");
-     var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
-     wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+$("#password").val()+'"}';
+     alert("date is " + eventDate);
+  //   var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
+  //   wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+$("#password").val()+'"}';
 
      $.ajax({
        type: 'POST',
@@ -132,7 +141,7 @@ function validFields() {
         sha256.update($("#password").val() + salt);
         var hash = sha256.getHash("HEX");
         alert("Hashed val" + hash);
-        var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
+        var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
         wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+ hash +'", "Uppu": "' + salt + '"}';
         $.ajax({
             type : 'POST',
@@ -141,8 +150,19 @@ function validFields() {
             success : function(res) {
               //The following alert will need to be replaced by a modal dialog
                   alert(res);
-              //redirecting the user to /home
-                  window.location.href = "/home";
+
+              //3/31/2017 - trznt - Deleting cookies as they have now been stored in the database.
+              deleteCookie('ProdID');
+              deleteCookie('age_group');
+              deleteCookie('event_date');
+              deleteCookie('event_category');
+              deleteCookie('event_name');
+              deleteCookie('gender');
+
+
+              // Posting to Home.
+              document.getElementById("signup").submit();
+                //    window.location.href = "/home";
             },
             error : function(res) {alert("Error in saving wishlist!")}
           })

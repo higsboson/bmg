@@ -1,4 +1,14 @@
+.modal {
+    overflow-y: auto;
+}
 
+.modal-open {
+    overflow: auto;
+}
+
+.modal-open[style] {
+    padding-right: 0px !important;
+}
 
 .full {
     width: 100%;
