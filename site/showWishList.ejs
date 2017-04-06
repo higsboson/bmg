@@ -14,6 +14,9 @@
     <script>
 
      $(document).ready(function () {
+       var buyingProdID = "";
+       var buyingProdURL = "";
+       var eventID = "";
        function searchCatg() {
           var genreStr = [];
           var priceStr = [];
@@ -116,6 +119,29 @@
          $("#chkPrice").change(function() {searchCatg()});
 
      }); //ready
+
+     function openAmznPage() {
+       alert("Product Id being bought"+buyingProdID);
+       $("#boughtButton").toggle();
+       $("#buyBtn").toggle();
+       $("#didNotBuy").toggle();
+       $("#closeBtn").toggle();
+       var data = {"WishListID":eventID,"ProductID":buyingProdID,"Status":"Blocked"};
+       $.ajax({
+         type : 'POST',
+         url :"/updProductStatus",
+         data : {"Data":data},
+         success : function(res) {
+           $("#boughtButton").toggle();
+           $("#buyBtn").toggle();
+           $("#didNotBuy").toggle();
+           $("#closeBtn").toggle();
+
+           window.open(buyingProdURL);
+         },
+         error : function(res) {alert("Error in blocking product. Please try after sometime!")}
+       })
+     }
      </script>
   </head>
 
@@ -146,7 +172,28 @@
     <!-- Carousel
            ================================================== -->
     <div class = "container-fluid" style="padding-top:100px"> <!-- This is the carousel holder - Being added to accomodate a wider Nav Bar-->
-
+      <!-- Modal -->
+      <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+          <div class = "modal-content">
+            <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button></div>
+            <div class="modal-body">
+              <p>Hi There!!!,</p>
+              <p>You will now be redirected to the third party website where you can buy and ship the product to your desired destination.</p>
+              <p>Please note, that this product will be blocked as bought by you. For some reason if you do not complete your purchase, We urge you to kindly
+                comeback to this page and notify us of the same.</p>
+              <br>
+              <p>We Thank You for your kind support in helping us serve better</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="closeBtn" class="btn btn-default" style="display:default" data-dismiss="modal">Close</button>
+              <button type="button" id="buyBtn" class="btn btn-success" style="display:default" onclick="openAmznPage()">Proceed to Buy</button>
+              <button type="button" id="boughtButton" class="btn btn-success" style="display:none" onclick="purchaseCompleted()">Purchase Completed</button>
+              <button type="button" id="didNotBuy" class="btn btn-warning" style="display:none" onclick="noPurchase()">Did not Buy</button>
+            </div>
+          </div>
+        </div>
+      </div>
         <!--div class = "container-fluid"-->
           <!--Quick filters-->
           <div class = "col-sm-2">
