@@ -10,6 +10,7 @@ var crypto = require('crypto');
 var http = require("http");
 var parseString = require("xml2js").parseString;
 var ObjectId = require('mongodb').ObjectID;
+var sha256 = require('sha256');
 
 //3/24/2017 - Setting up a variable for database sessions
 //This will help bmg with session management
@@ -155,7 +156,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                       "EventDate":wishlistToBeAdded.EventDate,
                       "HostName":wishlistToBeAdded.HostName,"RcvrName":wishlistToBeAdded.ContactName,
                       "HostPhone":wishlistToBeAdded.HostPhone,"HostEmail":wishlistToBeAdded.HostEmail,
-                      "KEY":wishlistToBeAdded.Password,"UPPU":wishlistToBeAdded.Uppu,"Primary":1,
+                      "KEY":wishlistToBeAdded.Password,"UPPU":wishlistToBeAdded.Uppu,"Primary":1, // Primary 1 means primary record.
                       // Event status 1 means open wishlist, 0 means closed wishlist
                       "EventStatus":1,
                       "Products":docs};
@@ -166,8 +167,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
           req.session.name = wishlistToBeAdded.HostName;
         } else {
           wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
-                      "RcvrName":wishlistToBeAdded.ContactName,"HostEmail":wishlistToBeAdded.HostEmail,
-                      "EventDate":wishlistToBeAdded.EventDate,
+                      "HostEmail":req.session.user,"EventDate":wishlistToBeAdded.EventDate,
                       // Event status 1 means open wishlist, 0 means closed wishlist
                       "EventStatus":1,
                       "Products":docs};
@@ -191,6 +191,22 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
 
 //3/24/2017 - Created a get to /home.
 app.post('/home',urlencodedParser, function (req,res) {
+  // Checking if a valid session exists.
+  if (req.session && req.session.user) {
+    //rendering Home page with user ID
+    // On load of the ejs file, it will use the user ID reference
+    // To pick information about the user.
+    res.render(__dirname + "/site/home.ejs",{userID : req.session.user,username: req.session.name});
+    console.log("call made to home.html with valid session " + req.session.user);
+  } else {
+    // If this is not a valid session then the user gets a message that the
+    // session is not valid
+    // At a later time, this should be a login page
+    res.end("A session does not exist");
+  }
+});
+
+app.get('/home', function (req,res) {
   // Checking if a valid session exists.
   if (req.session && req.session.user) {
     //rendering Home page with user ID
@@ -362,6 +378,50 @@ app.post('/getsalt',urlencodedParser,function(req,res) {
   req.session.email = null;
   req.session.user = null;
   res.end(rand(160,36));
+});
+
+app.post('/plogin',urlencodedParser,function(req,res){
+  console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
+
+  var wishList = bmgDB.collection('WishList');
+  var qryStr = req.query.eventID;
+  try {
+    wishList.find({"HostEmail" : req.body.user},{_id:0,KEY:1,HostName:1}).toArray(function(err,docs) {
+      if (!err){
+        if (docs.length == 0) {res.end("")}
+        else {
+          console.log("Key from DB is " + docs[0].KEY);
+          var trypass = sha256(req.body.gensalt + docs[0].KEY);
+          console.log("Try Pass is " + trypass);
+          if (req.body.attempt == trypass) {
+            req.session.user = req.body.user;
+            req.session.name = docs[0].HostName;
+            res.end("Login Success");
+          } else {
+            res.end("Login Fail");
+          }
+        }
+      }
+      else {res.end("Error in fetching documents")}
+    });
+  }
+  catch (e) {res.end(e)};
+});
+
+app.post('/getSaltForUser',urlencodedParser,function(req,res) {
+  console.log(req.body.user);
+  var wishList = bmgDB.collection('WishList');
+  var qryStr = req.query.eventID;
+  try {
+    wishList.find({"HostEmail" : req.body.user},{_id:0,HostEmail:1,UPPU:1}).toArray(function(err,docs) {
+      if (!err){
+      if (docs.length == 0) {res.end("")}
+      else {res.end(docs[0].UPPU)}
+      }
+      else {res.end("Error in fetching documents")}
+    });
+  }
+  catch (e) {res.end(e)};
 });
 
 app.get('/product_loader',function(req,res){
