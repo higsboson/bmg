@@ -188,6 +188,18 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
   catch (e) {console.log(e);res.send("Error in saving wishlist!")}
 })
 
+app.post('/updProductStatus',urlencodedParser,function(req,res) {//change the status of the product
+  try {
+    var wishlistCollection = bmgDB.collection('WishList');
+    var data = JSON.parse(req.body.Data);
+
+    wishlistCollection.update({"_id" : new ObjectId(data.WishListID),"Products.ProdID":data.ProductID},{$set:{"Products.$.Status":data.Status}}, function(err) {
+      if (!err) {res.send("Success")}
+      else {res.send("Error in updating product status")}
+    })
+  }
+  catch (e) {console.log("Error - "+e)}
+})
 
 //3/24/2017 - Created a get to /home.
 app.post('/home',urlencodedParser, function (req,res) {

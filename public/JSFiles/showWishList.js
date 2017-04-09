@@ -8,6 +8,44 @@ function buyNow(prodid,prodURL) {
   $("#myModal").modal('show');
 }
 
+function openAmznPage() {
+  try {
+    var dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"Blocked"}';
+    $.ajax({
+      type : 'POST',
+      url :"/updProductStatus",
+      data : {"Data":dataStr},
+      success : function(res) {
+        $("#boughtButton").toggle();
+        $("#buyBtn").toggle();
+        $("#didNotBuy").toggle();
+        $("#closeBtn").toggle();
+        window.open(buyingProdURL);
+      },
+      error : function(res) {alert("Error in blocking product. Please try after sometime!")}
+    })
+  }
+  catch (e) {alert("error - "+e)}
+}
+
+function changeGiftStatus(strStatus) {
+  try {
+    var dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"'+strStatus+'"}';
+    $.ajax({
+      type : 'POST',
+      url :"/updProductStatus",
+      data : {"Data":dataStr},
+      success : function(res) {
+        $("#myModal").modal('hide');
+        location.reload();
+      },
+      error : function(res) {alert("Error in changing product status. Please try after sometime!")}
+    })
+
+  }
+  catch (e) {alert("error - "+e)}
+}
+
 window.onload = function() {
   //var eventID = <%= eventID %>;
   eventID = $("#evntID").val();
@@ -25,14 +63,20 @@ window.onload = function() {
         htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
         htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p>';
         htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div>';
-        htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc.ProdID+'","'+doc.ProdDsc+'")>Buy Now</button></p>'
+        if (doc.Status == "Blocked")
+         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Blocked</button></p>'}
+        else if (doc.Status == "Bought")
+         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Already Bought</button></p>'}
+        else
+         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc.ProdID+'","'+doc.ProdDsc+'") id="btn_'+doc.ProdID+'">Buy Now</button></p>'}
+
         htmlStr = htmlStr + '</div></div>';
         cnt++;
         if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
       }) //for each
       if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
       htmlStr = htmlStr + '<hr></div>';
-      alert(htmlStr);
+      //alert(htmlStr);
       $('#carousel-wrapper').replaceWith(htmlStr);
    }
    else {

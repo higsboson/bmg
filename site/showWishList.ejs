@@ -120,28 +120,6 @@
 
      }); //ready
 
-     function openAmznPage() {
-       alert("Product Id being bought"+buyingProdID);
-       $("#boughtButton").toggle();
-       $("#buyBtn").toggle();
-       $("#didNotBuy").toggle();
-       $("#closeBtn").toggle();
-       var data = {"WishListID":eventID,"ProductID":buyingProdID,"Status":"Blocked"};
-       $.ajax({
-         type : 'POST',
-         url :"/updProductStatus",
-         data : {"Data":data},
-         success : function(res) {
-           $("#boughtButton").toggle();
-           $("#buyBtn").toggle();
-           $("#didNotBuy").toggle();
-           $("#closeBtn").toggle();
-
-           window.open(buyingProdURL);
-         },
-         error : function(res) {alert("Error in blocking product. Please try after sometime!")}
-       })
-     }
      </script>
   </head>
 
@@ -188,8 +166,8 @@
             <div class="modal-footer">
               <button type="button" id="closeBtn" class="btn btn-default" style="display:default" data-dismiss="modal">Close</button>
               <button type="button" id="buyBtn" class="btn btn-success" style="display:default" onclick="openAmznPage()">Proceed to Buy</button>
-              <button type="button" id="boughtButton" class="btn btn-success" style="display:none" onclick="purchaseCompleted()">Purchase Completed</button>
-              <button type="button" id="didNotBuy" class="btn btn-warning" style="display:none" onclick="noPurchase()">Did not Buy</button>
+              <button type="button" id="boughtButton" class="btn btn-success" style="display:none" onclick="changeGiftStatus('Bought')">Purchase Completed</button>
+              <button type="button" id="didNotBuy" class="btn btn-warning" style="display:none" onclick="changeGiftStatus('Available')">Did not Buy</button>
             </div>
           </div>
         </div>
