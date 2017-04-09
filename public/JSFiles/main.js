@@ -269,7 +269,13 @@ function validFields() {
          //The following alert will need to be replaced by a modal dialog
              alert(JSON.stringify(res));
              if (res.length >=2) {
-               $('#' + div).text("You have " + res.length + " active lists.");
+               var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Status</th></tr></thead><tbody>';
+               for (i = 0; i < res.length ;i++) {
+                 table_text += '<tr><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + res[i].EventStatus + '</td></tr>';
+               }
+              table_text += '</tbody></table>';
+              $('#' + div).append("You have " + res.length + " active lists." + table_text);
+
              }
              else {
                 $('#' + div).text("You have " + res.length + " active list.");
@@ -280,6 +286,8 @@ function validFields() {
        error : function(res) {alert("Error in retrieving user informaton!")}
      })
  }
+
+
 
 
  function AddToCart(Id,MRP,PrdGrp) {
