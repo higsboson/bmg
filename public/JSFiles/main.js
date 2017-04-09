@@ -1,6 +1,83 @@
   // Added for all date calculations
   var _MS_PER_DAY = 1000 * 60 * 60 * 24;
 
+
+  function doLogin(action) {
+    alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
+    $.ajax({
+      type: 'POST',
+      url: '/getSaltForUser',
+      data: {user: $(login_username).val()},
+      success: function (salt) {
+       alert(salt);
+       var sha256 = new jsSHA('SHA-256', 'TEXT');
+       sha256.update($(login_password).val() + salt);
+       var hash = sha256.getHash("HEX");
+       alert("Hashed val" + hash);
+       $.ajax({
+         type: 'POST',
+         url: '/getsalt',
+         success: function (newsalt) {
+          alert(newsalt);
+          var sha2562 = new jsSHA('SHA-256', 'TEXT');
+          sha2562.update(newsalt + hash);
+          var newhash = sha2562.getHash("HEX");
+          alert("New calculated Salt" + newhash);
+          $.ajax({
+            type: 'POST',
+            url: '/plogin',
+            data: {attempt: newhash,gensalt: newsalt,user: $(login_username).val()},
+            success: function (data) {
+             alert("Performing Login: Result is " + data);
+             if (action == 'saveWishList') {
+               var eventDate = getCookie("event_date");
+               var eventType = getCookie("event_category");
+               var selProducts = getCookie("ProdID");
+               var event_name = getCookie("event_name");
+               var wishList = '{"EventName" :"'+ event_name +'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$(login_username).val()+'",';
+               wishList = wishList + ' "ProductIDs" : "'+ selProducts+ '"}';
+               $.ajax({
+                   type : 'POST',
+                   url :"/saveWishlist",
+                   data : {"Wishlist":wishList},
+                   success : function(res) {
+                     //The following alert will need to be replaced by a modal dialog
+                         alert(res);
+
+                     //3/31/2017 - trznt - Deleting cookies as they have now been stored in the database.
+                     deleteCookie('ProdID');
+                     deleteCookie('age_group');
+                     deleteCookie('event_date');
+                     deleteCookie('event_category');
+                     deleteCookie('event_name');
+                     deleteCookie('gender');
+
+
+                     // Posting to Home.
+
+                     window.location.href = "/home";
+                   },
+                   error : function(res) {alert("Error in saving wishlist!")}
+                 })
+             }
+           },
+           error: function (err) {
+             alert("Unable to login")
+           }
+         });
+        },
+        error: function (err) {
+          alert("Unable to login")
+        }
+      });
+      },
+      error: function (err) {
+        alert("Unable to save wishlist")
+      }
+    })
+
+  }
+
   function dateDifferenceInDays(date1, date2) {
     var utc1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
     var utc2 = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());

@@ -275,15 +275,15 @@
           <div class="form-group" id="form-group_login_username">
             <label for="username">Email:</label>
           </div>
-          <input type="email" class="form-control" name="email" id="login_username" placeholder="Registered Email" />
+          <input type="email" class="form-control" name="email" id="login_username" placeholder="Registered Email" required/>
           <br />
           <div class="form-group" id="form-group_login_password">
             <label for="password">Password:</label>
           </div>
-          <input type="password" class="form-control" name="email" id="login_password" />
+          <input type="password" class="form-control" name="email" id="login_password" required/>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal"  onclick="getCustomerDetails()">Login</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal"  onclick="doLogin('saveWishList')">Login</button>
         </div>
       </div>
 
