@@ -29,36 +29,41 @@
             data: {attempt: newhash,gensalt: newsalt,user: $(login_username).val()},
             success: function (data) {
              alert("Performing Login: Result is " + data);
-             if (action == 'saveWishList') {
-               var eventDate = getCookie("event_date");
-               var eventType = getCookie("event_category");
-               var selProducts = getCookie("ProdID");
-               var event_name = getCookie("event_name");
-               var wishList = '{"EventName" :"'+ event_name +'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$(login_username).val()+'",';
-               wishList = wishList + ' "ProductIDs" : "'+ selProducts+ '"}';
-               $.ajax({
-                   type : 'POST',
-                   url :"/saveWishlist",
-                   data : {"Wishlist":wishList},
-                   success : function(res) {
-                     //The following alert will need to be replaced by a modal dialog
-                         alert(res);
+             if (data == "Login Success") {
+               if (action == 'saveWishList') {
+                 var eventDate = getCookie("event_date");
+                 var eventType = getCookie("event_category");
+                 var selProducts = getCookie("ProdID");
+                 var event_name = getCookie("event_name");
+                 var wishList = '{"EventName" :"'+ event_name +'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$(login_username).val()+'",';
+                 wishList = wishList + ' "ProductIDs" : "'+ selProducts+ '"}';
+                 $.ajax({
+                     type : 'POST',
+                     url :"/saveWishlist",
+                     data : {"Wishlist":wishList},
+                     success : function(res) {
+                       //The following alert will need to be replaced by a modal dialog
+                           alert(res);
 
-                     //3/31/2017 - trznt - Deleting cookies as they have now been stored in the database.
-                     deleteCookie('ProdID');
-                     deleteCookie('age_group');
-                     deleteCookie('event_date');
-                     deleteCookie('event_category');
-                     deleteCookie('event_name');
-                     deleteCookie('gender');
+                       //3/31/2017 - trznt - Deleting cookies as they have now been stored in the database.
+                       deleteCookie('ProdID');
+                       deleteCookie('age_group');
+                       deleteCookie('event_date');
+                       deleteCookie('event_category');
+                       deleteCookie('event_name');
+                       deleteCookie('gender');
 
 
-                     // Posting to Home.
+                       // Posting to Home.
 
-                     window.location.href = "/home";
-                   },
-                   error : function(res) {alert("Error in saving wishlist!")}
-                 })
+                       window.location.href = "/home";
+                     },
+                     error : function(res) {alert("Error in saving wishlist!")}
+                   })
+               }
+               else if(action == "") {
+                 window.location.href = "/home";
+               }
              }
            },
            error: function (err) {
