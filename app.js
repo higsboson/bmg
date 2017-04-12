@@ -343,23 +343,29 @@ app.get('/showWishList',function(req,res) {
 });
 
 app.get('/filterWishListByCatg',function(req,res){
-  var wishList = bmgDB.collection('WishList');
-  var qryStr = req.query.Catg;
-  var eventID = req.query.eventID;
-  var prodArr = [];
-  wishList.find({"EventID":eventID},{_id:0,Products:1}).toArray(function(err,docs) {
-    if (!err){
-      if (docs.length == 0) {res.send()}
-      else {res.format({'application/json': function(){
-        for (i=0;i<docs[0].Products.length;i++) {
-          if (qryStr.indexOf(docs[0].Products[i].Catg) != -1) {prodArr.push(docs[0].Products[i])}
-        }
-        if (prodArr.length == 0) {res.send()}
-        else {res.send(prodArr)}
-      }})}
-    }
-    else {res.send("Error in fetching documents")}
-  });
+  try {
+    var wishList = bmgDB.collection('WishList');
+    var qryStr = req.query.Catg;
+    var eventID = req.query.eventID;
+    var prodArr = [];
+    wishList.find({"_id":new ObjectId(eventID)},{_id:0,Products:1}).toArray(function(err,docs) {
+      if (!err){
+        if (docs.length == 0) {res.send()}
+        else {res.format({'application/json': function(){
+          if (qryStr.indexOf("KKK") != -1) {prodArr = docs[0].Products}
+          else {
+            for (i=0;i<docs[0].Products.length;i++) {
+              if (qryStr.indexOf(docs[0].Products[i].Catg) != -1) {prodArr.push(docs[0].Products[i])}
+            }
+          }
+          if (prodArr.length == 0) {res.send("No matching products found")}
+          else {res.send(prodArr)}
+        }})}
+      }
+      else {res.send("Error in fetching documents")}
+    });
+  }
+  catch (e) {console.log("Error - "+e)}
 }); //filter wishlist by category
 
 app.get('/showListProducts',function(req,res){

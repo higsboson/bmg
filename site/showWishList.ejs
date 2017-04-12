@@ -16,7 +16,7 @@
      $(document).ready(function () {
        var buyingProdID = "";
        var buyingProdURL = "";
-       var eventID = "";
+       var eventID = $("#evntID").val();
        function searchCatg() {
           var genreStr = [];
           var priceStr = [];
@@ -44,60 +44,44 @@
 
           chkCnt = 0;
           cnt = 0;
-          $.each($("input[name='chkValEventType']:checked"), function(){evntTypeStr.push($(this).val());chkCnt++});
-          var eventArr = [];
-          var evntCombStr = "";
-
-          evntTypeStr.sort();
-          for (i=0;i<evntTypeStr.length;i++) {evntCombStr = evntCombStr + evntTypeStr[i]}
-          switch (evntCombStr) {
-            case 'B': eventArr = ['B','C','U','Y','V','@','R'];break;
-            case 'A': eventArr = ['A','C','T','X','V','@','Q'];break;
-            case 'S': eventArr = ['S','T','U','P','V','Q','R'];break;
-            case 'W': eventArr = ['W','X','Y','P','@','Q','R'];break;
-            case 'AB': eventArr = ['A','B','C','T','U','Y','X','V','@','R','Q'];break;
-            case 'AS': eventArr = ['A','S','C','T','U','Y','P','V','@','R','Q'];break;
-            case 'AW': eventArr = ['A','W','C','T','Y','X','V','P','@','R','Q'];break;
-            case 'BS': eventArr = ['B','S','C','T','U','Y','V','@','R','P','Q'];break;
-            case 'BW': eventArr = ['B','C','U','Y','V','@','R','W','X','P','Q'];break;
-            case 'SW': eventArr = ['S','T','U','P','V','Q','R','W','X','Y','@'];break;
-            case 'ABS': eventArr = ['A','B','C','T','U','Y','X','V','@','R','Q','S','P'];break;
-            case 'ASW': eventArr = ['A','S','C','T','U','Y','P','V','@','R','Q','W','X'];break;
-            case 'BSW': eventArr = ['B','S','C','T','U','Y','V','@','R','P','Q','W','X'];break;
-            default: eventArr = ['B','S','A','W','@','C','T','X','U','Y','P','V','Q','R','L'];
-          }
-
           for (i=0;i<gpStr.length;i++){
               if (chkCnt > 0 && chkCnt != 4) {for (j=0;j<eventArr.length;j++) {srchStr[cnt] = eventArr[j] + gpStr[i];cnt++}}
               else {for (j=0;j<eventAll.length;j++) {srchStr[cnt] = eventAll[j] + gpStr[i];cnt++}}
           }
           if (cnt > 0) {
              if (cnt == (genreAll.length*priceAll.length*eventAll.length)) {srchStr="KKK"};
-             $.get( "/filterWishListByCatg",{Catg:srchStr,eventID : eventID}, function( data, status ) {
+
+             $.get( "/filterWishListByCatg",{"Catg":srchStr,"eventID" : eventID}, function( data, status ) {
               if (status == 'success'){ //changed since last version on 24 Jan.. fix no records returned issue
                 var htmlStr = "";
                 var endStr = "";
                 var prdName = "";
-                var loop = 0;
+                var cnt = 0;
                 htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
 
                 $.each(data, function(key,doc){
                   try {
                     prdName = doc.ProdNm;
-                    if (loop%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+                    if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
                     htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
-                    htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
-                    htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
-                    htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p>';
-                    htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div></a>';
-                    htmlStr = htmlStr + '</div></div>'
-                    loop++;
-                    if (loop%4 == 0){htmlStr = htmlStr + "</div>"};
+                    htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
+                    htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p>';
+                    htmlStr = htmlStr + '<p align="middle"> INR '+doc.MRP+'</p></div>';
+                    if (doc.Status == "Blocked")
+                     {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Blocked</button></p>'}
+                    else if (doc.Status == "Bought")
+                     {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Already Bought</button></p>'}
+                    else
+                     {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc.ProdID+'","'+doc.ProdDsc+'") id="btn_'+doc.ProdID+'">Buy Now</button></p>'}
+
+                    htmlStr = htmlStr + '</div></div>';
+                    cnt++;
+                    if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
                  }
-                 catch (e) {}
+                 catch (e) {alert("Error - "+e)}
                 }) //for each
-                if (loop%4 != 0) {htmlStr = htmlStr + "</div>"};
-                htmlStr = htmlStr + endStr + "</div>";
+                if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
+                htmlStr = htmlStr + '<hr></div>';
                 //alert(htmlStr);
                 $('#carousel-wrapper').replaceWith(htmlStr);
              }
@@ -176,25 +160,6 @@
           <!--Quick filters-->
           <div class = "col-sm-2">
             <div class = "panel-group">
-
-              <div class = "panel panel-default">
-                <div class = "panel-heading">
-                  <h4 class="panel-title">
-                    <a data-toggle="collapse" href="#eventType">Event Type</a></h4>
-                </div> <!--Panel heading-->
-                <div id="eventType" class="panel-collapse collapse">
-                  <form>
-                    <div class = "checkbox" id="chkEvntType">
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValEventType" value="B">Birthday</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValEventType" value="S">Baby Shower</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValEventType" value="A">Anniversary</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValEventType" value="W">Wedding</label><br>
-                    </div>
-                  </form>
-                </div><!--Panel items-->
-              </div> <!--Panel Genre-->
-
-
               <div class = "panel panel-default">
                 <div class = "panel-heading">
                   <h4 class="panel-title">
