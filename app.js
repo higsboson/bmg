@@ -57,8 +57,8 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
     configData.find({}).toArray(function(err,doc) {
       if (doc.length == 0) {console.log("Config data is missing!!")}
       else {
-        aws_access_key_id = doc[0].aws_access_key_id;
-        aws_secret_key = doc[0].aws_secret_key;
+        aws_access_key_id = doc[0].aws_secret_key_id;
+        aws_secret_key = doc[0].aws_access_key;
         associate_tag = doc[0].associate_tag;
       }
     });
