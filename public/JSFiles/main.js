@@ -1,86 +1,79 @@
   // Added for all date calculations
   var _MS_PER_DAY = 1000 * 60 * 60 * 24;
-
+  var signuporlogin = "";
 
   function doLogin(action) {
-    alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
-    $.ajax({
-      type: 'POST',
-      url: '/getSaltForUser',
-      data: {user: $(login_username).val()},
-      success: function (salt) {
-       alert(salt);
-       var sha256 = new jsSHA('SHA-256', 'TEXT');
-       sha256.update($(login_password).val() + salt);
-       var hash = sha256.getHash("HEX");
-       alert("Hashed val" + hash);
-       $.ajax({
-         type: 'POST',
-         url: '/getsalt',
-         success: function (newsalt) {
-          alert(newsalt);
-          var sha2562 = new jsSHA('SHA-256', 'TEXT');
-          sha2562.update(newsalt + hash);
-          var newhash = sha2562.getHash("HEX");
-          alert("New calculated Salt" + newhash);
-          $.ajax({
-            type: 'POST',
-            url: '/plogin',
-            data: {attempt: newhash,gensalt: newsalt,user: $(login_username).val()},
-            success: function (data) {
-             alert("Performing Login: Result is " + data);
-             if (data == "Login Success") {
-               if (action == 'saveWishList') {
-                 var eventDate = getCookie("event_date");
-                 var eventType = getCookie("event_category");
-                 var selProducts = getCookie("ProdID");
-                 var event_name = getCookie("event_name");
-                 var wishList = '{"EventName" :"'+ event_name +'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$(login_username).val()+'",';
-                 wishList = wishList + ' "ProductIDs" : "'+ selProducts+ '"}';
-                 $.ajax({
-                     type : 'POST',
-                     url :"/saveWishlist",
-                     data : {"Wishlist":wishList},
-                     success : function(res) {
-                       //The following alert will need to be replaced by a modal dialog
-                           alert(res);
+    try {
+      alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
+      $.ajax({
+        type: 'POST',
+        url: '/getSaltForUser',
+        data: {user: $(login_username).val()},
+        success: function (salt) {
+         alert(salt);
+         var sha256 = new jsSHA('SHA-256', 'TEXT');
+         sha256.update($(login_password).val() + salt);
+         var hash = sha256.getHash("HEX");
+         alert("Hashed val" + hash);
+         $.ajax({
+           type: 'POST',
+           url: '/getsalt',
+           success: function (newsalt) {
+            alert(newsalt);
+            var sha2562 = new jsSHA('SHA-256', 'TEXT');
+            sha2562.update(newsalt + hash);
+            var newhash = sha2562.getHash("HEX");
+            alert("New calculated Salt" + newhash);
+            $.ajax({
+              type: 'POST',
+              url: '/plogin',
+              data: {attempt: newhash,gensalt: newsalt,user: $(login_username).val()},
+              success: function (data) {
+               alert("Performing Login: Result is " + data);
+               if (data == "Login Success") {
+                 if (action == 'saveWishList') {
+                   var eventDate = getCookie("event_date");
+                   var eventType = getCookie("event_category");
+                   var selProducts = getCookie("ProdID");
+                   var event_name = getCookie("event_name");
+                   var wishList = '{"EventName" :"'+ event_name +'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$(login_username).val()+'",';
+                   wishList = wishList + ' "ProductIDs" : "'+ selProducts+ '"}';
+                   $.ajax({
+                       type : 'POST',
+                       url :"/saveWishlist",
+                       data : {"Wishlist":wishList},
+                       success : function(res) {
+                         //The following alert will need to be replaced by a modal dialog
+                         document.getElementById("wishListLink").innerHTML = res;
+                         signuporlogin = "login";
+                         $("#signUpOrNot").modal('hide');
+                         $("#wishListURLModal").modal('show');
 
-                       //3/31/2017 - trznt - Deleting cookies as they have now been stored in the database.
-                       deleteCookie('ProdID');
-                       deleteCookie('age_group');
-                       deleteCookie('event_date');
-                       deleteCookie('event_category');
-                       deleteCookie('event_name');
-                       deleteCookie('gender');
-
-
-                       // Posting to Home.
-
-                       window.location.href = "/home";
-                     },
-                     error : function(res) {alert("Error in saving wishlist!")}
-                   })
+                       },
+                       error : function(res) {alert("Error in saving wishlist!")}
+                     })
+                 }
+                 else if(action == "") {
+                   window.location.href = "/home";
+                 }
                }
-               else if(action == "") {
-                 window.location.href = "/home";
-               }
+             },
+             error: function (err) {
+               alert("Unable to login")
              }
-           },
-           error: function (err) {
-             alert("Unable to login")
-           }
-         });
+           });
+          },
+          error: function (err) {
+            alert("Unable to login")
+          }
+        });
         },
         error: function (err) {
-          alert("Unable to login")
+          alert("Unable to save wishlist")
         }
-      });
-      },
-      error: function (err) {
-        alert("Unable to save wishlist")
-      }
-    })
-
+      })
+    }
+    catch (e) {alert("Error!!! - "+e)}
   }
 
   function dateDifferenceInDays(date1, date2) {
@@ -205,56 +198,49 @@ function validFields() {
 }
 
  function saveWishlist() {
-   if (validFields())
-   {
-     var eventDate = getCookie("event_date");
-     var eventType = getCookie("event_category");
-     var selProducts = getCookie("ProdID");
-     alert("date is " + eventDate);
-  //   var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
-  //   wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+$("#password").val()+'"}';
+   try {
+     alert("SaveWishList function");
+     if (validFields())
+     {
+       var eventDate = getCookie("event_date");
+       var eventType = getCookie("event_category");
+       var selProducts = getCookie("ProdID");
+       //alert("date is " + eventDate);
+    //   var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
+    //   wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+$("#password").val()+'"}';
 
-     $.ajax({
-       type: 'POST',
-       url: '/getsalt',
-       success: function (salt) {
-        alert(salt);
-        var sha256 = new jsSHA('SHA-256', 'TEXT');
-        sha256.update($("#password").val() + salt);
-        var hash = sha256.getHash("HEX");
-        alert("Hashed val" + hash);
-        var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
-        wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+ hash +'", "Uppu": "' + salt + '"}';
-        $.ajax({
-            type : 'POST',
-            url :"/saveWishlist",
-            data : {"Wishlist":wishList},
-            success : function(res) {
-              //The following alert will need to be replaced by a modal dialog
-                  alert(res);
-
-              //3/31/2017 - trznt - Deleting cookies as they have now been stored in the database.
-              deleteCookie('ProdID');
-              deleteCookie('age_group');
-              deleteCookie('event_date');
-              deleteCookie('event_category');
-              deleteCookie('event_name');
-              deleteCookie('gender');
-
-
-              // Posting to Home.
-              document.getElementById("signup").submit();
-                //    window.location.href = "/home";
-            },
-            error : function(res) {alert("Error in saving wishlist!")}
-          })
-       },
-       error: function (err) {
-         alert("Unable to save wishlist")
-       }
-     })
+       $.ajax({
+         type: 'POST',
+         url: '/getsalt',
+         success: function (salt) {
+          //alert(salt);
+          var sha256 = new jsSHA('SHA-256', 'TEXT');
+          sha256.update($("#password").val() + salt);
+          var hash = sha256.getHash("HEX");
+          alert("Hashed val" + hash);
+          var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
+          wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+ hash +'", "Uppu": "' + salt + '"}';
+          $.ajax({
+              type : 'POST',
+              url :"/saveWishlist",
+              data : {"Wishlist":wishList},
+              success : function(res) {
+                document.getElementById("wishListLink").innerHTML = res;
+                signuporlogin = "signup";
+                $("#login").modal('hide');
+                $("#signUpOrNot").modal('hide');
+                $("#wishListURLModal").modal('show');
+              },
+              error : function(res) {alert("Error in saving wishlist!")}
+            })
+         },
+         error: function (err) {
+           alert("Unable to save wishlist")
+         }
+       })
+     } /*valid fields*/
    }
-/*  */
+   catch (e) {alert("Error --!!!\n"+e)}
  }
 
 
@@ -359,6 +345,23 @@ function validFields() {
    document.getElementById("CartId").innerHTML="Cart ("+newCartLngth+")";
    $("#CartId").click();
  };
+
+function redirectToHome() {
+  //4/16/2017 - higsboson - moved redirection to home in separate fuction & called on OK button of modal
+  //3/31/2017 - trznt - Deleting cookies as they have now been stored in the database.
+  deleteCookie('ProdID');
+  deleteCookie('age_group');
+  deleteCookie('event_date');
+  deleteCookie('event_category');
+  deleteCookie('event_name');
+  deleteCookie('gender');
+
+  $("#wishListURLModal").modal('hide');
+  signuporlogin = "";
+  // Posting to Home.
+  if (signuporlogin = "login") {window.location.href = "/home"}
+  else if (signuporlogin = "signup") {document.getElementById("signup").submit()}
+}
 
  function getCatg(genre,price,event_type,callback) {
    var error;
