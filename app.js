@@ -57,8 +57,9 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
     configData.find({}).toArray(function(err,doc) {
       if (doc.length == 0) {console.log("Config data is missing!!")}
       else {
-        aws_access_key_id = doc[0].aws_secret_key_id;
-        aws_secret_key = doc[0].aws_access_key;
+        //higsboson - changed to correct identifiers - Access Key Id & Secret Key from Config collection
+        aws_access_key_id = doc[0].aws_access_key_id;
+        aws_secret_key = doc[0].aws_secret_key;
         associate_tag = doc[0].associate_tag;
       }
     });
@@ -273,63 +274,69 @@ app.get('/srchProductByName',function(req,res){
 });
 
 function getProductsFrmAmzn(req,callback) {
-  var operation = "ItemSearch"
-  var response_group = "Images,ItemAttributes,Offers";  //Stricly no spaces only commas.
-  var service="AWSECommerceService";
-  var sort="price";
-  var search_index = "All";
-  var resJSON;
-  var vJSON = [];
-  var canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&AssociateTag=" + associate_tag + "\&Availability=Available\&Keywords=" +
-                                encodeURIComponent(req.query.ProdNm) + "\&Operation=" + operation + "\&ResponseGroup=" +
-                                encodeURIComponent(response_group) + "\&SearchIndex=" + search_index + "\&Service=" + service +
-                                "\&Timestamp=" + encodeURIComponent(new Date().toISOString());
-  var string_to_sign = "GET\n" + end_point + "\n" + uri + "\n" + canonical_query_string;
-  var hash = crypto.createHmac('sha256', aws_secret_key).update(string_to_sign).digest('base64');
-  var signed_url = amazon_end_point + uri + "\?" + canonical_query_string + "\&Signature=" + encodeURIComponent(hash);
-  console.log(signed_url);
-  var rawData = '';
-  let error;
-  http.get(signed_url, (response) => {
-    const statusCode = response.statusCode;
-    const contentType = response.headers['content-type'];
+  try {
+    var operation = "ItemSearch"
+    var response_group = "Images,ItemAttributes,Offers";  //Stricly no spaces only commas.
+    var service="AWSECommerceService";
+    var sort="price";
+    var search_index = "All";
+    var resJSON;
+    var vJSON = [];
+    var canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&AssociateTag=" + associate_tag + "\&Availability=Available\&Keywords=" +
+                                  encodeURIComponent(req.query.ProdNm) + "\&Operation=" + operation + "\&ResponseGroup=" +
+                                  encodeURIComponent(response_group) + "\&SearchIndex=" + search_index + "\&Service=" + service +
+                                  "\&Timestamp=" + encodeURIComponent(new Date().toISOString());
+    var string_to_sign = "GET\n" + end_point + "\n" + uri + "\n" + canonical_query_string;
+    console.log("string to sign - "+string_to_sign);
+    console.log("secret key - "+aws_secret_key);
+    var hash = crypto.createHmac('sha256', aws_secret_key).update(string_to_sign).digest('base64');
+    console.log("hash - "+hash);
+    var signed_url = amazon_end_point + uri + "\?" + canonical_query_string + "\&Signature=" + encodeURIComponent(hash);
+    console.log(signed_url);
+    var rawData = '';
+    let error;
+    http.get(signed_url, (response) => {
+      const statusCode = response.statusCode;
+      const contentType = response.headers['content-type'];
 
 
-    if (statusCode != 200) {error = new Error('Request Failed.\n' +'Status Code: ${statusCode}')}
-    else if (!/^text\/xml/.test(contentType)) {error = new Error('Invalid content-type.\n'
-                                              +'Expected text/xml but received ${contentType}')}
-    if (error) {console.log(error.message);response.resume();return}
+      if (statusCode != 200) {error = new Error('Request Failed.\n' +'Status Code: ${statusCode}')}
+      else if (!/^text\/xml/.test(contentType)) {error = new Error('Invalid content-type.\n'
+                                                +'Expected text/xml but received ${contentType}')}
+      if (error) {console.log(error.message);response.resume();return}
 
-    response.setEncoding('utf8');
-    response.on('data', (chunk) => rawData += chunk);
-    response.on('end', () => {
-    try {
-        parseString(rawData,function(err,resJSON) {
-          if (err) {console.log("Error in converting to json")}
-          else {
-            if (resJSON.ItemSearchResponse.Items[0].Item.length == 0) {vJSON = []}
+      response.setEncoding('utf8');
+      response.on('data', (chunk) => rawData += chunk);
+      response.on('end', () => {
+      try {
+          parseString(rawData,function(err,resJSON) {
+            if (err) {console.log("Error in converting to json")}
             else {
-                for (var i=0;i<resJSON.ItemSearchResponse.Items[0].Item.length;i++) {
-                  try {
-                   vJSON[i] = {"ProdNm" : resJSON.ItemSearchResponse.Items[0].Item[i].ItemAttributes[0].Title,
-                               "ImageURL" : resJSON.ItemSearchResponse.Items[0].Item[i].MediumImage[0].URL,
-                               "MRP" : Number(resJSON.ItemSearchResponse.Items[0].Item[i].ItemAttributes[0].ListPrice[0].Amount)/100,
-                               "ProdGrp" : resJSON.ItemSearchResponse.Items[0].Item[i].ItemAttributes[0].ProductGroup,
-                               "ProdDsc" : resJSON.ItemSearchResponse.Items[0].Item[i].DetailPageURL,
-                               "ProdID" : resJSON.ItemSearchResponse.Items[0].Item[i].ASIN};
-                    //console.log("\nItem"+JSON.stringify(vJSON[i]));
-                   }
-                   catch (e) {} //Ignore items on offers
+              if (resJSON.ItemSearchResponse.Items[0].Item.length == 0) {vJSON = []}
+              else {
+                  for (var i=0;i<resJSON.ItemSearchResponse.Items[0].Item.length;i++) {
+                    try {
+                     vJSON[i] = {"ProdNm" : resJSON.ItemSearchResponse.Items[0].Item[i].ItemAttributes[0].Title,
+                                 "ImageURL" : resJSON.ItemSearchResponse.Items[0].Item[i].MediumImage[0].URL,
+                                 "MRP" : Number(resJSON.ItemSearchResponse.Items[0].Item[i].ItemAttributes[0].ListPrice[0].Amount)/100,
+                                 "ProdGrp" : resJSON.ItemSearchResponse.Items[0].Item[i].ItemAttributes[0].ProductGroup,
+                                 "ProdDsc" : resJSON.ItemSearchResponse.Items[0].Item[i].DetailPageURL,
+                                 "ProdID" : resJSON.ItemSearchResponse.Items[0].Item[i].ASIN};
+                      //console.log("\nItem"+JSON.stringify(vJSON[i]));
+                     }
+                     catch (e) {} //Ignore items on offers
+                 }
+                 //res = vJSON;
                }
-               //res = vJSON;
-             }
-            }
-            callback(error,vJSON);
-        }) //parseString
-      }
-      catch (e) {console.log(e.message)}
-    });
- }).on('error', (e) => {console.log('Got error: ${e.message}')}); //end of http.get
+              }
+              callback(error,vJSON);
+          }) //parseString
+        }
+        catch (e) {console.log(e.message)}
+      });
+   }).on('error', (e) => {console.log('Got error: ${e.message}')}); //end of http.get
+  }
+  catch (e) {console.log("Error - "+e)}
 }
 
 app.get('/New-Cart.html',function(req,res){
