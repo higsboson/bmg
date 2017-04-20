@@ -127,7 +127,7 @@ app.post('/addToDB',urlencodedParser,function(req,res){
 
     console.log("ProdID : "+prdToBeAdded.ProdID);
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
-      if (docs.length != 0) {res.send("Already Present in DB")}
+      if (docs.length != 0) {res.send("Already present in DB")}
       else {
         prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp});
         if (!err) {res.send("Success")}
@@ -269,6 +269,18 @@ app.get('/srchProductByName',function(req,res){
       }
       else {res.send("Error in fetching documents")}
     });
+  }
+  catch (e) {console.log("srchProdByName -->"+e.message)}
+});
+
+app.get('/srchInAmazon',function(req,res){
+  try {
+    getProductsFrmAmzn(req,function(err,docs) {
+        if (err) {res.send("Error in fetching products")}
+        else {
+          res.format({'application/json': function(){res.send(docs)}})
+        }
+    }); //Use callback function....
   }
   catch (e) {console.log("srchProdByName -->"+e.message)}
 });

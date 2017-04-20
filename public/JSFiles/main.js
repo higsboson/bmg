@@ -279,8 +279,6 @@ function validFields() {
  }
 
 
-
-
  function AddToCart(Id,MRP,PrdGrp) {
    try {
      var bmgId = "";
@@ -300,7 +298,7 @@ function validFields() {
          type : 'POST',
          url :"/addToDB",
          data : {"Product":prd},
-         success : function(res) {alert(res)},
+         success : function(res) {},
          error : function(res) {alert("Error in adding product to cart!")}
        })
      } //Amazon product -- write to DB
@@ -395,3 +393,39 @@ function redirectToHome() {
   catch (e) {error = e}
   callback(error,sCatg);
  }
+
+ function srchInAmazon() { //called from New-Cart.html to search products in Amazon forcefully
+   var srchprod = $("#searchitem").val();
+
+   $.get( "/srchInAmazon",{ProdNm:srchprod}, function( data, status ) {
+     if (status == 'success'){
+       var htmlStr = "";
+       var endStr = "";
+       var prdName ="";
+       var cnt =0;
+       htmlStr = '<hr><div class = "carousel-wrapper" id="carousel-wrapper">';
+       $.each(data, function(key,doc){
+         try {
+           prdName = doc.ProdNm;
+           if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+           htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
+           htmlStr = htmlStr + '<div class="thumbnail" style="height:250px;border:0;">';
+           htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
+           htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
+           htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
+           htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
+           htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick=AddToCart("'+doc.ProdID+'","'+doc.MRP+'","'+doc.ProdGrp+'")>Add to wishlist</button></p>';
+           htmlStr = htmlStr + '</div></div>'
+           cnt++;
+           if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+        }
+        catch (e) {}
+       }) //for each
+       if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
+
+       htmlStr = htmlStr + '<hr></div>';
+
+       $('#carousel-wrapper').replaceWith(htmlStr);
+   }
+ })
+}

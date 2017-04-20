@@ -97,11 +97,13 @@
                  var htmlStr = "";
                  var endStr = "";
                  var prdName ="";
+                 var prdId = "";
                  var cnt =0;
                  htmlStr = '<hr><div class = "carousel-wrapper" id="carousel-wrapper">';
                  $.each(data, function(key,doc){
                    try {
                      prdName = doc.ProdNm;
+                     prdId = doc.ProdID;
                      if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
                      htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
                      htmlStr = htmlStr + '<div class="thumbnail" style="height:250px;border:0;">';
@@ -117,8 +119,13 @@
                   catch (e) {}
                  }) //for each
                  if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
-                 htmlStr = htmlStr + '<hr></div>';
-                 //alert(htmlStr);
+
+                 if (prdId.substring(0,3) == "BMG") {
+                   htmlStr = htmlStr + '<hr><div class="row"><div class="col-sm-6"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
+                   htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon()">Search Here</button></p></div><hr></div>';
+                 }
+                 else {htmlStr = htmlStr + '<div class="row"><hr></div>'}
+                 htmlStr = htmlStr + '</div>';
                  $('#carousel-wrapper').replaceWith(htmlStr);
               }
               else {
