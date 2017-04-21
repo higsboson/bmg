@@ -60,7 +60,7 @@ window.onload = function() {
       $.each(data, function(key,doc){
         if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
         htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
-        htmlStr = htmlStr + '<div class="thumbnail" style="height:250px;border:0;">';
+        htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
         htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
         htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p></div></div>';
         htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div>';
