@@ -256,12 +256,37 @@ function getListData(id,name) {
       success : function(res) {
         //The following alert will need to be replaced by a modal dialog
             var data = '';
-            alert(JSON.stringify(res));
-            alert(res);
+            var boughtCount = 0;
+            //alert(JSON.stringify(res));
+            //alert(res);
+            data += '<table>';
             for (i = 0;i < res.Products.length; i++) {
-                data += res.Products[i].ProdNm;
+                data += '<tr>';
+                data += '<td><a href="' + res.Products[i].ProdDsc + '" target="_blank"><img src="' + res.Products[i].ImageURL + '"></a></td>';
+                data += '<td style="padding:10px">';
+                data += '<a href="' + res.Products[i].ProdDsc + '" target="_blank"><font color="#2B547E" size="3">' +  res.Products[i].ProdNm + '</font></a><br>';
+                if (res.Products[i].Status == "Available")
+                  data += 'Gift Status: <b><font color="#FFA62F">Pending Purchase</font></b>';
+                else
+                   data += 'Gift Status: <b><font color="#348781">Purchased</font></b>';
+                data += '</td>';
+                data += '</tr>';
+                data += '<tr><td><hr></td><td><hr></td></tr>';
+                if (res.Products[i].Status == "Bought")
+                  boughtCount++;
             }
-            $('#wishlistsummary').text(data);
+            data += '</table>';
+            if (boughtCount == res.Products.length) {
+              $('#summaryDescription').html('<p class="summary">Awesome! All ' + res.Products.length + ' item(s) in your wishlist has been bought.</p>')
+            }
+            else if (boughtCount == 1) {
+              $('#summaryDescription').html('<p class="summary">Your wishlist has ' + res.Products.length + ' items of which ' + boughtCount + ' has already been purchased.</p>')
+            } else if (boughtCount > 1){
+              $('#summaryDescription').html('<p class="summary">Your wishlist has ' + res.Products.length + ' items of which ' + boughtCount + ' have already been purchased.</p>')
+            } else if (boughtCount == 0) {
+              $('#summaryDescription').html('<p class="summary">There are ' + res.Products.length + ' item(s) in your wishlist. No items have been purchased yet.</p>')
+            }
+            $('#wishlistsummary').html(data);
             //$('#' + div).text("You have " + res[0].EventName);
             //$('#' + div).text("Event Name: " + res[0].EventName);
       },
