@@ -247,6 +247,7 @@ function validFields() {
 //4/22/2017 - trznt
 //Getting Data of WishList item
 function getListData(id,name) {
+  $('#summaryDescription').html("");
   $('#wishlistname').text(name);
   $('#wishlistsummary').html('<div style="text-align:center">Loading Wishlist...<br> <i class="fa fa-circle-o-notch fa-spin" style="font-size:48px"></i></div>');
   $.ajax({
