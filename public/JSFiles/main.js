@@ -244,13 +244,39 @@ function validFields() {
  }
 
 
+//4/22/2017 - trznt
+//Getting Data of WishList item
+function getListData(id,name) {
+  $('#wishlistname').text(name);
+  $('#wishlistsummary').html('<div style="text-align:center">Loading Wishlist...<br> <i class="fa fa-circle-o-notch fa-spin" style="font-size:48px"></i></div>');
+  $.ajax({
+      type : 'GET',
+      url :"/getWishListItems",
+      data : {"id":id},
+      success : function(res) {
+        //The following alert will need to be replaced by a modal dialog
+            var data = '';
+            alert(JSON.stringify(res));
+            alert(res);
+            for (i = 0;i < res.Products.length; i++) {
+                data += res.Products[i].ProdNm;
+            }
+            $('#wishlistsummary').text(data);
+            //$('#' + div).text("You have " + res[0].EventName);
+            //$('#' + div).text("Event Name: " + res[0].EventName);
+      },
+      error : function(res) {alert("Error in retrieving user informaton!")}
+    })
+}
+
+
 //27/3/2017 - trznt
  // The following function gets called from the Dashboards page to load user information
  // Things to load:
  //   1. Open and Completed WishLists
  //   2. User Profile information
  //   3. User Service Requests
- function getUserWishLists(user,div) {
+ function getUserWishLists(user,divactive) {
    alert("getting wishlist");
    $.ajax({
        type : 'GET',
@@ -259,17 +285,16 @@ function validFields() {
        success : function(res) {
          //The following alert will need to be replaced by a modal dialog
              alert(JSON.stringify(res));
-             if (res.length >=2) {
-               var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Status</th></tr></thead><tbody>';
+             if (res.length >=1) {
+               var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead style="background:#6a617e;color:#FFFFFF"><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Date</th></tr></thead><tbody>';
                for (i = 0; i < res.length ;i++) {
-                 table_text += '<tr><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + res[i].EventStatus + '</td></tr>';
+                 var d = new Date(res[i].EventDate);
+                 var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear();
+                 table_text += '<tr data-toggle="modal" data-target="#viewWishListModal" onclick="getListData(\'' + res[i]._id + '\',\'' + res[i].EventName +  '\')" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
                }
               table_text += '</tbody></table>';
-              $('#' + div).append("You have " + res.length + " active lists." + table_text);
+              $('#' + divactive).append("<h2>Here are the wishlists for your upcoming events. </h2><br><br>" + table_text);
 
-             }
-             else {
-                $('#' + div).text("You have " + res.length + " active list.");
              }
              //$('#' + div).text("You have " + res[0].EventName);
              //$('#' + div).text("Event Name: " + res[0].EventName);
@@ -292,6 +317,7 @@ function validFields() {
        var prodnm = document.getElementById("ProdNm_"+Id).innerHTML;
        var catg = "NPD";
        prodnm = prodnm.replace(/['"]+/g, '');
+       //trznt - Adding another item to prod called Status: Open
        var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'"}';
        //Throwing error if the name has quotes in it
        $.ajax({

@@ -147,6 +147,9 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
     var wishList = {};
 
     prdCollection.find({ProdID:{$in:prdIdArr}}).toArray(function(err,docs){
+      for (i = 0;i < docs.length;i++) {
+        docs[i]["Status"] = "Available";
+      }
       if (docs.length == 0) {res.send("Fatal error! Products not found in database")}
       else {
         // Making the below check to see if this wishlist was being saved as a logged in user
@@ -226,7 +229,7 @@ app.get('/home', function (req,res) {
     // On load of the ejs file, it will use the user ID reference
     // To pick information about the user.
     res.render(__dirname + "/site/home.ejs",{userID : req.session.user,username: req.session.name});
-    console.log("call made to home.html with valid session " + req.session.user);
+    console.log("call made to home.html with valid session " + req.session.user + req.session.name);
   } else {
     // If this is not a valid session then the user gets a message that the
     // session is not valid
@@ -235,12 +238,33 @@ app.get('/home', function (req,res) {
   }
 });
 
+//trznt - 22/4/2017
+//This get will retrieve all wishlist items based on the ID for display on the user's dashboard.
+app.get('/getWishListItems', function (req,res) {
+  // Checking if a valid session exists.
+  if (req.session && req.session.user) {
+    console.log("call made to /getWishListItems with valid session " + req.session.user + req.session.name);
+    try {
+      var wishList = bmgDB.collection('WishList');
+      wishList.find({"_id":new ObjectId(req.query.id),"HostEmail":req.session.user},{_id:0,Products:1}).toArray(function(err,docs) {
+        if (!err){
+          res.send(docs[0]);
+        }
+        else {res.send({"Products": []})}
+      });
+    }
+    catch (e) {console.log("Error - " +e)}
+  } else {
+    res.end("Invalid request");
+  }
+});
+
 
 app.get('/getUserWishLists', function (req,res) {
   var wishlistCollection = bmgDB.collection('WishList');
   console.log("getting wishlist for " + req.query.userid);
   //We only return pertinent information such as the event names, types and open/closed registries
-  wishlistCollection.find({"HostEmail": req.query.userid},{"_id":1,"EventName":1,"EventType":1,"EventStatus":1}).toArray(function(err,docs){
+  wishlistCollection.find({"HostEmail": req.query.userid},{"_id":1,"EventName":1,"EventType":1,"EventStatus":1,"EventDate":1}).toArray(function(err,docs){
     if (!err) {
       if (docs.length) {
         res.format({'application/json': function(){res.send(docs)}})
