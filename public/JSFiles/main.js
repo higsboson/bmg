@@ -266,6 +266,7 @@ function getListData(id,name) {
                 data += '<td><a href="' + res.Products[i].ProdDsc + '" target="_blank"><img src="' + res.Products[i].ImageURL + '"></a></td>';
                 data += '<td style="padding:10px">';
                 data += '<a href="' + res.Products[i].ProdDsc + '" target="_blank"><font color="#2B547E" size="3">' +  res.Products[i].ProdNm + '</font></a><br>';
+                data += 'Price:  &#8377;' +  res.Products[i].MRP + '<br>';
                 if (res.Products[i].Status == "Available")
                   data += 'Gift Status: <b><font color="#FFA62F">Pending Purchase</font></b>';
                 else
