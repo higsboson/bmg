@@ -208,7 +208,7 @@
 }
 
 .user-header{
-  background-color: #616D7E;
+  background-color: #559ac2;
   border-color: #ffffff;
 }
 
@@ -359,7 +359,7 @@
   color: #FFFFFF;
   text-align: left;
   font-size: 20px;
-  background: #617e72;
+  background: #55c27d;
   border-radius: 20px
 }
 
@@ -381,4 +381,8 @@
 
 p.summary{
   font-size: 15px;
+}
+
+ul.dropdown-menu {
+  font-size: 16px;
 }
