@@ -313,7 +313,7 @@ function getListData(id,name) {
          //The following alert will need to be replaced by a modal dialog
              //alert(JSON.stringify(res));
              if (res.length >=1) {
-               var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead style="background:#8973d1;color:#FFFFFF"><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Date</th></tr></thead><tbody>';
+               var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead style="background:#454282;color:#FFFFFF"><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Date</th></tr></thead><tbody>';
                for (i = 0; i < res.length ;i++) {
                  var d = new Date(res[i].EventDate);
                  var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear();
