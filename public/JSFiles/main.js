@@ -289,6 +289,8 @@ function getListData(id,name) {
               $('#summaryDescription').html('<p class="summary">There are ' + res.Products.length + ' item(s) in your wishlist. No items have been purchased yet.</p>')
             }
             $('#wishlistsummary').html(data);
+            $('#wishListLink').html('<table><tr><td><p class="summary" style="padding-top:8px">Link to this wishlist: </p></td><td><div class="help-tip">	<p>To share this wishlist with your friends and family, pass along this link.</p> </div></td></tr></table> <input class="form-control" value="http://'+ window.location.hostname + ':8080/showWishList?eventID=' + id + '" id="wishListLinkUrl" readonly>');
+            $("#wishListLinkUrl").focus(function() { $(this).select(); } );
             //$('#' + div).text("You have " + res[0].EventName);
             //$('#' + div).text("Event Name: " + res[0].EventName);
       },

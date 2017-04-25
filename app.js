@@ -152,7 +152,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
     var wishList = {};
 
     prdCollection.find({ProdID:{$in:prdIdArr}}).toArray(function(err,docs){
-      for (i = 0;i < docs.length;i++) {
+      for (var i = 0;i < docs.length;i++) {
         docs[i]["Status"] = "Available";
       }
       if (docs.length == 0) {res.send("Fatal error! Products not found in database")}
@@ -187,7 +187,8 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
             //we need to send back the link
             var wishListId = insertedObj["ops"][0]["_id"];
             console.log("Wishlist is inserted in database");
-            res.send("<b>Wishlist inserted successfully.</b><br><br>To share the wishlist with your invitees, copy and paste the below link :<br>http://"+urlHost+"/showWishList?eventID="+wishListId)}
+            //25/4/2017 - Made a change to have URL domain automatically populated
+            res.send("<b>Wishlist inserted successfully.</b><br><br>To share the wishlist with your invitees, copy and paste the below link :<br>http://"+ window.location.hostname +"/showWishList?eventID="+wishListId)}
           else {res.send("Error in saving wishlist. Please try again later")}
 
         });
