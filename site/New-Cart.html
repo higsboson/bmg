@@ -119,8 +119,7 @@
                   catch (e) {}
                  }) //for each
                  if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
-
-                 if (prdId.substring(0,3) == "BMG") {
+                 if (prdId.slice(0,3) == "BMG") {
                    htmlStr = htmlStr + '<hr><div class="row"><div class="col-sm-6"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
                    htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon()">Search Here</button></p></div><hr></div>';
                  }

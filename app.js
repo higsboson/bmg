@@ -75,7 +75,10 @@ app.get('/', function(req,res) {
   console.log("call made to index.html");
 });
 
-
+app.get('/FAQ.html',function(req,res) {
+  console.log("call made to FAQ.html")
+  res.sendFile(__dirname + "/site/FAQ.html");
+})
 
 
 app.get('/getProdByCatg',function(req,res){
@@ -281,6 +284,7 @@ app.get('/srchProductByName',function(req,res){
     prdCollection.find({"ProdNm" : {$regex : new RegExp(srchStr,"i")}}).toArray(function(err,docs){
         if (!err){
         if (docs.length == 0) {
+          console.log("no products found, calling amazon");
           getProductsFrmAmzn(req,function(err,docs) {
             if (err) {res.send("Error in fetching products")}
             else {

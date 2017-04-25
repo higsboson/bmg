@@ -354,6 +354,10 @@
   padding-top: 150px;
 }
 
+.FAQ {
+  padding-top: 100px;
+}
+
 .user-active-list {
   padding: 40px;
   color: #FFFFFF;
@@ -377,7 +381,13 @@
   color: #38ACEC;
 }
 
-
+.list-group.faq-items {
+  color: #FFFFFF;
+  background: #284b66;
+  padding: 0px;
+  padding-left: 5px;
+  border-radius: 5px;
+}
 
 p.summary{
   font-size: 15px;
