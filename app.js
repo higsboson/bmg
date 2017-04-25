@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
@@ -35,7 +37,7 @@ app.use(bodyParser.json()); //to parse application-json
 app.use(urlencodedParser); // for parsing application/x-www-form-urlencoded
 app.set('view engine','ejs');
 
-// Making user of npm package client-sessions.
+// Making user of npm package client-rs.
 // Setting the app to make use of sessions.
 // Ideally the random string that goes here will
 // need to be recreated after every restart of the application server
@@ -525,6 +527,16 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
         });
 });
 
+app.get('/logout',function (req,res) {
+  if ((req.session && req.session.user)) {
+    req.session.user = null;
+    req.session.name = null;
+    res.end("Log-off success");
+  } else {
+    res.end("unable to logoff");
+  }
+
+});
 
 app.get('/get_amazon',function (req,res) {
   console.log("Page is " + req.query.pageNumber);

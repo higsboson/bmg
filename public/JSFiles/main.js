@@ -4,32 +4,32 @@
 
   function doLogin(action) {
     try {
-      alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
+      //alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
       $.ajax({
         type: 'POST',
         url: '/getSaltForUser',
         data: {user: $(login_username).val()},
         success: function (salt) {
-         alert(salt);
+         //alert(salt);
          var sha256 = new jsSHA('SHA-256', 'TEXT');
          sha256.update($(login_password).val() + salt);
          var hash = sha256.getHash("HEX");
-         alert("Hashed val" + hash);
+         //alert("Hashed val" + hash);
          $.ajax({
            type: 'POST',
            url: '/getsalt',
            success: function (newsalt) {
-            alert(newsalt);
+            //alert(newsalt);
             var sha2562 = new jsSHA('SHA-256', 'TEXT');
             sha2562.update(newsalt + hash);
             var newhash = sha2562.getHash("HEX");
-            alert("New calculated Salt" + newhash);
+            //alert("New calculated Salt" + newhash);
             $.ajax({
               type: 'POST',
               url: '/plogin',
               data: {attempt: newhash,gensalt: newsalt,user: $(login_username).val()},
               success: function (data) {
-               alert("Performing Login: Result is " + data);
+               //alert("Performing Login: Result is " + data);
                if (data == "Login Success") {
                  if (action == 'saveWishList') {
                    var eventDate = getCookie("event_date");
@@ -162,7 +162,7 @@ function validFields() {
     $('#form_group_password').removeClass('has-error');
     if ($('#password').val() != $('#retype-password').val()) {
       alert ('Passwords dont match');
-      alert ($('#password').val() + '-' + $('#retype-password').val())
+      //alert ($('#password').val() + '-' + $('#retype-password').val())
       $('#form_group_retype_password').addClass('has-error');
       $('#form_group_password').addClass('has-error');
       valid = false;
@@ -184,7 +184,7 @@ function validFields() {
     $('#form_group_retype_password').removeClass('has-error');
     if ($('#password').val() != $('#retype-password').val()) {
       alert ('Passwords dont match');
-      alert ($('#password').val() + '-' + $('#retype-password').val())
+      //alert ($('#password').val() + '-' + $('#retype-password').val())
       $('#form_group_retype_password').addClass('has-error');
       $('#form_group_password').addClass('has-error');
       valid = false;
@@ -199,7 +199,7 @@ function validFields() {
 
  function saveWishlist() {
    try {
-     alert("SaveWishList function");
+     //alert("SaveWishList function");
      if (validFields())
      {
        var eventDate = getCookie("event_date");
@@ -217,7 +217,7 @@ function validFields() {
           var sha256 = new jsSHA('SHA-256', 'TEXT');
           sha256.update($("#password").val() + salt);
           var hash = sha256.getHash("HEX");
-          alert("Hashed val" + hash);
+          //alert("Hashed val" + hash);
           var wishList = '{"EventName" :"'+$("#event_name").val()+'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$("#emailaddr").val()+'", "HostName" : "'+$("#hostfullname").val()+'",';
           wishList = wishList +' "ContactName" : "'+$("#rcvrname").val()+'", "HostEmail" : "'+$("#emailaddr").val()+'", "HostPhone" : "'+$("#cellphnum").val()+'", "ProductIDs" : "'+selProducts+'", "Password" : "'+ hash +'", "Uppu": "' + salt + '"}';
           $.ajax({
@@ -266,6 +266,7 @@ function getListData(id,name) {
                 data += '<td><a href="' + res.Products[i].ProdDsc + '" target="_blank"><img src="' + res.Products[i].ImageURL + '"></a></td>';
                 data += '<td style="padding:10px">';
                 data += '<a href="' + res.Products[i].ProdDsc + '" target="_blank"><font color="#2B547E" size="3">' +  res.Products[i].ProdNm + '</font></a><br>';
+                data += 'Price:  &#8377;' +  res.Products[i].MRP + '<br>';
                 if (res.Products[i].Status == "Available")
                   data += 'Gift Status: <b><font color="#FFA62F">Pending Purchase</font></b>';
                 else
@@ -303,16 +304,16 @@ function getListData(id,name) {
  //   2. User Profile information
  //   3. User Service Requests
  function getUserWishLists(user,divactive) {
-   alert("getting wishlist");
+   //alert("getting wishlist");
    $.ajax({
        type : 'GET',
        url :"/getUserWishLists",
        data : {"userid":user},
        success : function(res) {
          //The following alert will need to be replaced by a modal dialog
-             alert(JSON.stringify(res));
+             //alert(JSON.stringify(res));
              if (res.length >=1) {
-               var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead style="background:#6a617e;color:#FFFFFF"><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Date</th></tr></thead><tbody>';
+               var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead style="background:#454282;color:#FFFFFF"><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Date</th></tr></thead><tbody>';
                for (i = 0; i < res.length ;i++) {
                  var d = new Date(res[i].EventDate);
                  var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear();
@@ -480,4 +481,13 @@ function redirectToHome() {
        $('#carousel-wrapper').replaceWith(htmlStr);
    }
  })
+}
+
+function logout() {
+  $.ajax({
+    type : 'GET',
+    url :"/logout",
+    success : function(res) {window.location.href = "/";},
+    error : function(res) {alert("Error logging out")}
+  })
 }
