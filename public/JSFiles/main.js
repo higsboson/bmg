@@ -246,10 +246,17 @@ function validFields() {
 
 //4/22/2017 - trznt
 //Getting Data of WishList item
-function getListData(id,name) {
+function getListData(id,name,mode) {
   $('#summaryDescription').html("");
-  $('#wishlistname').text(name);
-  $('#wishlistsummary').html('<div style="text-align:center">Loading Wishlist...<br> <i class="fa fa-circle-o-notch fa-spin" style="font-size:48px"></i></div>');
+  if (mode) {
+    $('#wishlistname').text(name);
+    $('#wishlistsummary').html('<div style="text-align:center">Loading Wishlist...<br> <i class="fa fa-circle-o-notch fa-spin" style="font-size:48px"></i></div>');
+  }
+  else {
+    $('#wishlistoldname').text(name);
+    $('#wishlistoldsummary').html('<div style="text-align:center">Loading Wishlist...<br> <i class="fa fa-circle-o-notch fa-spin" style="font-size:48px"></i></div>');
+  }
+
   $.ajax({
       type : 'GET',
       url :"/getWishListItems",
@@ -278,19 +285,35 @@ function getListData(id,name) {
                   boughtCount++;
             }
             data += '</table>';
-            if (boughtCount == res.Products.length) {
-              $('#summaryDescription').html('<p class="summary">Awesome! All ' + res.Products.length + ' item(s) in your wishlist has been bought.</p>')
+            if (mode) {
+              if (boughtCount == res.Products.length) {
+                $('#summaryDescription').html('<p class="summary">Awesome! All ' + res.Products.length + ' item(s) in your wishlist has been bought.</p>')
+              }
+              else if (boughtCount == 1) {
+                $('#summaryDescription').html('<p class="summary">Your wishlist has ' + res.Products.length + ' items of which ' + boughtCount + ' has already been purchased.</p>')
+              } else if (boughtCount > 1){
+                $('#summaryDescription').html('<p class="summary">Your wishlist has ' + res.Products.length + ' items of which ' + boughtCount + ' have already been purchased.</p>')
+              } else if (boughtCount == 0) {
+                $('#summaryDescription').html('<p class="summary">There are ' + res.Products.length + ' item(s) in your wishlist. No items have been purchased yet.</p>')
+              }
+              $('#wishlistsummary').html(data);
+            } else {
+              if (boughtCount == res.Products.length) {
+                $('#summaryOldDescription').html('<p class="summary">Awesome! All ' + res.Products.length + ' item(s) in your wishlist had been bought.</p>')
+              }
+              else if (boughtCount == 1) {
+                $('#summaryOldDescription').html('<p class="summary">Your wishlist had ' + res.Products.length + ' items of which ' + boughtCount + ' were  purchased.</p>')
+              } else if (boughtCount > 1){
+                $('#summaryOldDescription').html('<p class="summary">Your wishlist had ' + res.Products.length + ' items of which ' + boughtCount + ' were purchased.</p>')
+              } else if (boughtCount == 0) {
+                $('#summaryOldDescription').html('<p class="summary">There were ' + res.Products.length + ' item(s) in your wishlist. No items were purchased unfortunately.</p>')
+              }
+              $('#wishlistoldsummary').html(data);
             }
-            else if (boughtCount == 1) {
-              $('#summaryDescription').html('<p class="summary">Your wishlist has ' + res.Products.length + ' items of which ' + boughtCount + ' has already been purchased.</p>')
-            } else if (boughtCount > 1){
-              $('#summaryDescription').html('<p class="summary">Your wishlist has ' + res.Products.length + ' items of which ' + boughtCount + ' have already been purchased.</p>')
-            } else if (boughtCount == 0) {
-              $('#summaryDescription').html('<p class="summary">There are ' + res.Products.length + ' item(s) in your wishlist. No items have been purchased yet.</p>')
+            if (mode) {
+              $('#wishListLink').html('<table><tr><td><p class="summary" style="padding-top:8px">Link to this wishlist: </p></td><td><div class="help-tip">	<p>To share this wishlist with your friends and family, pass along this link.</p> </div></td></tr></table> <input class="form-control" value="http://'+ window.location.hostname + ':8080/showWishList?eventID=' + id + '" id="wishListLinkUrl" readonly>');
+              $("#wishListLinkUrl").focus(function() { $(this).select(); } );
             }
-            $('#wishlistsummary').html(data);
-            $('#wishListLink').html('<table><tr><td><p class="summary" style="padding-top:8px">Link to this wishlist: </p></td><td><div class="help-tip">	<p>To share this wishlist with your friends and family, pass along this link.</p> </div></td></tr></table> <input class="form-control" value="http://'+ window.location.hostname + ':8080/showWishList?eventID=' + id + '" id="wishListLinkUrl" readonly>');
-            $("#wishListLinkUrl").focus(function() { $(this).select(); } );
             //$('#' + div).text("You have " + res[0].EventName);
             //$('#' + div).text("Event Name: " + res[0].EventName);
       },
@@ -320,7 +343,10 @@ function getListData(id,name) {
                for (i = 0; i < res.length ;i++) {
                  var d = new Date(res[i].EventDate);
                  var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear();
-                 table_text += '<tr data-toggle="modal" data-target="#viewWishListModal" onclick="getListData(\'' + res[i]._id + '\',\'' + res[i].EventName +  '\')" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
+                 if (mode)
+                  table_text += '<tr data-toggle="modal" data-target="#viewWishListModal" onclick="getListData(\'' + res[i]._id + '\',\'' + res[i].EventName +  '\',1)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
+                 else
+                  table_text += '<tr data-toggle="modal" data-target="#viewOldWishListModal" onclick="getListData(\'' + res[i]._id + '\',\'' + res[i].EventName +  '\',0)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
                }
               table_text += '</tbody></table>';
               if (mode)
@@ -336,7 +362,7 @@ function getListData(id,name) {
                  $('#' + divactive).append("<h2>You have no completed events yet. </h2><br><br>");
              }
              //For Asthetics
-             if (res.length <= 3) {
+             if (res.length <= 2) {
                $('#userblock').css({"padding-bottom":"100px"})
              }
              //$('#' + div).text("You have " + res[0].EventName);
