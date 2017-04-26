@@ -1,0 +1,10 @@
+Active and Historic WishLists
+--------------------------------
+
+The following query returns wishlist based on date criteria:
+
+  db.WishList.find({"EventDate" : {"$gte": new Date("2017-04-25T00:00:00.000Z")} });
+
+A batch SQL will be schduled via crontab to convert all wishlists older than today to historic list. The query that will need to be scheduled therefore is :
+
+db.WishList.update({$and : [{"EventDate" : {"$lte": new Date("2017-04-28T00:00:00.000Z")}},{"EventStatus": 1} ]},{$set :{"EventStatus": 0}});

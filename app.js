@@ -162,7 +162,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
         // A Primary record will store user informtation such as the user's name. phone, etc
         if (!(req.session && req.session.user)) {
           wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
-                      "EventDate":wishlistToBeAdded.EventDate,
+                      "EventDate":new Date(wishlistToBeAdded.EventDate),
                       "HostName":wishlistToBeAdded.HostName,"RcvrName":wishlistToBeAdded.ContactName,
                       "HostPhone":wishlistToBeAdded.HostPhone,"HostEmail":wishlistToBeAdded.HostEmail,
                       "KEY":wishlistToBeAdded.Password,"UPPU":wishlistToBeAdded.Uppu,"Primary":1, // Primary 1 means primary record.
@@ -176,7 +176,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
           req.session.name = wishlistToBeAdded.HostName;
         } else {
           wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
-                      "HostEmail":req.session.user,"EventDate":wishlistToBeAdded.EventDate,
+                      "HostEmail":req.session.user,"EventDate":new Date(wishlistToBeAdded.EventDate),
                       // Event status 1 means open wishlist, 0 means closed wishlist
                       "EventStatus":1,
                       "Products":docs};
