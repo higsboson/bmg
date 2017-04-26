@@ -283,6 +283,33 @@ app.get('/getUserWishLists', function (req,res) {
   });
 });
 
+app.post('/saveProfileChanges',urlencodedParser, function (req,res) {
+  console.log("Name is " + req.body.hostname);
+  if (req.session && req.session.user) {
+    var wishlistCollection = bmgDB.collection('WishList');
+    wishlistCollection.update({"_id" : new ObjectId(req.body._id)},{$set:{"HostName":req.body.hostname,"HostPhone":req.body.hostphone}}, function(err) {
+      if (!err) {res.redirect('/home');}
+      else {res.send("Error in updating product status")}
+    })
+    req.session.name = req.body.hostname;
+  }
+});
+
+app.get('/getUserProfileDetails', function (req,res) {
+  var profileDetails = bmgDB.collection('WishList');
+  profileDetails.find({$and: [{"HostEmail": req.query.userid},{"Primary" : 1}]},{"_id":1,"HostName":1,"HostPhone":1,"HostEmail":1}).toArray(function(err,docs){
+    if (!err) {
+      if (docs.length) {
+        res.format({'application/json': function(){res.send(docs)}})
+      }
+      else {
+        var nothing = [];
+        res.format({'application/json': function(){res.send(nothing)}})
+      }
+    }
+  });
+});
+
 app.get('/srchProductByName',function(req,res){
   try {
     var prdCollection = bmgDB.collection('Product');

@@ -197,6 +197,8 @@ function validFields() {
   return valid;
 }
 
+
+
  function saveWishlist() {
    try {
      //alert("SaveWishList function");
@@ -321,6 +323,35 @@ function getListData(id,name,mode) {
     })
 }
 
+// 26/4/2017
+// Getting Profile information form the DB
+function getUserProfileDetails(user,div) {
+  div = "#" + div;
+  $(div).html("");
+  //alert("Getting User information");
+  $.ajax({
+      type : 'GET',
+      url :"/getUserProfileDetails",
+      data : {"userid":user},
+      success : function(res) {
+        var data = "";
+        data += '<br><br><form action="/saveProfileChanges" method="POST"><div class="row"><div class="col-sm-4" style="text-align:right"><div class="form-group"><label for="name">Name:</label></div></div>';
+        data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="text" class="form-control" value="' + res[0].HostName + '" name="hostname"></div></div></div>';
+        data += '<div class="row"><div class="col-sm-4" style="text-align:right"><div class="form-group"><label for="phone">Mobile:</label></div></div>';
+        data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="text" class="form-control" value="' + res[0].HostPhone + '" name="hostphone"></div></div></div>';
+        data += '<div class="row"><div class="col-sm-4" style="text-align:right"><div class="form-group"><label for="email">Email:</label></div></div>';
+        data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="text" class="form-control" value="' + res[0].HostEmail + '" name="email" readonly><input type="hidden" name="_id" value="' + res[0]._id + '"></div></div></div>';
+        data += '<div class="row"><div class="col-sm-4" style="text-align:right"><div class="form-group"><label for="password">Password:</label></div></div>';
+        data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="password" class="form-control" value="******" id="password" readonly><a href="#" style="font-size:10px;float:right">Change Password</a></div></div></div>';
+        data += '<div class="row"></br></div><div class="row"><div class="col-sm-6" style="text-align:right">' + '<button class="btn btn-primary" name="Save" type="submit" style="background-color:#454282">Save Changes</button></div>';
+        data += '<div class="col-sm-6" style="text-align:left">' + '<button class="btn btn-primary" name="Cancel" style="background-color:#454282" onclick="location.href=\'/home \';return false;">Cancel</button></div></div></form>';
+
+        $(div).append('<h2>Your Profile. </h2>' + data);
+      },
+      error : function(res) { alert ("Error reading from server");}
+  });
+
+}
 
 //27/3/2017 - trznt
  // The following function gets called from the Dashboards page to load user information
@@ -357,7 +388,7 @@ function getListData(id,name,mode) {
              }
              else {
                if (mode)
-                 $('#' + divactive).append("<h2You have no upcoming events. </h2><br><br>");
+                 $('#' + divactive).append("<h2>You have no upcoming events. </h2><br><br>");
                else
                  $('#' + divactive).append("<h2>You have no completed events yet. </h2><br><br>");
              }
