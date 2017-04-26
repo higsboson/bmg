@@ -188,7 +188,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
             var wishListId = insertedObj["ops"][0]["_id"];
             console.log("Wishlist is inserted in database");
             //25/4/2017 - Made a change to have URL domain automatically populated
-            res.send("<b>Wishlist inserted successfully.</b><br><br>To share the wishlist with your invitees, copy and paste the below link :<br>http://"+ window.location.hostname +"/showWishList?eventID="+wishListId)}
+            res.send("<b>Wishlist inserted successfully.</b><br><br>To share the wishlist with your invitees, copy and paste the below link :<br>http://"+ urlHost +"/showWishList?eventID="+wishListId)}
           else {res.send("Error in saving wishlist. Please try again later")}
 
         });
@@ -224,7 +224,7 @@ app.post('/home',urlencodedParser, function (req,res) {
     // If this is not a valid session then the user gets a message that the
     // session is not valid
     // At a later time, this should be a login page
-    res.end("A session does not exist");
+    res.redirect('/');
   }
 });
 
@@ -240,7 +240,7 @@ app.get('/home', function (req,res) {
     // If this is not a valid session then the user gets a message that the
     // session is not valid
     // At a later time, this should be a login page
-    res.end("A session does not exist");
+    res.redirect('/');
   }
 });
 
@@ -268,12 +268,16 @@ app.get('/getWishListItems', function (req,res) {
 
 app.get('/getUserWishLists', function (req,res) {
   var wishlistCollection = bmgDB.collection('WishList');
-  console.log("getting wishlist for " + req.query.userid);
+  console.log("getting wishlist for " + req.query.userid + req.query.mode);
   //We only return pertinent information such as the event names, types and open/closed registries
-  wishlistCollection.find({"HostEmail": req.query.userid},{"_id":1,"EventName":1,"EventType":1,"EventStatus":1,"EventDate":1}).toArray(function(err,docs){
+  wishlistCollection.find({$and: [{"HostEmail": req.query.userid},{"EventStatus": parseInt(req.query.mode)}]},{"_id":1,"EventName":1,"EventType":1,"EventStatus":1,"EventDate":1}).toArray(function(err,docs){
     if (!err) {
       if (docs.length) {
         res.format({'application/json': function(){res.send(docs)}})
+      }
+      else {
+        var nothing = [];
+        res.format({'application/json': function(){res.send(nothing)}})
       }
     }
   });

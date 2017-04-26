@@ -14,7 +14,7 @@
   $(document).ready(function() {
 
       //alert("hi there" + $('#user').val());
-      getUserWishLists($('#user').val(),'active_lists');
+      getUserWishLists($('#user').val(),'active_lists',1);
 
       window.onbeforeunload = function() { alert("Your work will be lost."); };
 
@@ -71,7 +71,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand wide" href="#">bemygenie.com - Hello, <%=username%> !</a>
+          <a class="navbar-brand wide" href="/home">bemygenie.com - Hello, <%=username%> !</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse user-header">
           <ul class="nav navbar-nav">
@@ -83,7 +83,7 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="#">Profile</a></li>
-                <li><a href="#">Previous Wishlists</a></li>
+                <li><a href="#" onclick="getUserWishLists($('#user').val(),'active_lists',0);">Previous Wishlists</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="#" onclick="logout();">Logout</a></li>
               </ul>
@@ -95,7 +95,7 @@
 
 
 
-  <div class="container user-dashboard">
+  <div class="container user-dashboard" id="userblock">
     <div class="row">
       <div class="col-sm-12">
         <div class="user-active-list" id="active_lists">
@@ -114,8 +114,8 @@
 </p>
 <footer>
 
-  <div class="footer" id="footer">
-      <div class="container">
+<div class="footer" id="footer">
+      <div class="container footer-details">
           <div class="row">
               <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
                 <h3> Support </h3>
@@ -137,10 +137,12 @@
 
           </div>
           <!--/.row-->
+
+
       </div>
       <!--/.container-->
-  </div>
 
+</div>
 <div class="footer-bottom user-dashboard">
     <div class="container">
         <p class="pull-left"> Copyright © bemygenie.com 2016 </p>

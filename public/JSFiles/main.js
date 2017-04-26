@@ -305,12 +305,13 @@ function getListData(id,name) {
  //   1. Open and Completed WishLists
  //   2. User Profile information
  //   3. User Service Requests
- function getUserWishLists(user,divactive) {
-   //alert("getting wishlist");
+ function getUserWishLists(user,divactive,mode) {
+   //alert("getting wishlist data:" + user +divactive + mode);
+   $('#' + divactive).html("");
    $.ajax({
        type : 'GET',
        url :"/getUserWishLists",
-       data : {"userid":user},
+       data : {"userid":user,"mode":mode},
        success : function(res) {
          //The following alert will need to be replaced by a modal dialog
              //alert(JSON.stringify(res));
@@ -322,8 +323,21 @@ function getListData(id,name) {
                  table_text += '<tr data-toggle="modal" data-target="#viewWishListModal" onclick="getListData(\'' + res[i]._id + '\',\'' + res[i].EventName +  '\')" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
                }
               table_text += '</tbody></table>';
-              $('#' + divactive).append("<h2>Here are the wishlists for your upcoming events. </h2><br><br>" + table_text);
+              if (mode)
+                $('#' + divactive).append("<h2>Here are the wishlists for your upcoming events. </h2><br><br>" + table_text);
+              else
+                $('#' + divactive).append("<h2>These are wishlists for completed events. </h2><br><br>" + table_text);
 
+             }
+             else {
+               if (mode)
+                 $('#' + divactive).append("<h2You have no upcoming events. </h2><br><br>");
+               else
+                 $('#' + divactive).append("<h2>You have no completed events yet. </h2><br><br>");
+             }
+             //For Asthetics
+             if (res.length <= 3) {
+               $('#userblock').css({"padding-bottom":"100px"})
              }
              //$('#' + div).text("You have " + res[0].EventName);
              //$('#' + div).text("Event Name: " + res[0].EventName);
