@@ -15,7 +15,9 @@
 $(document).ready(function () {
 
   //alert("I am Raedy");
-
+ $("#bdayProducts").slideUp();
+ $("#homeProducts").slideUp();
+ $("#babyProducts").slideUp();
   $("#myiframe").click(function(){
     alert("I am caputring my event here.");
   });
@@ -174,29 +176,55 @@ function checkEvents() {
          <div class="container marketing">
 
              <!-- Three columns of text below the carousel -->
-             <div class="row">
-               <div class="col-lg-4">
+             <div class="row" id="marketing-row">
+               <div class="col-lg-4" id="bday-marketing">
                  <img class="img-circle" src="images/birthdays.jpg" alt="Generic placeholder image" width="140" height="140">
                  <h2>Birthdays!</h2>
                  <p>Let the fun begin. It's your day after all, so make up your registry with the gifts that you want to receive and share with your friends and family.  Check out our birthday gifts collection!</p>
-                 <p><a class="btn btn-default" href="#" role="button">View gifts &raquo;</a></p>
+                 <p><a class="btn btn-default" id="bday-a-link" role="button" onclick="showBdayProducts();">View gifts &raquo;</a></p>
                </div><!-- /.col-lg-4 -->
-               <div class="col-lg-4">
+               <div class="col-lg-4" id="house-marketing">
                  <img class="img-circle" src="images/housewarming.png" alt="Generic placeholder image" width="140" height="140">
                  <h2>House Warmings!</h2>
                  <p>Moving to a new home? Celebrate your happy new home with friends and family. Create a registry with something new for your new home - something pretty, something practical or perhaps something even a bit fancy! </p>
-                 <p><a class="btn btn-default" href="#" role="button">View  gifts &raquo;</a></p>
+                 <p><a class="btn btn-default" id="house-a-link" role="button" onclick="showHomeProducts();">View  gifts &raquo;</a></p>
                </div><!-- /.col-lg-4 -->
-               <div class="col-lg-4">
+               <div class="col-lg-4" id="baby-marketing">
                  <img class="img-circle" src="images/babyshower.png" alt="Generic placeholder image" width="140" height="140">
                  <h2>Baby Showers!</h2>
                  <p>For the mom-to-be. One of the most special days of your life! Build your baby shower gift list with clothes and toys for the little one and also for the new Mommy! Check out our very special range of gifts. </p>
-                 <p><a class="btn btn-default" href="#" role="button">View gifts &raquo;</a></p>
+                 <p><a class="btn btn-default" id="baby-a-link"  role="button" onclick="showBabyProducts();">View gifts &raquo;</a></p>
                </div><!-- /.col-lg-4 -->
              </div><!-- /.row -->
            </div>
 
+           <div class="container-fluid" id="bdayProducts">
+             <div class="row" >
+               <div class="col-sm-12" style="padding:20px;">
+                  <!--<img src="images/productback.jpg" style="width:100%;"/>-->
 
+               </div>
+
+             </div>
+           </div>
+           <div class="container-fluid" id="homeProducts">
+             <div class="row" >
+               <div class="col-sm-12" style="padding:20px;">
+                  <!--<img src="images/productback.jpg" style="width:100%;"/>-->
+
+               </div>
+
+             </div>
+           </div>
+           <div class="container-fluid" id="babyProducts">
+             <div class="row" >
+               <div class="col-sm-12" style="padding:20px;">
+                  <!--<img src="images/productback.jpg" style="width:100%;"/>-->
+
+               </div>
+
+             </div>
+           </div>
            <footer>
      <div class="footer" id="footer">
          <div class="container">
@@ -251,7 +279,9 @@ function checkEvents() {
          <!--/.container-->
      </div>
      <!--/.footer-->
-
+     <div style="display:none" id="raqval">
+       &raquo;
+     </div>
      <div class="footer-bottom">
          <div class="container">
              <p class="pull-left"> Copyright © bemygenie.com 2016 </p>

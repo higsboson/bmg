@@ -639,3 +639,71 @@ function logout() {
     error : function(res) {alert("Error logging out")}
   })
 }
+
+function showBdayProducts() {
+  if($("#bdayProducts").css('display') == 'none') {
+    $("#bdayProducts").slideDown();
+
+    $("#house-marketing").slideUp();
+    $("#baby-marketing").slideUp('fast', function() {
+      if ($("#bday-side-bar").length == 0)
+        $("#marketing-row").append('<div class="col-lg-8" id="bday-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>On your<br> special day. </b></p></div>')
+      else
+        $("#bday-side-bar").css("display","block");
+      })
+      $('#bday-a-link').text("Back");
+  }
+  else if($("#bdayProducts").css('display') == 'block') {
+      $("#bdayProducts").slideUp();
+      $("#house-marketing").slideDown();
+      $("#baby-marketing").slideDown();
+      $("#bday-side-bar").css("display","none");
+      $('#bday-a-link').text("View Gifts " + $('#raqval').text());
+    }
+}
+
+function showHomeProducts() {
+  if($("#homeProducts").css('display') == 'none') {
+    $("#homeProducts").slideDown();
+    $("#baby-marketing").slideUp();
+  //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
+  //  $("#house-marketing").css("transform","translateX(-200px)");
+    $("#bday-marketing").slideUp('fast', function() {
+      if ($("#home-side-bar").length == 0)
+        $("#marketing-row").append('<div class="col-lg-8" id="home-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>Home,<br> Sweet Home. </b></p></div>')
+      else
+        $("#home-side-bar").css("display","block");
+      })
+      $('#house-a-link').text("Back");
+  }
+  else if($("#homeProducts").css('display') == 'block') {
+      $("#homeProducts").slideUp();
+      $("#bday-marketing").slideDown();
+      $("#baby-marketing").slideDown();
+      $("#home-side-bar").css("display","none");
+      $('#house-a-link').text("View Gifts " + $('#raqval').text());
+    }
+}
+
+function showBabyProducts() {
+  if($("#babyProducts").css('display') == 'none') {
+    $("#babyProducts").slideDown();
+    $("#bday-marketing").slideUp();
+  //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
+  //  $("#house-marketing").css("transform","translateX(-200px)");
+    $("#house-marketing").slideUp('fast', function() {
+      if ($("#baby-side-bar").length == 0)
+        $("#marketing-row").append('<div class="col-lg-8" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
+      else
+        $("#baby-side-bar").css("display","block");
+      })
+      $('#baby-a-link').text("Back");
+  }
+  else if($("#babyProducts").css('display') == 'block') {
+      $("#babyProducts").slideUp();
+      $("#bday-marketing").slideDown();
+      $("#house-marketing").slideDown();
+      $("#baby-side-bar").css("display","none");
+      $('#baby-a-link').text("View Gifts " + $('#raqval').text());
+    }
+}
