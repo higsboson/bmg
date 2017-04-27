@@ -17,6 +17,12 @@
        var buyingProdID = "";
        var buyingProdURL = "";
        var eventID = $("#evntID").val();
+
+       //Replace footer links here
+       const baseURL = "http://localhost:8080";
+       $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
+
+
        function searchCatg() {
           var genreStr = [];
           var priceStr = [];
@@ -257,7 +263,7 @@
                  <div class="col-lg-2  col-md-3 col-sm-6 col-xs-12 ">
                    <h3> Help </h3>
                    <ul>
-                          <li> <a href="#"> FAQs </a> </li>
+                         <li> <a id="FAQpage" href="#" target="_blank"> FAQs </a> </li>
                          <li> <a href="#"> Terms & Conditions </a> </li>
                          <li> <a href="#"> Privacy Policy </a> </li>
                          <li> <a href="#"> Shipping & Returns Policy </a> </li>
