@@ -2,6 +2,81 @@
   var _MS_PER_DAY = 1000 * 60 * 60 * 24;
   var signuporlogin = "";
 
+  function changePassword() {
+    try {
+      //alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
+      $.ajax({
+        type: 'POST',
+        url: '/getSaltForUser',
+        data: {user: $('#user').val()},
+        success: function (salt) {
+         //alert(salt);
+         var sha256 = new jsSHA('SHA-256', 'TEXT');
+         sha256.update($('#e_password').val() + salt);
+         var hash = sha256.getHash("HEX");
+         //alert("Hashed val" + hash);
+         $.ajax({
+           type: 'POST',
+           url: '/getsalt',
+           success: function (newsalt) {
+            //alert(newsalt);
+            var sha2562 = new jsSHA('SHA-256', 'TEXT');
+            sha2562.update(newsalt + hash);
+            var newhash = sha2562.getHash("HEX");
+            //alert("New calculated Salt" + newhash);
+            $.ajax({
+              type: 'POST',
+              url: '/changePassword',
+              data: {attempt: newhash,gensalt: newsalt,user: $('#user').val()},
+              success: function (data) {
+               //alert("Performing Login: Result is " + data);
+               if (data == "Login Success") {
+                 //alert('login with existing password is success.');
+                 $.ajax({
+                   type: 'POST',
+                   url: '/getPasswordChangeSalt',
+                   success: function (salt_for_new_pass) {
+                    alert("Got Salt for new Password" + salt);
+                    var sha256 = new jsSHA('SHA-256', 'TEXT');
+                    sha256.update($("#login_password").val() + salt_for_new_pass);
+                    var hash = sha256.getHash("HEX");
+                    //alert("Hashed val" + hash);
+                    var changedPassData = '{"Password" : "'+ hash +'", "Uppu": "' + salt_for_new_pass + '", "user": "' + $('#user').val() + '"}';
+                    $.ajax({
+                        type : 'POST',
+                        url :"/saveNewPassword",
+                        data : {"changedPassData":changedPassData},
+                        success : function(res) {
+                          alert("Password Change is " + res);
+                        },
+                        error : function(res) {alert("Error Changing Password!")}
+                      })
+                   },
+                   error: function (err) {
+                     alert("Unable to save wishlist")
+                   }
+                 })
+               }
+             },
+             error: function (err) {
+               alert("Unable to login")
+             }
+           });
+          },
+          error: function (err) {
+            alert("Unable to login")
+          }
+        });
+        },
+        error: function (err) {
+          alert("Unable to save wishlist")
+        }
+      })
+    }
+    catch (e) {alert("Error!!! - "+e)}
+  }
+
+
   function doLogin(action) {
     try {
       //alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
@@ -342,7 +417,7 @@ function getUserProfileDetails(user,div) {
         data += '<div class="row"><div class="col-sm-4" style="text-align:right"><div class="form-group"><label for="email">Email:</label></div></div>';
         data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="text" class="form-control" value="' + res[0].HostEmail + '" name="email" readonly><input type="hidden" name="_id" value="' + res[0]._id + '"></div></div></div>';
         data += '<div class="row"><div class="col-sm-4" style="text-align:right"><div class="form-group"><label for="password">Password:</label></div></div>';
-        data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="password" class="form-control" value="******" id="password" readonly><a href="#" style="font-size:10px;float:right">Change Password</a></div></div></div>';
+        data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="password" class="form-control" value="******" id="password" readonly><a href="#" data-target="#changePassword" data-toggle="modal" style="font-size:10px;float:right">Change Password</a></div></div></div>';
         data += '<div class="row"></br></div><div class="row"><div class="col-sm-6" style="text-align:right">' + '<button class="btn btn-primary" name="Save" type="submit" style="background-color:#454282">Save Changes</button></div>';
         data += '<div class="col-sm-6" style="text-align:left">' + '<button class="btn btn-primary" name="Cancel" style="background-color:#454282" onclick="location.href=\'/home \';return false;">Cancel</button></div></div></form>';
 

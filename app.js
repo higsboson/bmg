@@ -479,6 +479,56 @@ app.post('/getsalt',urlencodedParser,function(req,res) {
   res.end(rand(160,36));
 });
 
+app.post('/getPasswordChangeSalt',urlencodedParser,function(req,res) {
+  //console.log("session user is " + req.session.user);
+  res.end(rand(160,36));
+});
+
+app.post('/saveNewPassword', urlencodedParser, function (req, res){
+  var wishlistCollection = bmgDB.collection('WishList');
+  //console.log("changedPassData is" + req.body.changedPassData)
+  var passData = JSON.parse(req.body.changedPassData);
+  //console.log("User for which password gonna be changed is is" + passData.user + req.session.user)
+  if (req.session.user == passData.user) {
+    wishlistCollection.update({$and:[{"HostEmail" : passData.user},{"Primary":1}]},{$set:{"KEY":passData.Password,"UPPU":passData.Uppu}}, function(err) {
+      if (!err) {
+        //console.log("Password changed to :" + passData.Password);
+        //console.log("uppu changed to :" + passData.Uppu);
+        res.send("Success.")
+      }
+      else {res.send("Error in updating product status")}
+    })
+  }
+});
+
+app.post('/changePassword',urlencodedParser, function (req, res){
+  //console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
+  var wishList = bmgDB.collection('WishList');
+  //console.log("In change Password user is " + req.body.user)
+  try {
+    wishList.find({"HostName" : req.session.name},{_id:0,KEY:1,HostName:1}).toArray(function(err,docs) {
+      if (!err){
+        if (docs.length == 0) {res.end("")}
+        else {
+          //console.log("Key from DB is " + docs[0].KEY);
+          var trypass = sha256(req.body.gensalt + docs[0].KEY);
+          //console.log("Try Pass is " + trypass);
+          if (req.body.attempt == trypass) {
+            req.session.user = req.body.user;
+            req.session.name = docs[0].HostName;
+            //console.log("session user is " + req.session.user);
+            res.end("Login Success");
+          } else {
+            res.end("Login Fail");
+          }
+        }
+      }
+      else {res.end("Error in fetching documents")}
+    });
+  }
+  catch (e) {res.end(e)};
+});
+
 app.post('/plogin',urlencodedParser,function(req,res){
   console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
 

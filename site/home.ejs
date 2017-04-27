@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/main.css" >
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <script src="JSFiles/main.js"></script>
+  <script src="JSFiles/sha256.js"></script>
 
   <script>
 
@@ -82,6 +83,42 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  <!-- Modal Ends here-->
+  <!-- 3/31/2017 - trznt - This is a Login modal. -->
+  <!-- Modal Starts here-->
+    <div class="modal fade" id="changePassword" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Change Password</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+               You can change your password here.
+            </p>
+            <div class="form-group" id="form-group_existing-password">
+              <label for="username">Current Password:</label>
+            </div>
+            <input type="password" class="form-control" name="email" id="e_password" required/>
+            <br />
+            <div class="form-group" id="form-group_new-password1">
+              <label for="password">New Password:</label>
+            </div>
+            <input type="password" class="form-control" name="email" id="login_password" required/>
+            <br />
+            <div class="form-group" id="form-group_new-password2">
+              <label for="password">Repeat New Password:</label>
+            </div>
+            <input type="password" class="form-control" name="email" id="login_password2" required/>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="changePassword()">Change Password</button>
           </div>
         </div>
 
