@@ -647,7 +647,7 @@ function showBdayProducts() {
     $("#house-marketing").slideUp();
     $("#baby-marketing").slideUp('fast', function() {
       if ($("#bday-side-bar").length == 0)
-        $("#marketing-row").append('<div class="col-lg-8" id="bday-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>On your<br> special day. </b></p></div>')
+        $("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="bday-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>On your<br> special day. </b></p></div>')
       else
         $("#bday-side-bar").css("display","block");
       })
@@ -670,7 +670,7 @@ function showHomeProducts() {
   //  $("#house-marketing").css("transform","translateX(-200px)");
     $("#bday-marketing").slideUp('fast', function() {
       if ($("#home-side-bar").length == 0)
-        $("#marketing-row").append('<div class="col-lg-8" id="home-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>Home,<br> Sweet Home. </b></p></div>')
+        $("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="home-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>Home,<br> Sweet Home. </b></p></div>')
       else
         $("#home-side-bar").css("display","block");
       })
@@ -693,7 +693,7 @@ function showBabyProducts() {
   //  $("#house-marketing").css("transform","translateX(-200px)");
     $("#house-marketing").slideUp('fast', function() {
       if ($("#baby-side-bar").length == 0)
-        $("#marketing-row").append('<div class="col-lg-8" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
+        $("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
       else
         $("#baby-side-bar").css("display","block");
       })
