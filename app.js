@@ -620,6 +620,24 @@ app.get('/logout',function (req,res) {
 
 });
 
+
+app.get('/checkIfEmailExists',function (req,res) {
+  var wishList = bmgDB.collection('WishList');
+  try {
+    wishList.find({$and: [{"HostEmail": req.query.email},{"Primary" : 1}]},{_id:0,KEY:1,HostName:1}).toArray(function(err,docs) {
+      if (!err){
+        if (docs.length == 0)
+          res.end("EmailDoesNotExist")
+        else
+          res.end("EmailExists");
+      }
+      else {res.end("Error in fetching documents")}
+    });
+  }
+  catch (e) {res.end(e)};
+
+});
+
 app.get('/get_amazon',function (req,res) {
   console.log("Page is " + req.query.pageNumber);
   console.log("String is " + req.query.searchString);

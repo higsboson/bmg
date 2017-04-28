@@ -209,10 +209,30 @@
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><div class="form-group" id="form_group_password"><input type="password" class="form-control" id="password"></div></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group" id="form_group"><label for "retype-password">Re-Type Password: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><div class="form-group" id="form_group_retype_password"><input type="password" class="form-control" id="retype-password"></div></div></div>';
+   htmlStr = htmlStr + '<input type="hidden" name="emailvalidate" id="emailvalidate" value="0" >'
    htmlStr = htmlStr+'<button type="submit" class="btn btn-primary btn-lg">Save your Wishlist!</button></form>';
    htmlStr = htmlStr+'</div></div><div class="row"><div class="col-sm-12"><hr></div></div></form>'
    htmlStr = htmlStr+'</div>';
    $('#mainContentPage').replaceWith(htmlStr);
+   $( "#emailaddr" )
+    .focusout(function() {
+      if ($('#emailaddr').val().length > 0)
+      $.ajax({
+        type: 'GET',
+        url: '/checkIfEmailExists',
+        data: {email: $('#emailaddr').val()},
+        success: function (res) {
+          alert ("Email is " + res);
+          if (res == "EmailDoesNotExist")
+            $('#emailvalidate').val("1");
+            else
+              $('#emailvalidate').val("0");
+        },
+        error: function (res) {
+          alert ("unable to reach server");
+        }
+    });
+  });
    //$("#event_name").val() = eventName;
  }
 
@@ -267,6 +287,12 @@ function validFields() {
       $('#form_group_retype_password').removeClass('has-error');
       $('#form_group_password').removeClass('has-error');
     }
+  }
+  if ($('#emailvalidate').val() == "0") {
+    $('#form_group_email').addClass('has-error');
+    valid = false;
+  } else {
+    $('#form_group_email').removeClass('has-error');
   }
 
   return valid;
