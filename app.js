@@ -82,31 +82,39 @@ app.get('/FAQ.html',function(req,res) {
   res.sendFile(__dirname + "/site/FAQ.html");
 })
 
-
-app.get('/getProdByCatg',function(req,res){
+app.post('/getProdByCatg',function(req,res){
   try {
     var prdCollection = bmgDB.collection('Product');
-    var qryStr = req.query.Catg;
-    if (qryStr == "KKK") {
-      prdCollection.find({}).toArray(function(err,docs){
+    var qryStr = JSON.parse(req.body.Catg);
+    //console.log("Query String - "+qryStr);
+    var count = qryStr.catgCount;
+    var evenTypeStr = qryStr.eventType;
+    //console.log("Event Type : "+evenTypeStr);
+    //console.log("Count : "+qryStr.catgCount);
+    //console.log("Category Array : "+qryStr.category);
+
+    if (count == 0) {
+      prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).toArray(function(err,docs) {
         if (!err){
           if (docs.length == 0) {res.send()}
           else {res.format({'application/json': function(){res.send(docs)}})}
         }
-        else {res.send("Error in fetching documents")}
-      })}
+        else {console.log(err);res.send("Error in fetching documents")}
+      })
+    }
     else {
-      //console.log(qryStr);
-      prdCollection.find({Catg:{$in:qryStr}}).toArray(function(err,docs){
+      prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).toArray(function(err,docs) {
         if (!err){
           if (docs.length == 0) {res.send()}
           else {res.format({'application/json': function(){res.send(docs)}})}
         }
-        else {res.send("Error in fetching documents")}
-      })}
+        else {console.log(err);res.send("Error in fetching documents")}
+      })
+    }
   }
   catch (e) {console.log("getProdByCatg -->"+e.message)}
 });
+
 
 app.get('/fetchCartProducts',function(req,res) {
   try {
@@ -134,7 +142,7 @@ app.post('/addToDB',urlencodedParser,function(req,res){
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
       if (docs.length != 0) {res.send("Already present in DB")}
       else {
-        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp});
+        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType});
         if (!err) {res.send("Success")}
         else {res.send("Error")}
       }

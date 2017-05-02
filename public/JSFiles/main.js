@@ -490,10 +490,13 @@ function getUserProfileDetails(user,div) {
        var proddsc = document.getElementById("detURL_"+Id);
        var imageURL = document.getElementById("imgURL_"+Id).src;
        var prodnm = document.getElementById("ProdNm_"+Id).innerHTML;
-       var catg = "NPD";
-       prodnm = prodnm.replace(/['"]+/g, '');
+       var evntType = getCookie("event_category");
+       var catg = getCatg(MRP,PrdGrp);
+       //var catg = "NPD";
+       prodnm = prodnm.replace(/['"-()]+/g, ''); //need to handle escaping of /
+
        //trznt - Adding another item to prod called Status: Open
-       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'"}';
+       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"]}';
        //Throwing error if the name has quotes in it
        $.ajax({
          type : 'POST',
@@ -562,37 +565,41 @@ function redirectToHome() {
   else if (signuporlogin = "signup") {document.getElementById("signup").submit()}
 }
 
- function getCatg(genre,price,event_type,callback) {
-   var error;
-   var sCatg = [];
+ function getCatg(MRP,PrdGrp) {
+   var catg="";
    try {
-     var genMap = [];genMap["Apparel"] = "A";genMap["Automotive"]="C";genMap["Baby"]="Y";genMap["Beauty"]="U";genMap["Books"]="B";
-     genMap["DVD"]="D";genMap["Electronics"]="E";genMap["Gift Cards"]="V";genMap["Health and Personal Care"]="H";
-     genMap["Home and Garden"]="G";genMap["Jewelry"]="J";genMap["Kindle Store"]="K";genMap["Luggage"]="L";genMap["Music"]="M";
-     genMap["Musical Instruments"]="N";genMap["Office Products"]="O";genMap["PC Hardware"]="P";genMap["Shoes"]="S";genMap["Software"]="F";
-     genMap["Sporting Goods"]="R";genMap["Toys"]="T";genMap["Video Game"]="I";genMap["Watches"]="W";
-
-     sCatg = genMap[genre];
-     var prc = Math.floor(price/500);
-     switch (prc) {
-       case 0:sCatg = sCatg + "0";break;
-       case 1:sCatg = sCatg + "5";break;
-       case 2:case 3:sCatg = sCatg + "1";break;
-       case 4:case 5:sCatg = sCatg + "2";break;
-       default:sCatg = sCatg + "3";
-     }
-     var evTypOrd=0;
-     if (event_type.length == 4) {sCatg = "L"+sCatg}
-     else {
-       for (var i=0;i<event_type.length;i++) {
-         if (event_type[i] == "Baby Shower") {evTypOrd = evTypOrd + (event_type[i].charCodeAt(5)-64)}
-         else {evTypOrd = evTypOrd + (event_type[i].charCodeAt(0)-64)}
-       }
-       sCatg = String.fromCharCode(64+evTypOrd%26) + sCatg;
-     }
+     switch(PrdGrp) {
+       case "Apparel":
+       case "Book":
+       case "Toy":
+       case "DVD":
+       case "Health & Personal Care":
+       case "Luggage":
+       case "Music":
+       case "Office Products":
+       case "PC Hardware":
+       case "Shoes":
+       case "Watches": catg=PrdGrp.slice(0,1);break;
+       case "Automobile": catg='C';break;
+       case "Baby Items": catg="Y";break;
+       case "Beauty": catg="U";break;
+       case "CE": catg="E";break;//Electronics
+       case "Experiences": catg="X";break;
+       case "Gift Cards": catg="V";break;
+       case "Home": catg="G";break;
+       //case "Musical Instruments": catg="N";break;
+       case "Software": catg="F";break;
+       case "Sports": catg="R";break;
+       case "Video Games": catg="I";break;
+     };
+     if (MRP<=500) {catg=catg+'0'}
+     else if (MRP>500 && MRP<=1000) {catg=catg+'5'}
+     else if (MRP>1000 && MRP<=2000) {catg=catg+'1'}
+     else if (MRP>2000 && MRP<=3000) {catg=catg+'2'}
+     else {catg=catg+'3'}
   }
-  catch (e) {error = e}
-  callback(error,sCatg);
+  catch (e) {error = e;alert("Error - "+e)};
+  return catg;
  }
 
  function srchInAmazon() { //called from New-Cart.html to search products in Amazon forcefully
