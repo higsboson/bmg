@@ -209,10 +209,30 @@
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><div class="form-group" id="form_group_password"><input type="password" class="form-control" id="password"></div></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group" id="form_group"><label for "retype-password">Re-Type Password: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><div class="form-group" id="form_group_retype_password"><input type="password" class="form-control" id="retype-password"></div></div></div>';
+   htmlStr = htmlStr + '<input type="hidden" name="emailvalidate" id="emailvalidate" value="0" >'
    htmlStr = htmlStr+'<button type="submit" class="btn btn-primary btn-lg">Save your Wishlist!</button></form>';
    htmlStr = htmlStr+'</div></div><div class="row"><div class="col-sm-12"><hr></div></div></form>'
    htmlStr = htmlStr+'</div>';
    $('#mainContentPage').replaceWith(htmlStr);
+   $( "#emailaddr" )
+    .focusout(function() {
+      if ($('#emailaddr').val().length > 0)
+      $.ajax({
+        type: 'GET',
+        url: '/checkIfEmailExists',
+        data: {email: $('#emailaddr').val()},
+        success: function (res) {
+          alert ("Email is " + res);
+          if (res == "EmailDoesNotExist")
+            $('#emailvalidate').val("1");
+            else
+              $('#emailvalidate').val("0");
+        },
+        error: function (res) {
+          alert ("unable to reach server");
+        }
+    });
+  });
    //$("#event_name").val() = eventName;
  }
 
@@ -267,6 +287,12 @@ function validFields() {
       $('#form_group_retype_password').removeClass('has-error');
       $('#form_group_password').removeClass('has-error');
     }
+  }
+  if ($('#emailvalidate').val() == "0") {
+    $('#form_group_email').addClass('has-error');
+    valid = false;
+  } else {
+    $('#form_group_email').removeClass('has-error');
   }
 
   return valid;
@@ -645,4 +671,72 @@ function logout() {
     success : function(res) {window.location.href = "/";},
     error : function(res) {alert("Error logging out")}
   })
+}
+
+function showBdayProducts() {
+  if($("#bdayProducts").css('display') == 'none') {
+    $("#bdayProducts").slideDown();
+
+    $("#house-marketing").slideUp();
+    $("#baby-marketing").slideUp('fast', function() {
+      if ($("#bday-side-bar").length == 0)
+        $("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="bday-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>On your<br> special day. </b></p></div>')
+      else
+        $("#bday-side-bar").css("display","block");
+      })
+      $('#bday-a-link').text("Back");
+  }
+  else if($("#bdayProducts").css('display') == 'block') {
+      $("#bdayProducts").slideUp();
+      $("#house-marketing").slideDown();
+      $("#baby-marketing").slideDown();
+      $("#bday-side-bar").css("display","none");
+      $('#bday-a-link').text("View Gifts " + $('#raqval').text());
+    }
+}
+
+function showHomeProducts() {
+  if($("#homeProducts").css('display') == 'none') {
+    $("#homeProducts").slideDown();
+    $("#baby-marketing").slideUp();
+  //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
+  //  $("#house-marketing").css("transform","translateX(-200px)");
+    $("#bday-marketing").slideUp('fast', function() {
+      if ($("#home-side-bar").length == 0)
+        $("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="home-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>Home,<br> Sweet Home. </b></p></div>')
+      else
+        $("#home-side-bar").css("display","block");
+      })
+      $('#house-a-link').text("Back");
+  }
+  else if($("#homeProducts").css('display') == 'block') {
+      $("#homeProducts").slideUp();
+      $("#bday-marketing").slideDown();
+      $("#baby-marketing").slideDown();
+      $("#home-side-bar").css("display","none");
+      $('#house-a-link').text("View Gifts " + $('#raqval').text());
+    }
+}
+
+function showBabyProducts() {
+  if($("#babyProducts").css('display') == 'none') {
+    $("#babyProducts").slideDown();
+    $("#bday-marketing").slideUp();
+  //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
+  //  $("#house-marketing").css("transform","translateX(-200px)");
+    $("#house-marketing").slideUp('fast', function() {
+      if ($("#baby-side-bar").length == 0)
+        $("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
+      else
+        $("#baby-side-bar").css("display","block");
+      })
+      $('#baby-a-link').text("Back");
+  }
+  else if($("#babyProducts").css('display') == 'block') {
+      $("#babyProducts").slideUp();
+      $("#bday-marketing").slideDown();
+      $("#house-marketing").slideDown();
+      $("#baby-side-bar").css("display","none");
+      $('#baby-a-link').text("View Gifts " + $('#raqval').text());
+    }
 }
