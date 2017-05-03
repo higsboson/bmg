@@ -24,75 +24,78 @@
 
 
        function searchCatg() {
-          var genreStr = [];
-          var priceStr = [];
-          var gStr = [];
-          var gpStr = [];
-          var evntTypeStr = [];
-          var srchStr = [];
-          var chkCnt = 0;
-          var cnt = 0;
+         var genreStr = [];
+         var priceStr = [];
+         var gpStr = [];
+         var srchStr;
+         var chkCnt = 0;
+         var cnt = 0;
+         var prcChkCnt = 0;
 
-          var genreAll = ['A','C','Y','U','B','D','E','V','H','G','J','L','M','N','O','P','S','F','R','T','I','W'];
-          var priceAll = ['0','5','1','2','3'];
-          var eventAll = ['B','S','A','W','@','C','T','X','U','Y','P','V','Q','R','L'];
+         var genreAll = ['A','C','Y','U','B','D','E','X','V','H','G','L','M','N','O','P','S','F','R','T','I','W'];
+         var priceAll = ['0','5','1','2','3'];
 
-          $.each($("input[name='chkValGen']:checked"), function(){genreStr.push($(this).val());chkCnt++});
-          if (chkCnt > 0) {for (i=0;i<genreStr.length;i++) {gStr[i]=genreStr[i]}}
-          else {for (i=0;i<genreAll.length;i++) {gStr[i]=genreAll[i]}}
+         $.each($("input[name='chkValGen']:checked"), function(){genreStr.push($(this).val());chkCnt++});
+         $.each($("input[name='chkValPrc']:checked"), function(){priceStr.push($(this).val());prcChkCnt++});
 
-          chkCnt = 0;
-          $.each($("input[name='chkValPrc']:checked"), function(){priceStr.push($(this).val());chkCnt++});
-          for (i=0;i<gStr.length;i++){
-             if (chkCnt > 0) {for (j=0;j<priceStr.length;j++) {gpStr[cnt] = gStr[i] + priceStr[j];cnt++}}
-             else {for (j=0;j<priceAll.length;j++) {gpStr[cnt] = gStr[i] + priceAll[j];cnt++}}
-          }
+         if (chkCnt > 0 && prcChkCnt > 0) {
+           for (i=0;i<genreStr.length;i++) {for (j=0;j<priceStr.length;j++) {gpStr[cnt]='"'+genreStr[i]+priceStr[j]+'"';cnt++;}}
+         }
+         else if (chkCnt > 0 && prcChkCnt == 0) {
+           for (i=0;i<genreStr.length;i++) {for (j=0;j<priceAll.length;j++) {gpStr[cnt]='"'+genreStr[i]+priceAll[j]+'"';cnt++;}}
+         }
+         else if (chkCnt == 0 && prcChkCnt > 0) {
+           for (i=0;i<genreAll.length;i++) {for (j=0;j<priceStr.length;j++) {gpStr[cnt]='"'+genreAll[i]+priceStr[j]+'"';cnt++;}}
+         }
 
-          chkCnt = 0;
-          cnt = 0;
-          for (i=0;i<gpStr.length;i++){
-              if (chkCnt > 0 && chkCnt != 4) {for (j=0;j<eventArr.length;j++) {srchStr[cnt] = eventArr[j] + gpStr[i];cnt++}}
-              else {for (j=0;j<eventAll.length;j++) {srchStr[cnt] = eventAll[j] + gpStr[i];cnt++}}
-          }
           if (cnt > 0) {
-             if (cnt == (genreAll.length*priceAll.length*eventAll.length)) {srchStr="KKK"};
-
-             $.get( "/filterWishListByCatg",{"Catg":srchStr,"eventID" : eventID}, function( data, status ) {
-              if (status == 'success'){ //changed since last version on 24 Jan.. fix no records returned issue
+            srchStr = '{"Catg":['+gpStr+'],"eventID":"'+eventID+'","catgCount":'+cnt+'}';
+            $.ajax({
+              type : 'POST',
+              url :"/filterWishListByCatg",
+              data : {"criteria":srchStr},
+              success : function(data) {
                 var htmlStr = "";
                 var endStr = "";
                 var prdName = "";
                 var cnt = 0;
                 htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
+                if (data.length > 0) {
+                  $.each(data, function(key,doc){
+                    try {
+                      prdName = doc.ProdNm;
+                      if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+                      htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
+                      htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
+                      htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
+                      htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
+                      htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div>';
+                      if (doc.Status == "Blocked")
+                        {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Blocked</button></p>'}
+                      else if (doc.Status == "Bought")
+                        {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Already Bought</button></p>'}
+                      else
+                        {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc.ProdID+'","'+doc.ProdDsc+'") id="btn_'+doc.ProdID+'">Buy Now</button></p>'}
 
-                $.each(data, function(key,doc){
-                  try {
-                    prdName = doc.ProdNm;
-                    if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
-                    htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
-                    htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
-                    htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
-                    htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-                    htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div>';
-                    if (doc.Status == "Blocked")
-                     {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Blocked</button></p>'}
-                    else if (doc.Status == "Bought")
-                     {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Already Bought</button></p>'}
-                    else
-                     {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc.ProdID+'","'+doc.ProdDsc+'") id="btn_'+doc.ProdID+'">Buy Now</button></p>'}
-
-                    htmlStr = htmlStr + '</div></div>';
-                    cnt++;
-                    if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
-                 }
-                 catch (e) {alert("Error - "+e)}
-                }) //for each
-                if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
-                htmlStr = htmlStr + '<hr></div>';
-                //alert(htmlStr);
-                $('#carousel-wrapper').replaceWith(htmlStr);
-             }
-             else { //This code below is causing issue when no product found
+                      htmlStr = htmlStr + '</div></div>';
+                      cnt++;
+                      if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+                    }
+                    catch (e) {alert("Error - "+e)}
+                  }) //for each
+                  if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
+                  htmlStr = htmlStr + '<hr></div>';
+                  //alert(htmlStr);
+                  $('#carousel-wrapper').replaceWith(htmlStr);
+                }
+                else {
+                  htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
+                  htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
+                  htmlStr = "</div></div>";
+                  $('#carousel-wrapper').replaceWith(htmlStr);
+                }
+              },
+             error: function(res) {
                htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
                htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
                htmlStr = "</div></div>";
@@ -101,7 +104,59 @@
            });
          }
          else {
+           srchStr = '{"eventID":"'+eventID+'","catgCount":'+0+'}';
+           $.ajax({
+             type : 'POST',
+             url :"/filterWishListByCatg",
+             data : {"criteria":srchStr},
+             success : function(data) {
+               var htmlStr = "";
+               var endStr = "";
+               var prdName = "";
+               var cnt = 0;
+               htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
+               if (data.length > 0) {
+                 $.each(data, function(key,doc){
+                   try {
+                     prdName = doc.ProdNm;
+                     if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+                     htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
+                     htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
+                     htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
+                     htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
+                     htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div>';
+                     if (doc.Status == "Blocked")
+                       {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Blocked</button></p>'}
+                     else if (doc.Status == "Bought")
+                       {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Already Bought</button></p>'}
+                     else
+                       {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc.ProdID+'","'+doc.ProdDsc+'") id="btn_'+doc.ProdID+'">Buy Now</button></p>'}
 
+                     htmlStr = htmlStr + '</div></div>';
+                     cnt++;
+                     if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+                   }
+                   catch (e) {alert("Error - "+e)}
+                 }) //for each
+                 if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
+                 htmlStr = htmlStr + '<hr></div>';
+                 //alert(htmlStr);
+                 $('#carousel-wrapper').replaceWith(htmlStr);
+               }
+               else {
+                 htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
+                 htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
+                 htmlStr = "</div></div>";
+                 $('#carousel-wrapper').replaceWith(htmlStr);
+               }
+             },
+            error: function(res) {
+              htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
+              htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
+              htmlStr = "</div></div>";
+              $('#carousel-wrapper').replaceWith(htmlStr);
+            }
+          });
          }
        }
 
@@ -131,8 +186,8 @@
               <ul class="nav navbar-nav">
               </ul>
               <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Planning event</a></li>   <!--change this-->
-                <li><a href="#show-cart">Cart</a></li>
+                <li><a href="#" class="invisible">Planning event</a></li>   <!--change this-->
+                <li><a href="#show-cart" class="invisible">Cart</a></li>
               </ul>
             </div><!--/.nav-collapse -->
           </div>
@@ -182,7 +237,7 @@
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreBooks" value="B">Books</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="D">DVD</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="E">Electronics</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="E">Experiences</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="X">Experiences</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="V">Gift Cards</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="H">Health & Personal Care</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="G">Home & Garden</label><br>

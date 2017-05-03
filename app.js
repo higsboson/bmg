@@ -431,20 +431,23 @@ app.get('/showWishList',function(req,res) {
   res.render(__dirname+"/site/showWishList.ejs",{eventID : qryStr});
 });
 
-app.get('/filterWishListByCatg',function(req,res){
+app.post('/filterWishListByCatg',function(req,res){
   try {
     var wishList = bmgDB.collection('WishList');
-    var qryStr = req.query.Catg;
-    var eventID = req.query.eventID;
+    var qryStr = JSON.parse(req.body.criteria);
+    var eventID = qryStr.eventID;
+    var cnt = qryStr.catgCount;
+    var catg = qryStr.Catg;
+
     var prodArr = [];
     wishList.find({"_id":new ObjectId(eventID)},{_id:0,Products:1}).toArray(function(err,docs) {
       if (!err){
-        if (docs.length == 0) {res.send()}
+        if (docs.length == 0) {res.send({})}
         else {res.format({'application/json': function(){
-          if (qryStr.indexOf("KKK") != -1) {prodArr = docs[0].Products}
+          if (cnt == 0) {prodArr = docs[0].Products}
           else {
-            for (i=0;i<docs[0].Products.length;i++) {
-              if (qryStr.indexOf(docs[0].Products[i].Catg) != -1) {prodArr.push(docs[0].Products[i])}
+            for (var i=0;i<docs[0].Products.length;i++) {
+              if (catg.indexOf(docs[0].Products[i].Catg) != -1) {prodArr.push(docs[0].Products[i])}
             }
           }
           if (prodArr.length == 0) {res.send("No matching products found")}
