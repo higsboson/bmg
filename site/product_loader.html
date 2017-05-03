@@ -9,6 +9,8 @@
   <script src="JSFiles/main.js"></script>
   <script>
 
+var eventTypeList = ['Birthday','Anniversary','Baby Shower','Wedding','House Warming','Farewell'];
+
 function showAmazon() {
   $('#search_intro').text("");
   $('#amazon').css({"visibility":"visible"});
@@ -42,62 +44,26 @@ function showDirectVendor(){
     if ($('#select_item_' + i).text() === "Select Item") {
       $('#select_item_' + i).text("Un-Select");
       $("#item" + i).css("background-color", "#92C7C7");
-      $("#eventTypeCheckProdB" + i).prop("disabled", false);
-      $("#eventTypeCheckProdS" + i).prop("disabled", false);
-      $("#eventTypeCheckProdA" + i).prop("disabled", false);
-      $("#eventTypeCheckProdW" + i).prop("disabled", false);
+      for (var j = 0; j < eventTypeList.length;j++) {
+        $("#eventTypeCheckProd" + eventTypeList[j].replace(/ /gi, "_") + i).prop("disabled", false);
+      }
     } else {
       $('#select_item_' + i).text("Select Item");
       $("#item" + i).css("background-color", "#FFFFFF");
-      $("#eventTypeCheckProdB" + i).prop("disabled", true);
-      $("#eventTypeCheckProdS" + i).prop("disabled", true);
-      $("#eventTypeCheckProdA" + i).prop("disabled", true);
-      $("#eventTypeCheckProdW" + i).prop("disabled", true);
-      $("#eventTypeCheckProdB" + i).prop("checked", false);
-      $("#eventTypeCheckProdS" + i).prop("checked", false);
-      $("#eventTypeCheckProdA" + i).prop("checked", false);
-      $("#eventTypeCheckProdW" + i).prop("checked", false);
+      for (var j = 0; j < eventTypeList.length;j++) {
+        $("#eventTypeCheckProd" + eventTypeList[j].replace(/ /gi, "_") + i).prop("disabled", true);
+        $("#eventTypeCheckProd" + eventTypeList[j].replace(/ /gi, "_") + i).prop("checked", false);
+      }
     }
   }
 
-  function getCatg(genre,price,event_type) {
-     var error;
-     var i;
-     try {
-       var genMap = [];genMap["Apparel"] = "A";genMap["Automotive"]="C";genMap["Baby"]="Y";genMap["Beauty"]="U";genMap["Books"]="B";
-       genMap["DVD"]="D";genMap["Electronics"]="E";genMap["Gift Cards"]="V";genMap["Health and Personal Care"]="H";
-       genMap["Home and Garden"]="G";genMap["Jewelry"]="J";genMap["Kindle Store"]="K";genMap["Luggage"]="L";genMap["Music"]="M";
-       genMap["Musical Instruments"]="N";genMap["Office Products"]="O";genMap["PC Hardware"]="P";genMap["Shoes"]="S";genMap["Software"]="F";
-       genMap["Sporting Goods"]="R";genMap["Toys"]="T";genMap["Video Game"]="I";genMap["Watches"]="W";
-
-       var sCatg = genMap[genre];
-       var prc = Math.floor(price/500);
-       switch (prc) {
-         case 0:sCatg = sCatg + "0";break;
-         case 1:sCatg = sCatg + "5";break;
-         case 2:case 3:sCatg = sCatg + "1";break;
-         case 4:case 5:sCatg = sCatg + "2";break;
-         default:sCatg = sCatg + "3";
-       }
-       var evTypOrd=0;
-       if (event_type.length == 4) {sCatg = "L"+sCatg}
-       else {
-         for (i=0;i<event_type.length;i++) {
-           if (event_type[i] == "Baby Shower") {evTypOrd = evTypOrd + (event_type[i].charCodeAt(5)-64)}
-           else {evTypOrd = evTypOrd + (event_type[i].charCodeAt(0)-64)}
-         }
-         sCatg = String.fromCharCode(64+evTypOrd%26) + sCatg;
-       }
-    }
-    catch (e) {error = e}
-    return sCatg;
-   }
 
 
 function load_to_db() {
+     alert ("page is " + $('#amazon_search_page').val());
     var productArray = [];
     if ($('#amazon_search').text() === "Add to DB and view more") {
-      //alert("adding to db");
+      alert("adding to db");
       var j = 0;
       var i;
       for (i = 0; i < 10; i++) {
@@ -110,37 +76,31 @@ function load_to_db() {
             //alert(j);
             var catArr = [];
             var k = 0;
-            if ( $("#eventTypeCheckProdB" + i).prop( "checked" ) ) {
-              //alert("bday");
-              catArr[k] = 'Birthday';
-              k++;
-            }
-            if ( $("#eventTypeCheckProdS" + i).prop( "checked" ) ) {
-              //alert("baby");
-              catArr[k] = 'Baby Shower';
-              k++;
-            }
-            if ( $("#eventTypeCheckProdA" + i).prop( "checked" ) ) {
-              //alert("aniv");
-              catArr[k] = 'Anniversary';
-              k++;
-            }
-            if ( $("#eventTypeCheckProdW" + i).prop( "checked" ) ) {
-              //alert("wed");
-              catArr[k] = 'Wedding';
-              k++;
+            for (var l = 0; l < eventTypeList.length;l++) {
+              if ( $("#eventTypeCheckProd" + eventTypeList[l].replace(/ /gi, "_") + i).prop( "checked" ) ) {
+                //alert("bday");
+                catArr[k] = eventTypeList[l];
+                k++;
+              }
             }
             if (k == 0) {
               alert("Event type is missing for atleast one product. Please check");
               return;
             }
             //alert(catArr[0] + catArr[1] + catArr[2] + catArr[3] + "lenght " + catArr.lenght);
-            var cat = getCatg($('#amazon_search_cat').val(),parseInt($('#product_price' + i).val())/100,catArr);
+            var cat = getCatg(parseInt($('#product_price' + i).val())/100,$('#amazon_search_cat').val());
             //alert("cat is " + cat);
             //alert ("i is " + i);
-            productArray[j] = '{ "ProdID":\"BMG' + $('#product_id' + i).val() + '\","ProdNm":\"' + $('#product_name' + i).val() + '\","MRP":\"' + parseInt($('#product_price' + i).val())/100 +
-            '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"Catg":\"' + cat  + '\"}';
-            //alert(productArray[j]);
+            var catAddData = "";
+            for (var l = 0; l < catArr.length;l++) {
+              if (l > 0)
+                catAddData += ",";
+              catAddData += '"' + catArr[l] + '"';
+            }
+            alert ("cat arr done");
+            productArray[j] = '{ "ProdID":\"BMG' + $('#product_id' + i).val() + '\","ProdNm":\"' + $('#product_name' + i).val() + '\","Catg":"'+ cat +'","MRP":\"' + parseInt($('#product_price' + i).val())/100 +
+            '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"eventType":['+ catAddData +']}';
+            alert(productArray[j]);
             j++;
           }
         }
@@ -175,6 +135,7 @@ function load_to_db() {
         }
       });*/
     } else {
+      alert ("Going straight to run");
       run();
     }
 
@@ -183,19 +144,37 @@ function load_to_db() {
 
 
   function run(){
+    alert ("page is " + $('#amazon_search_page').val());
     var searchIndex = '';
+    var priRange = '';
     if ($('#amazon_search_cat').val() === "") {
       $.each($("input[name='prod_cat']:checked"),function(){searchIndex = $(this).val()});
       $('#amazon_search_cat').val(searchIndex);
+      if (searchIndex == "") {
+        alert("Please select a category.");
+        $('#amazon_search_cat').val("")
+        $('#amazon_price_range').val("");
+        return;
+      }
+
+      $.each($("input[name='price_range']:checked"),function(){priRange = $(this).val()});
+      $('#amazon_price_range').val(priRange);
+      if (priRange == "") {
+        alert("Please select a price range.");
+        $('#amazon_search_cat').val("")
+        $('#amazon_price_range').val("");
+        return;
+      }
       $('#amazon_product_category').text("");
     }
     else {
       searchIndex = $('#amazon_search_cat').val();
+      priRange = $('#amazon_price_range').val();
     }
     window.scrollTo(0, 0);
     $('#preview').html('<i class="fa fa-circle-o-notch fa-spin" style="font-size:48px;"></i>');
     $.get(
-      "/get_amazon",{pageNumber: $('#amazon_search_page').val(),searchString: $('#search_product').val(), searchCat: searchIndex},
+      "/get_amazon",{pageNumber: $('#amazon_search_page').val(),searchString: $('#search_product').val(), searchCat: searchIndex, priceRange: priRange},
       function(data) {
           if (data === "error") {
             $('#preview').html('');
@@ -241,12 +220,15 @@ function load_to_db() {
                       txt += '<input type="hidden" name="product_desc' + i + '" id="product_desc' + i + '" value="' + x[i].getElementsByTagName("DetailPageURL")[0].childNodes[0].nodeValue + "\">";
                       txt += '<input type="hidden" name="product_id' + i + '" id="product_id' + i + '" value="' + x[i].getElementsByTagName("ASIN")[0].childNodes[0].nodeValue + "\">";
                       txt += '<input type="hidden" name="image_url' + i + '" id="image_url' + i + '" value="' + image_url + "\">";
-                      txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0].childNodes[0].nodeValue + "\">";
+                      //if (typeof x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] !== 'undefined' || x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] === null)
+                      //  txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0].childNodes[0].nodeValue + "\">";
+                      //else
+                        txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + $('#amazon_search_cat').val() + '"  />';
+
                       txt += '<div class = "checkbox" id="eventTypeProd' + i + '" style="padding:10px;text-align:left">';
-                      txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdB' + i + '" value="B" disabled="true">Birthday</label><br />';
-                      txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdS' + i + '" value="S" disabled="true">Baby Shower</label><br />';
-                      txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdA' + i + '" value="A" disabled="true">Anniversary</label><br />';
-                      txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdW' + i + '" value="W" disabled="true">Wedding</label><br />';
+                      for (var j = 0; j < eventTypeList.length;j++) {
+                        txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProd' + eventTypeList[j].replace(/ /gi, "_") + i + '" value="' + eventTypeList[j].replace(/ /gi, "_") + i + '" disabled="true">' + eventTypeList[j] + '</label><br />';
+                      }
                       txt += '</div></div><div class="col-sm-1"></div>';
                     } else {
                       if (i % 3 == 0 && i != 0)
@@ -275,13 +257,14 @@ function load_to_db() {
                           txt += '<input type="hidden" name="product_desc' + i + '" id="product_desc' + i + '" value="' + x[i].getElementsByTagName("DetailPageURL")[0].childNodes[0].nodeValue + "\">";
                           txt += '<input type="hidden" name="product_id' + i + '" id="product_id' + i + '" value="' + x[i].getElementsByTagName("ASIN")[0].childNodes[0].nodeValue + "\">";
                           txt += '<input type="hidden" name="image_url' + i + '" id="image_url' + i + '" value="' + image_url + "\">";
-                          txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0].childNodes[0].nodeValue + "\">";
+                          //if (typeof x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] !== 'undefined' || x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] === null)
+                            //txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0].childNodes[0].nodeValue + "\">";
+                          //else
+                            txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + $('#amazon_search_cat').val() + '"  />';
                           txt += '<div class = "checkbox" id="eventTypeProd' + i + '" style="padding:10px;text-align:left">';
-                          txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdB' + i + '" value="B" disabled="true">Birthday</label><br />';
-                          txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdS' + i + '" value="S" disabled="true">Baby Shower</label><br />';
-                          txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdA' + i + '" value="A" disabled="true">Anniversary</label><br />';
-                          txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProdW' + i + '" value="W" disabled="true">Wedding</label><br />';
-                          txt += '</div></div><div class="col-sm-1"></div>';
+                          for (var j = 0; j < eventTypeList.length;j++) {
+                            txt += '<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" id = "eventTypeCheckProd' + eventTypeList[j].replace(/ /gi, "_") + i + '" value="' + eventTypeList[j].replace(/ /gi, "_") + i + '" disabled="true">' + eventTypeList[j] + '</label><br />';
+                          }  txt += '</div></div><div class="col-sm-1"></div>';
                       }
                       else {
                         txt += '<div class="col-sm-3 prod_load_item" id="item' + i + '">';
@@ -404,12 +387,20 @@ function load_to_db() {
                         <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Toys">Toys</label><br>
                         <label style="font-size:16px"><input type="radio" name = "prod_cat" value="VideoGames">Video Games</label><br>
                         <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Watches">Watches</label><br>
-                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="Watches">All (keywords need to be specific)</label><br>
-                    </div>
-                    <div class="col-sm-3">
-
+                        <label style="font-size:16px"><input type="radio" name = "prod_cat" value="All">All (keywords need to be specific)</label><br>
                     </div>
                   </div>
+
+                    <label for="amazon_product_category" >Price Range:</label>
+                      <div class = "radio" >
+                          <div class="col-sm-3">
+                            <label style="font-size:16px"><input type="radio" name = "price_range" value="0">less than 500</label><br>
+                            <label style="font-size:16px"><input type="radio" name = "price_range" value="5">500 - 1000</label><br>
+                            <label style="font-size:16px"><input type="radio" name = "price_range" value="1">1000 - 2000</label><br>
+                            <label style="font-size:16px"><input type="radio" name = "price_range" value="2">2000 - 3000</label><br>
+                            <label style="font-size:16px"><input type="radio" name = "price_range" value="3">greater than 3000</label><br>
+                          </div>
+                      </div>
 
 
 
@@ -436,6 +427,7 @@ function load_to_db() {
                 <button type="Search in Amazon" id="amazon_search"  class="btn btn-default">Amazon Search</button>
                 <input type="hidden" name="amazon_search_page" id="amazon_search_page"  value="1"/>
                 <input type="hidden" name="amazon_search_cat" id="amazon_search_cat"  value=""/>
+                <input type="hidden" name="amazon_price_range" id="amazon_price_range"  value=""/>
               </form>
             </div>
           </div>

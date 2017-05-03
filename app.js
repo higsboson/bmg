@@ -601,6 +601,8 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
     console.log(req.body.array);
     var prods = JSON.parse(req.body.array);
     var collection = bmgDB.collection("Product");
+    if (prods.values.length == 0) //nothing to add.
+      res.end("Posted");
     WaterfallOver(prods.values, function (val, report) {
       collection.find({"ProdID":val.ProdID}).toArray(function (err,data) {
           if(data.length == 0) {
@@ -651,10 +653,26 @@ app.get('/get_amazon',function (req,res) {
   console.log("String is " + req.query.searchString);
   console.log("Cat is " + req.query.searchCat);
   /// The following attribute needs to come in from the web browser based on what is selected.
-  var mxprice = 1000;
-  var mnprice = 500;
+  var mxprice, mnprice;
   var search_index = req.query.searchCat;
   var keywords = req.query.searchString;
+  var price_range = req.query.priceRange;
+  if (price_range == "0") {
+    mxprice = 500;
+    mnprice = 0;
+  } else if (price_range == "5") {
+    mxprice = 1000;
+    mnprice = 500;
+  } else if (price_range == "1") {
+    mxprice = 2000;
+    mnprice = 1000;
+  } else if (price_range == "2") {
+    mxprice = 3000;
+    mnprice = 2000;
+  } else {
+    mxprice = 100000;
+    mnprice = 3000;
+  }
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
 

@@ -591,32 +591,34 @@ function redirectToHome() {
   else if (signuporlogin = "signup") {document.getElementById("signup").submit()}
 }
 
+//Amazon Search Tags need to be - [ 'All','Beauty','Grocery','Industrial','PetSupplies','OfficeProducts','Electronics','Watches','Jewelry','Luggage','Shoes','Furniture','KindleStore','Automotive','Pantry','MusicalInstruments','GiftCards','Toys','SportingGoods','PCHardware','Books','LuxuryBeauty','Baby','HomeGarden','VideoGames','Apparel','Marketplace','DVD','Appliances','Music','LawnAndGarden','HealthPersonalCare','Software' ].
+// get Catg has been updated.
  function getCatg(MRP,PrdGrp) {
    var catg="";
    try {
      switch(PrdGrp) {
        case "Apparel":
-       case "Book":
-       case "Toy":
+       case "Books":
+       case "Toys":
        case "DVD":
-       case "Health & Personal Care":
+       case "HealthPersonalCare":
        case "Luggage":
        case "Music":
-       case "Office Products":
-       case "PC Hardware":
+       case "OfficeProducts":
+       case "PCHardware":
        case "Shoes":
        case "Watches": catg=PrdGrp.slice(0,1);break;
-       case "Automobile": catg='C';break;
-       case "Baby Items": catg="Y";break;
+       case "Automotive": catg='C';break;
+       case "Baby": catg="Y";break;
        case "Beauty": catg="U";break;
-       case "CE": catg="E";break;//Electronics
+       case "Electronics": catg="E";break;//Electronics
        case "Experiences": catg="X";break;
-       case "Gift Cards": catg="V";break;
-       case "Home": catg="G";break;
+       case "GiftCards": catg="V";break;
+       case "HomeGarden": catg="G";break;
        //case "Musical Instruments": catg="N";break;
        case "Software": catg="F";break;
-       case "Sports": catg="R";break;
-       case "Video Games": catg="I";break;
+       case "SportingGoods": catg="R";break;
+       case "VideoGames": catg="I";break;
      };
      if (MRP<=500) {catg=catg+'0'}
      else if (MRP>500 && MRP<=1000) {catg=catg+'5'}
