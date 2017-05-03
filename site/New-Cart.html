@@ -34,6 +34,8 @@
        //replace the footer links
        $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
 
+       searchCatg(); //search by event type
+
        $("#CartId").click(function() {
          cookieStr = getCookie("ProdID");
          prodArr = [];
@@ -436,6 +438,7 @@
            </div> <!-- Search product row -->
             <div class = "row" style="padding-top:10px">
               <div class = "carousel-wrapper" id="carousel-wrapper">
+              <!--
               <div id="carousel-genre" class ="carousel slide" data-ride="carousel">
                 <ol class ="carousel-indicators">
                   <li data-target="#carousel-genre" data-slide-to="0" class="active"></li>
@@ -486,8 +489,8 @@
                   <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                   <span class="sr-only">Next</span>
                 </a>
+              </div> --><!-- Carousel -->
 
-              </div> <!-- Carouel -->
             </div> <!--carousel-wrapper -->
             </div> <!-- Carousel row -->
           </div>
