@@ -633,6 +633,28 @@ app.get('/logout',function (req,res) {
 
 });
 
+app.get('/getFeaturedProducts', function (req,res){
+  var prdCollection = bmgDB.collection('Product');
+  //var qryStr = JSON.parse(req.body.Catg);
+  //console.log("Query String - "+qryStr);
+  //var count = qryStr.catgCount;
+  //var evenTypeStr = qryStr.eventType;
+  //console.log("Event Type : "+evenTypeStr);
+  //console.log("Count : "+qryStr.catgCount);
+  //console.log("Category Array : "+qryStr.category);
+
+
+    prdCollection.find({"eventType":{$elemMatch:{$eq:req.query.event}}}).toArray(function(err,docs) {
+      if (!err){
+        if (docs.length == 0) {res.send()}
+        else {res.format({'application/json': function(){res.send(docs)}})}
+      }
+      else {console.log(err);res.send("Error in fetching documents")}
+    })
+
+
+});
+
 
 app.get('/checkIfEmailExists',function (req,res) {
   var wishList = bmgDB.collection('WishList');
