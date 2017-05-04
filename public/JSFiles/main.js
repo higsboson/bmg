@@ -726,15 +726,19 @@ function showBabyProducts() {
     $("#bday-marketing").slideUp();
   //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
   //  $("#house-marketing").css("transform","translateX(-200px)");
+    $('#backup').val($("#marketing-row").html());
     $("#house-marketing").slideUp('fast', function() {
-      if ($("#baby-side-bar").length == 0)
-        $("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
+      if ($("#baby-side-bar").length == 0) {
+        $("#marketing-row").html('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:left;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div><div class="col-lg-4" id="baby-marketing">                 <img class="img-circle" src="images/babyshower.png" alt="Generic placeholder image" width="140" height="140"> <h2 class="marketing-headlines">Baby Showers!</h2>  <p>For the mom-to-be. One of the most special days of your life! Build your baby shower gift list with clothes and toys for the little one and also for the new Mommy! Check out our very special range of gifts. </p> <p><a class="btn btn-default" id="baby-a-link"  role="button" onclick="showBabyProducts();">View gifts &raquo;</a></p>    </div>')
+        //$("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
+      }
       else
         $("#baby-side-bar").css("display","block");
       })
       $('#baby-a-link').text("Back");
   }
   else if($("#babyProducts").css('display') == 'block') {
+      $("#marketing-row").html($('#backup').val());
       $("#babyProducts").slideUp();
       $("#bday-marketing").slideDown();
       $("#house-marketing").slideDown();
