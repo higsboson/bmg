@@ -687,10 +687,24 @@ function logout() {
   })
 }
 
+function getFeaturedProducts(event_type,div) {
+  $.ajax({
+    type: 'GET',
+    url: '/getFeaturedProducts',
+    data : {"event":event_type},
+    success : function(res) {
+      alert('Prod list is ' + JSON.stringify(res));
+    },
+    error : function(res) {
+      alert('Unable to get product list');
+    }
+  })
+}
+
 function showBdayProducts() {
   if($("#bdayProducts").css('display') == 'none') {
+    getFeaturedProducts("Birthday","bdayProductsInfo");
     $("#bdayProducts").slideDown();
-
     $("#house-marketing").slideUp();
     $("#baby-marketing").slideUp('fast', function() {
       if ($("#bday-side-bar").length == 0)
@@ -741,7 +755,7 @@ function showBabyProducts() {
     $('#backup').val($("#marketing-row").html());
     $("#house-marketing").slideUp('fast', function() {
       if ($("#baby-side-bar").length == 0) {
-        $("#marketing-row").html('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:left;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div><div class="col-lg-4" id="baby-marketing">                 <img class="img-circle" src="images/babyshower.png" alt="Generic placeholder image" width="140" height="140"> <h2 class="marketing-headlines">Baby Showers!</h2>  <p>For the mom-to-be. One of the most special days of your life! Build your baby shower gift list with clothes and toys for the little one and also for the new Mommy! Check out our very special range of gifts. </p> <p><a class="btn btn-default" id="baby-a-link"  role="button" onclick="showBabyProducts();">View gifts &raquo;</a></p>    </div>')
+        $("#marketing-row").html('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:left;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div><div class="col-lg-4" id="baby-marketing">                 <img class="img-circle" src="images/babyshower.png" alt="Generic placeholder image" width="140" height="140"> <h2 class="marketing-headlines">Baby Showers!</h2>  <p>For the mom-to-be. One of the most special days of your life! Build your baby shower gift list with clothes and toys for the little one and also for the new Mommy! Check out our very special range of gifts. </p> <p><a class="btn btn-default" id="baby-a-link"  role="button" onclick="showBabyProducts();">Back</a></p>    </div>')
         //$("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
       }
       else
