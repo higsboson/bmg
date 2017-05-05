@@ -517,9 +517,20 @@ function getUserProfileDetails(user,div) {
        var imageURL = document.getElementById("imgURL_"+Id).src;
        var prodnm = document.getElementById("ProdNm_"+Id).innerHTML;
        var evntType = getCookie("event_category");
+       switch (PrdGrp) {
+         case "Toy" : PrdGrp="Toys";break;
+         case "Book" : PrdGrp="Books";break;
+         case "Health & Personal Care" : PrdGrp="HealthPersonalCare";break;
+         case "Office Products" : PrdGrp="OfficeProducts";break;
+         case "PC Hardware" : PrdGrp="PCHardware";break;
+         case "Gift Cards" : PrdGrp="GiftCards";break;
+         case "Home & Garden" : PrdGrp="HomeGarden";break;
+         case "Sporting Goods" : PrdGrp="SportingGoods";break;
+         case "Video Games" : PrdGrp="VideoGames";break;
+         case "Musical Instruments" : PrdGrp="MusicalInstruments";break;
+       }
        var catg = getCatg(MRP,PrdGrp);
-       //var catg = "NPD";
-       prodnm = prodnm.replace(/['"-()]+/g, ''); //need to handle escaping of /
+       //prodnm = prodnm.replace(/['"-()]+/g, ''); //need to handle escaping of /
 
        //trznt - Adding another item to prod called Status: Open
        var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"]}';
@@ -615,10 +626,11 @@ function redirectToHome() {
        case "Experiences": catg="X";break;
        case "GiftCards": catg="V";break;
        case "HomeGarden": catg="G";break;
-       //case "Musical Instruments": catg="N";break;
+       case "MusicalInstruments": catg="N";break;
        case "Software": catg="F";break;
        case "SportingGoods": catg="R";break;
        case "VideoGames": catg="I";break;
+       default: catg="TBD";break;
      };
      if (MRP<=500) {catg=catg+'0'}
      else if (MRP>500 && MRP<=1000) {catg=catg+'5'}
