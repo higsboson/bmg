@@ -618,18 +618,21 @@ function redirectToHome() {
        case "OfficeProducts":
        case "PCHardware":
        case "Shoes":
+       case "Jewelry":
        case "Watches": catg=PrdGrp.slice(0,1);break;
        case "Automotive": catg='C';break;
        case "Baby": catg="Y";break;
        case "Beauty": catg="U";break;
        case "Electronics": catg="E";break;//Electronics
-       case "Experiences": catg="X";break;
+       case "LuxuryBeauty": catg="X";break;
        case "GiftCards": catg="V";break;
        case "HomeGarden": catg="G";break;
        case "MusicalInstruments": catg="N";break;
        case "Software": catg="F";break;
        case "SportingGoods": catg="R";break;
        case "VideoGames": catg="I";break;
+       case "Appliances": catg:"Q";break;
+       case "Furniture": catg="K";break;
        default: catg="TBD";break;
      };
      if (MRP<=500) {catg=catg+'0'}
@@ -642,19 +645,24 @@ function redirectToHome() {
   return catg;
  }
 
- function srchInAmazon() { //called from New-Cart.html to search products in Amazon forcefully
+ function srchInAmazon(pageNum,prdGrpSel) { //called from New-Cart.html to search products in Amazon forcefully
    var srchprod = $("#searchitem").val();
-
-   $.get( "/srchInAmazon",{ProdNm:srchprod}, function( data, status ) {
+   //var pageNum = $("#page-number").val();
+   try {
+   $.get( "/srchInAmazon",{PageNumber:pageNum,ProdNm:srchprod,ProdGrp:prdGrpSel}, function( data, status ) {
      if (status == 'success'){
        var htmlStr = "";
        var endStr = "";
        var prdName ="";
+       var prdName1="";
        var cnt =0;
-       htmlStr = '<hr><div class = "carousel-wrapper" id="carousel-wrapper">';
+       htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
        $.each(data, function(key,doc){
          try {
-           prdName = doc.ProdNm;
+           prdName1 = doc.ProdNm;
+           //alert("Name = "+prdName1+", Length="+prdName1.length);
+           if (prdName1.length>60) {prdName=prdName1.slice(0,20)+'...'+prdName1.slice(-20)}
+           else {prdName=prdName1};
            if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
            htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
            htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
@@ -662,20 +670,29 @@ function redirectToHome() {
            htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
            htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
            htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
-           htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick=AddToCart("'+doc.ProdID+'","'+doc.MRP+'","'+doc.ProdGrp+'")>Add to wishlist</button></p>';
+           htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
            htmlStr = htmlStr + '</div></div>'
            cnt++;
            if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
         }
         catch (e) {}
       }) //for eachs
-       if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
+       if (cnt%4 != 0) {htmlStr = htmlStr + '</div>'};
+       htmlStr = htmlStr +'<div class="row"><div class="col-xs-1">';
+       var prevPage=pageNum-1;
+       var nextPage=pageNum+1;
+       if (pageNum > 1) {htmlStr = htmlStr +'<button type="button" class="btn btn-default" id="prevButton" onclick="srchInAmazon('+prevPage+',\''+prdGrpSel+'\')">Previous</button>'}
+       htmlStr = htmlStr +'</div><div class="col-xs-10"></div>';
+       htmlStr = htmlStr + '<div class="col-xs-1"><button type="button" class="btn btn-default" id="nextButton" onclick="srchInAmazon('+nextPage+',\''+prdGrpSel+'\')">Next</button></div>';
+       //htmlStr = htmlStr + '<div class="row"><button class="btn-default" id="nextbutton">Next</button></div><div class="row"><hr></div>'
+       //htmlStr = htmlStr + '<button class="btn-default" id="nextbutton">Next</button><div class="row"><hr></div>'
 
        htmlStr = htmlStr + '<hr></div>';
-
+       $("#page-number").val(pageNum);
        $('#carousel-wrapper').replaceWith(htmlStr);
    }
  })
+ } catch (e) {alert(e.message)}
 }
 
 function logout() {

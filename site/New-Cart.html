@@ -15,12 +15,16 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="JSFiles/main.js"></script>
     <script src="JSFiles/sha256.js"></script>
+    <!-- Include the plugin's CSS and JS: -->
+    <script type="text/javascript" src="JSFiles/bootstrap-multiselect.js"></script>
+    <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
 
     <script>
      $(document).ready(function () {
        var cookieStr = getCookie("ProdID");
        var prodArr = []; var cartLngth = 0;
        const baseURL = "http://localhost:8080";
+       var prdGrpSel = "All";
 
        if (cookieStr != "") {
          if (cookieStr.indexOf(",") >= 0) {prodArr = cookieStr.split(',');cartLngth=prodArr.length}
@@ -33,7 +37,15 @@
 
        //replace the footer links
        $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
-
+       $("#prdGrpSelect").multiselect({
+         includeSelectAllOption:true,
+         includeSelectAllDivider:true,
+         enableCaseInsensitiveFiltering: true,
+         maxHeight:400,
+         enableFiltering: true,
+         onChange : function() {prdGrpSel = this.$select.val()},
+         onSelectAll : function() {prdGrpSel = "All"}
+       }); //multiple select option
        searchCatg(); //search by event type right at the start
 
        $("#CartId").click(function() {
@@ -94,20 +106,23 @@
        $("#searchbutton").click(function() {
          var srchprod="";
          srchprod = $("#searchitem").val();
-
          if (srchprod!="") {
-             $.get( "/srchProductByName",{ProdNm:srchprod}, function( data, status ) {
+             $("#page-number").val(1);
+             $.get( "/srchProductByName",{PageNumber:$("#page-number").val(),ProdNm:srchprod,ProdGrp:prdGrpSel}, function( data, status ) {
                if (status == 'success'){
                  var htmlStr = "";
                  var endStr = "";
                  var prdName ="";
+                 var prdName1="";
                  var prdId = "";
                  var cnt =0;
                  htmlStr = '<hr><div class = "carousel-wrapper" id="carousel-wrapper">';
                  $.each(data, function(key,doc){
                    try {
-                     prdName = doc.ProdNm;
+                     prdName1 = doc.ProdNm;
                      prdId = doc.ProdID;
+                     if (prdName1.length>60) {prdName=prdName1.slice(0,20)+'...'+prdName1.slice(-20)}
+                     else {prdName=prdName1};
                      //alert(doc.ProdGrp);
                      if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
                      htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
@@ -127,9 +142,11 @@
                  if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
                  if (prdId.slice(0,3) == "BMG") {
                    htmlStr = htmlStr + '<hr><div class="row"><div class="col-sm-6"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
-                   htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon()">Search Here</button></p></div><hr></div>';
+                   htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+prdGrpSel+'\')">Search Here</button></p></div><hr></div>';
                  }
-                 else {htmlStr = htmlStr + '<div class="row"><hr></div>'}
+                 else {
+                   htmlStr = htmlStr + '<div class="row"><div class="col-xs-11"></div><div class="col-xs-1"><button class="btn-default" id="nextbutton" onclick="srchInAmazon(2,\''+prdGrpSel+'\')">Next</button></div></div><div class="row"><hr></div>'
+                 }
                  htmlStr = htmlStr + '</div>';
                  $('#carousel-wrapper').replaceWith(htmlStr);
               }
@@ -154,8 +171,7 @@
           var chkCnt = 0;
           var cnt = 0;
           var prcChkCnt = 0;
-
-          var genreAll = ['A','C','Y','U','B','D','E','X','V','H','G','L','M','N','O','P','S','F','R','T','I','W'];
+          var genreAll = ['A','C','Y','U','B','D','E','X','V','H','G','L','M','N','O','P','S','F','R','T','I','W','Q','K','J'];
           var priceAll = ['0','5','1','2','3'];
 
           $.each($("input[name='chkValGen']:checked"), function(){genreStr.push($(this).val());chkCnt++});
@@ -262,7 +278,7 @@
              }
            })
          }
-       }
+       }//end search category
      }); //ready
 
 
@@ -361,43 +377,45 @@
             </div><!--/.nav-collapse -->
           </div>
     </nav> <!--Navigation bar -->
-
     <!-- Carousel
            ================================================== -->
-    <div class = "container-fluid" style="padding-top:100px" id="mainContentPage"> <!-- This is the carousel holder - Being added to accomodate a wider Nav Bar-->
-
         <!--div class = "container-fluid"-->
+        <div class = "container-fluid" style="padding-top:100px" id="mainContentPage"><!-- This is the carousel holder - Being added to accomodate a wider Nav Bar-->
           <!--Quick filters-->
           <div class = "col-sm-2">
             <div class = "panel-group">
               <div class = "panel panel-default">
                 <div class = "panel-heading">
                   <h4 class="panel-title">
-                    <a data-toggle="collapse" href="#collapseGenre">Genre</a></h4>
+                    <a data-toggle="collapse" href="#collapseGenre">Product Group</a></h4>
                 </div> <!--Panel heading-->
                 <div id="collapseGenre" class="panel-collapse collapse">
                   <form>
                     <div class = "checkbox" id = "chkGenre">
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id="genreApparel" value="A">Apparel</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="A">Apparel</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="C">Automobile</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Q">Appliances</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Y">Baby Items</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="U">Beauty Products</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreBooks" value="B">Books</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="B">Books</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="D">DVD</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="E">Electronics</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="X">Experiences</label><br>
+                      <!--<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="">Experiences</label><br>-->
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="K">Furniture</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="V">Gift Cards</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="H">Health & Personal Care</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="G">Home & Garden</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="J">Jewelry</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="L">Luggage</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="X">Luxury Beauty</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="M">Music</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="N">Musical Instruments</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="O">Office Products</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="P">PC Hardware</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="S">Shoes</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="F">Software</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreSports" value="R">Sports Goods</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreToys" value="T">Toys</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="R">Sports Goods</label><br>
+                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="T">Toys</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="I">Video Games</label><br>
                       <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="W">Watches</label>
                     </div>
@@ -433,13 +451,42 @@
                   <!--p style="color:#FFFFFF;font-size:72px"> Search</p-->
                  <label for="search-item" style="color:#000000;font-size:18px" class = "control-label">Search for a product:</label>
                  <input type="text" class="form-control" id="searchitem">
+                 <select id="prdGrpSelect">
+                   <option value="All">All</option>
+                   <option value="Apparel">Apparel</option>
+                   <option value="Appliances">Appliances</option>
+                   <option value="Automotive">Automotive</option>
+                   <option value="Baby">Baby</option>
+                   <option value="Beauty">Beauty</option>
+                   <option value="Books">Books</option>
+                   <option value="DVD">DVD</option>
+                   <option value="Electronics">Electronics</option>
+                   <!--<option value="Experiences">Experiences</option>-->
+                   <option value="Furniture">Furniture</option>
+                   <option value="GiftCards">Gift Cards</option>
+                   <option value="HealthPersonalCare">Health & Personal Care</option>
+                   <option value="HomeGarden">Home & Garden</option>
+                   <option value="Jewelry">Jewelry</option>
+                   <option value="Luggage">Luggage</option>
+                   <option value="LuxuryBeauty">Luxury Beauty</option>
+                   <option value="Music">Music</option>
+                   <option value="MusicalInstruments">Musical Instruments</option>
+                   <option value="OfficeProducts">Office Products</option>
+                   <option value="PCHardware">PC Hardware</option>
+                   <option value="Shoes">Shoes</option>
+                   <option value="Software">Software</option>
+                   <option value="SportingGoods">Sporting Goods</option>
+                   <option value="Toys">Toys</option>
+                   <option value="VideoGames">Video Games</option>
+                   <option value="Watches">Watches</option>
+                 </select>
                  <button type="button" class = "btn btn-primary active" id="searchbutton"><span class="glyphicon glyphicon-search"></span></button>
                </div>
              </form>
            </div> <!-- Search product row -->
             <div class = "row" style="padding-top:10px">
-              <div class = "carousel-wrapper" id="carousel-wrapper">
-            </div> <!--carousel-wrapper -->
+              <div class = "carousel-wrapper" id="carousel-wrapper"></div> <!--carousel-wrapper -->
+              <div class = "row"><div class="col-sm-5"></div><div class="col-sm-1"><form><input class="form-control" id="page-number" value="1" type="hidden"></form></div><div class="col-sm-6"></div></div>
             </div> <!-- Carousel row -->
           </div>
         <!--/div-->
@@ -510,8 +557,6 @@
      </div>
      <!--/.footer-bottom-->
  </footer>
-
-
 
   </body>
 

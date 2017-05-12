@@ -22,9 +22,9 @@ var usersession = require('client-sessions');
 // This will be used to generate a salt on which password will be hashed.
 var rand = require('csprng');
 
-var amazon_end_point = "http://webservices.amazon.in";
-var end_point = "webservices.amazon.in";
-var uri = "/onca/xml";
+const amazon_end_point = "http://webservices.amazon.in";
+const end_point = "webservices.amazon.in";
+const uri = "/onca/xml";
 var aws_access_key_id = "";
 var aws_secret_key = "";
 var associate_tag = "";
@@ -361,10 +361,15 @@ function getProductsFrmAmzn(req,callback) {
     var response_group = "Images,ItemAttributes,Offers";  //Stricly no spaces only commas.
     var service="AWSECommerceService";
     var sort="price";
-    var search_index = "All";
+    var search_index = req.query.ProdGrp;
+    console.log("Search Index : "+search_index);
     var resJSON;
     var vJSON = [];
-    var canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&AssociateTag=" + associate_tag + "\&Availability=Available\&Keywords=" +
+    var itempage = parseInt(req.query.PageNumber);
+    console.log("query = "+JSON.stringify(req.query));
+
+    var canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&AssociateTag=" + associate_tag +
+                                  "\&Availability=Available"+"\&ItemPage=" + itempage +"\&Keywords=" +
                                   encodeURIComponent(req.query.ProdNm) + "\&Operation=" + operation + "\&ResponseGroup=" +
                                   encodeURIComponent(response_group) + "\&SearchIndex=" + search_index + "\&Service=" + service +
                                   "\&Timestamp=" + encodeURIComponent(new Date().toISOString());
@@ -375,6 +380,7 @@ function getProductsFrmAmzn(req,callback) {
     console.log("hash - "+hash);
     var signed_url = amazon_end_point + uri + "\?" + canonical_query_string + "\&Signature=" + encodeURIComponent(hash);
     console.log(signed_url);
+
     var rawData = '';
     let error;
     http.get(signed_url, (response) => {
@@ -385,7 +391,7 @@ function getProductsFrmAmzn(req,callback) {
       if (statusCode != 200) {error = new Error('Request Failed.\n' +'Status Code: ${statusCode}')}
       else if (!/^text\/xml/.test(contentType)) {error = new Error('Invalid content-type.\n'
                                                 +'Expected text/xml but received ${contentType}')}
-      if (error) {console.log(error.message);response.resume();return}
+      if (error) {console.log("Error message = "+error.message);response.resume();return}
 
       response.setEncoding('utf8');
       response.on('data', (chunk) => rawData += chunk);
@@ -404,7 +410,8 @@ function getProductsFrmAmzn(req,callback) {
                                  "ProdGrp" : resJSON.ItemSearchResponse.Items[0].Item[i].ItemAttributes[0].ProductGroup,
                                  "ProdDsc" : resJSON.ItemSearchResponse.Items[0].Item[i].DetailPageURL,
                                  "ProdID" : resJSON.ItemSearchResponse.Items[0].Item[i].ASIN};
-                      //console.log("\nItem"+JSON.stringify(vJSON[i]));
+                      console.log("\nItem"+JSON.stringify(vJSON[i]));
+
                      }
                      catch (e) {} //Ignore items on offers
                  }
@@ -416,9 +423,9 @@ function getProductsFrmAmzn(req,callback) {
         }
         catch (e) {console.log(e.message)}
       });
-   }).on('error', (e) => {console.log('Got error: ${e.message}')}); //end of http.get
+   }).on('error', (e) => {console.log('Got error: ${e.message} - '+e.message)}); //end of http.get
   }
-  catch (e) {console.log("Error - "+e)}
+  catch (e) {console.log("Error - ")}
 }
 
 app.get('/New-Cart.html',function(req,res){
@@ -703,9 +710,9 @@ app.get('/get_amazon',function (req,res) {
 
   //The following entries are mostly static fields, that can be changed as part of a strategic change.
   var multiplier = 100;
-  var amazon_end_point = "http://webservices.amazon.in";
-  var end_point = "webservices.amazon.in";
-  var uri = "/onca/xml";
+  //var amazon_end_point = "http://webservices.amazon.in";
+  //var end_point = "webservices.amazon.in";
+  //var uri = "/onca/xml";
   var itempage = parseInt(req.query.pageNumber);
   var operation = "ItemSearch"
   var response_group = "Images,ItemAttributes,Offers";  //Stricly no spaces only commas.
