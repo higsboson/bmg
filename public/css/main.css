@@ -476,6 +476,38 @@ ul.dropdown-menu {
 	left:0;
 }
 
+.featured{
+    background: none repeat scroll 0 0 white;
+    height: 250px;
+    width: 300px;
+    text-align: center;
+
+}
+
+.featured-container {
+    width:100%;
+    overflow:scroll;
+    white-space: nowrap;
+
+}
+
+.featured-container div { display: inline-block; }
+
+.featured-image {
+  height: 160px;
+  width: 160px;
+  padding-top: 10px;
+}
+
+.featured-products {
+  padding: 10px;
+  border-color: #7a2b43;
+}
+
+.featured-price {
+  color: #7a2b43;
+  font-weight: bold;
+}
 /* CSS animation */
 
 @-webkit-keyframes fadeIn {

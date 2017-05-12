@@ -710,7 +710,16 @@ function getFeaturedProducts(event_type,div) {
     url: '/getFeaturedProducts',
     data : {"event":event_type},
     success : function(res) {
-      alert('Prod list is ' + JSON.stringify(res));
+      //alert('Prod list is ' + JSON.stringify(res));
+      var htmlContent = "";
+      for (var i = 0;i < res.length;i++) {
+        htmlContent += "<div class='featured featured-products'>";
+        htmlContent += "<div>" + res[i].ProdNm + "</div>";
+        //res[i].ImageURL = res[i].ImageURL.replace(/\//g, "\\/");
+        htmlContent += "<br/><div class='featured-image' style=\"background:url(\'" + res[i].ImageURL + "\') no-repeat center center\"></div>";
+        htmlContent += "<br/><div class=\"featured-price\"> &#8377;" + res[i].MRP + "</div></div>"
+      }
+      $('#' + div).html(htmlContent);
     },
     error : function(res) {
       alert('Unable to get product list');
@@ -719,6 +728,10 @@ function getFeaturedProducts(event_type,div) {
 }
 
 function showBdayProducts() {
+  $('html, body').animate({
+        scrollTop: $("#marketing-row").offset().top - 100
+    }, 400);
+  $("#bdayProducts").addClass("featured-container");
   if($("#bdayProducts").css('display') == 'none') {
     getFeaturedProducts("Birthday","bdayProductsInfo");
     $("#bdayProducts").slideDown();
@@ -741,7 +754,12 @@ function showBdayProducts() {
 }
 
 function showHomeProducts() {
+  $('html, body').animate({
+        scrollTop: $("#marketing-row").offset().top - 100
+    }, 400);
+  $("#homeProducts").addClass("featured-container");
   if($("#homeProducts").css('display') == 'none') {
+    getFeaturedProducts("House Warming","homeProductsInfo");
     $("#homeProducts").slideDown();
     $("#baby-marketing").slideUp();
   //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
@@ -764,7 +782,12 @@ function showHomeProducts() {
 }
 
 function showBabyProducts() {
+  $('html, body').animate({
+        scrollTop: $("#marketing-row").offset().top - 100
+    }, 400);
+  $("#babyProducts").addClass("featured-container");
   if($("#babyProducts").css('display') == 'none') {
+    getFeaturedProducts("Baby Shower","babyProductsInfo");
     $("#babyProducts").slideDown();
     $("#bday-marketing").slideUp();
   //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
