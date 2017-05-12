@@ -219,7 +219,7 @@ function load_to_db() {
                       txt += '<input type="hidden" name="product_price' + i + '" id="product_price' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0].getElementsByTagName("Amount")[0].childNodes[0].nodeValue + "\">";
                       txt += '<input type="hidden" name="product_desc' + i + '" id="product_desc' + i + '" value="' + x[i].getElementsByTagName("DetailPageURL")[0].childNodes[0].nodeValue + "\">";
                       txt += '<input type="hidden" name="product_id' + i + '" id="product_id' + i + '" value="' + x[i].getElementsByTagName("ASIN")[0].childNodes[0].nodeValue + "\">";
-                      txt += '<input type="hidden" name="image_url' + i + '" id="image_url' + i + '" value="' + image_url + "\">";
+                      txt += '<input type="hidden" name="image_url' + i + '" id="image_url' + i + '" value="' + image_url + "\" height=\"160px\">";
                       //if (typeof x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] !== 'undefined' || x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] === null)
                       //  txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0].childNodes[0].nodeValue + "\">";
                       //else
