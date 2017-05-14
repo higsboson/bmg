@@ -211,7 +211,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
             var wishListId = insertedObj["ops"][0]["_id"];
             console.log("Wishlist is inserted in database");
             //25/4/2017 - Made a change to have URL domain automatically populated
-            res.send("Your wishlist has been created! You can the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\" readonly/>")}
+            res.send("Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\" readonly/><br> We have also emailed you the link to the wishlist as well.")}
           else {res.send("Error in saving wishlist. Please try again later")}
 
         });
