@@ -476,6 +476,32 @@ ul.dropdown-menu {
 	left:0;
 }
 
+.tooltip1 {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip1 .tooltiptext {
+    visibility: hidden;
+
+    background-color: #454282;
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip1:hover .tooltiptext {
+    visibility: visible;
+}
+
 .featured{
     background: none repeat scroll 0 0 white;
     height: 250px;

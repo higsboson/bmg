@@ -714,7 +714,25 @@ function getFeaturedProducts(event_type,div) {
       var htmlContent = "";
       for (var i = 0;i < res.length;i++) {
         htmlContent += "<div class='featured featured-products'>";
-        htmlContent += "<div>" + res[i].ProdNm + "</div>";
+        if (res[i].ProdNm.length > 30) {
+          var dislaydata = res[i].ProdNm.substring(0,27);
+          dislaydata += "...";
+          var condensed_array = res[i].ProdNm.split(' ').join('_ ').split(' ');
+          var condensed = "";
+          var linelength = 0;;
+          for (var n = 0;n < condensed_array.length;n++) {
+            if ((condensed_array[n].length + linelength) < 30) {
+              condensed += condensed_array[n];
+              linelength += condensed_array[n].length;
+            } else {
+              linelength = condensed_array[n].length;
+              condensed = condensed + '<br>' + condensed_array[n];
+            }
+          }
+          htmlContent += '<div class="tooltip1">' + dislaydata + '<span class="tooltiptext">' + condensed.split('_').join(' ') + '</span></div>'
+        } else {
+          htmlContent += "<div>" + res[i].ProdNm + "</div>";
+        }
         //res[i].ImageURL = res[i].ImageURL.replace(/\//g, "\\/");
         htmlContent += "<br/><div class='featured-image' style=\"background:url(\'" + res[i].ImageURL + "\') no-repeat center center\"></div>";
         htmlContent += "<br/><div class=\"featured-price\"> &#8377;" + res[i].MRP + "</div></div>"
