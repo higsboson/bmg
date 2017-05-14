@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="css/main.css" >
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="JSFiles/main.js"></script>
+  <script src="JSFiles/sha256.js"></script>
+  <script src="JSFiles/admin.js"></script>
+  <script>
+
+  $(document).ready(function(){
+      $('.step2').hide();
+      $('.step3').hide();
+      var eventTypeList = ['Birthday','Anniversary','Baby Shower','Wedding','House Warming','Farewell'];
+
+      var select = '<select class="form-control" id="catselect"><option disabled selected value> -- Select a Category -- </option>'
+
+      for (var i = 0;i < eventTypeList.length;i++) {
+        select += '<option value="' + eventTypeList[i] + '">' + eventTypeList[i] + '</option>'
+      }
+
+      select += '</select>'
+      $('#catSelectHolder').html(select);
+
+      $("#catselect").change(function(){
+          $('#cached_prods').val("");
+          $('#skip').val("0");
+          $('.step2').hide();
+          $('.step3').hide();
+          alert('Selected value: ' + $('#catselect').val());
+          $('#current_featured_products').html('<i class="fa fa-circle-o-notch fa-spin" style="font-size:100px;color:#FFFFFF"></i><p style="color:#FFFFFF">Retrieving data...</p> ');
+          $('.step2').show();
+          getFeaturedProducts($('#catselect').val(),'current_featured_products');
+      });
+  });
+
+  function getProds() {
+    $('#more_prods').html('<i class="fa fa-circle-o-notch fa-spin" style="font-size:20px;color:#FFFFFF"></i>');
+
+    if ($('#skip').val() == "0")
+      $('#all_products_for_cat').html('<i class="fa fa-circle-o-notch fa-spin" style="font-size:100px;color:#FFFFFF"></i><p style="color:#FFFFFF">Retrieving data...</p> ');
+    $('.step3').show();
+    getAllProductsForCat($('#catselect').val(),'all_products_for_cat');
+  }
+
+
+
+
+  </script>
+</head>
+<body class="admin-body">
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+      <div class="nav-container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand wide" href="#">bemygenie.com - Admin Console</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/product_loader">Add New Product</a></li>
+            <li><a href="/admin_help">Help</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container admin">
+      <div id="search_intro">
+
+        <div class="list-group">
+
+
+      <div class="row" >
+        <div class="col-sm-12" style="text-align:center">
+          <div id="amazon_search_result">
+              <h1> Featured Product Administration </h1>
+              <p>
+                 Unauthorized Access is punishible by law.
+              </p>
+          </div>
+        </div>
+      </div>
+      <br />
+      <br />
+
+        <div class="row" >
+          <div class="col-sm-12" style="text-align:left">
+            <h3> <u>Step 1</u></h3>
+              <p>
+                Choose the category that you would like to set up featured products for.
+              </p>
+          </div>
+        </div>
+            <div class="row" >
+
+              <div class="col-sm-4" style="text-align:right;font-size:20px">
+                <div class="form-group" id="product_name_label">
+                <label for="product_name_label">Category:</label>
+                </div>
+              </div>
+              <div class="col-sm-4" style="text-align:left" id="catSelectHolder">
+
+              </div>
+              <div class="col-sm-2" style="text-align:center">
+              </div>
+            </div>
+            <div class="row step2">
+              <div class="col-sm-12" style="text-align:left">
+                <h3> <u>Step 2</u></h3>
+                  <p>
+                    Uncheck any products being featured if needed.
+                  </p>
+              </div>
+            </div>
+            <div class="row" >
+              <div class="col-sm-12" style="padding:20px;text-align:center;color:#000000" id="current_featured_products">
+
+              </div>
+            </div>
+
+        <div class="row step2">
+          <div class="col-sm-12" style="padding:20px">
+            <button type="button"  class="btn btn-info btn-lg" onclick="getProds();">Continue</button>
+          </div>
+        </div>
+
+        <div class="row step3">
+          <div class="col-sm-12" style="text-align:left">
+            <h3> <u>Step 3</u></h3>
+              <p>
+                Select Products that you would like to add to the featured list.
+              </p>
+          </div>
+        </div>
+        <div class="row step3" >
+          <div class="col-sm-12" style="padding:20px;text-align:center;color:#000000" id="all_products_for_cat">
+
+          </div>
+        </div>
+
+    <div class="row step3">
+      <div class="col-sm-12" style="padding:20px">
+        <button type="button"  class="btn btn-info btn-lg" onclick="saveFeaturedList();">Save Featured List</button>
+      </div>
+    </div>
+
+      </div>
+    </div>
+    </div>
+    <input type="hidden" name="skip" id="skip" value="0"  />
+
+
+    <input type="hidden" name="cached_prods" id="cached_prods" value=""  />
+    <input type="hidden" name="removed_prods" id="removed_prods" value=""  />
+    <input type="hidden" name="added_prods" id="added_prods" value=""  />
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+</body>
+</html>

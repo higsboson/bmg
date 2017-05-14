@@ -82,6 +82,21 @@ app.get('/FAQ.html',function(req,res) {
   res.sendFile(__dirname + "/site/FAQ.html");
 })
 
+app.get('/admin',function(req,res) {
+  if (req.session.adminUser && req.session) {
+    //rendering Home page with user ID
+    // On load of the ejs file, it will use the user ID reference
+    // To pick information about the user.
+    res.render(__dirname + "/site/admin_home.ejs",{username: req.session.adminUser});
+    console.log("call made to admin_home.html with valid session " + req.session.adminUser);
+  } else {
+    // Logging in if there is no valid session.
+    console.log("call made to FAQ.html")
+    res.sendFile(__dirname + "/site/admin.html");
+  }
+
+})
+
 app.post('/getProdByCatg',function(req,res){
   try {
     var prdCollection = bmgDB.collection('Product');
@@ -318,6 +333,7 @@ app.get('/getUserProfileDetails', function (req,res) {
   });
 });
 
+
 app.get('/srchProductByName',function(req,res){
   try {
     var prdCollection = bmgDB.collection('Product');
@@ -490,6 +506,7 @@ app.post('/getsalt',urlencodedParser,function(req,res) {
   res.end(rand(160,36));
 });
 
+
 app.post('/getPasswordChangeSalt',urlencodedParser,function(req,res) {
   //console.log("session user is " + req.session.user);
   res.end(rand(160,36));
@@ -568,6 +585,33 @@ app.post('/plogin',urlencodedParser,function(req,res){
   catch (e) {res.end(e)};
 });
 
+app.post('/pAdminLogin',urlencodedParser,function(req,res){
+  console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
+
+  var adminuser = bmgDB.collection('AdminUser');
+  try {
+    adminuser.find({"username" : req.body.user},{_id:0,hash:1,username:1}).toArray(function(err,docs) {
+      if (!err){
+        if (docs.length == 0) {console.log("no user named" + req.body.user);res.end("No user")}
+        else {
+          console.log("Key from DB is " + docs[0].hash);
+          var trypass = sha256(req.body.gensalt + docs[0].hash);
+          console.log("Try Pass is " + trypass);
+          if (req.body.attempt == trypass) {
+            req.session.adminUser = docs[0].username;
+            res.end("Login Success");
+          } else {
+            console.log(req);
+            res.end("Login Fail");
+          }
+        }
+      }
+      else {res.end("Error in fetching documents")}
+    });
+  }
+  catch (e) {res.end(e)};
+});
+
 app.post('/getSaltForUser',urlencodedParser,function(req,res) {
   console.log(req.body.user);
   var wishList = bmgDB.collection('WishList');
@@ -584,8 +628,41 @@ app.post('/getSaltForUser',urlencodedParser,function(req,res) {
   catch (e) {res.end(e)};
 });
 
+app.post('/getSaltForAdminUser',urlencodedParser,function(req,res) {
+  console.log(req.body.user);
+  var adminUser = bmgDB.collection('AdminUser');
+  try {
+    adminUser.find({"username" : req.body.user},{_id:0,username:1,UPPU:1}).toArray(function(err,docs) {
+      if (!err){
+      if (docs.length == 0) {res.end("")}
+      else {res.end(docs[0].UPPU)}
+      }
+      else {res.end("Error in fetching documents")}
+    });
+  }
+  catch (e) {res.end(e)};
+});
+
 app.get('/product_loader',function(req,res){
-  res.sendFile(__dirname+"/site/product_loader.html");
+  if ((req.session && req.session.adminUser)) {
+    res.sendFile(__dirname+"/site/product_loader.html");
+  } else {
+    console.log(req);
+    res.end("Un-Autorized Access. This request will be logged.");
+  }
+
+});
+
+
+
+app.get('/featured_product_configuration',function(req,res){
+  if ((req.session && req.session.adminUser)) {
+    res.sendFile(__dirname+"/site/featured_products.html");
+  } else {
+    console.log(req);
+    res.end("Un-Autorized Access. This request will be logged.");
+  }
+
 });
 
 function WaterfallOver(list, iterator, callback) {
@@ -597,8 +674,49 @@ function WaterfallOver(list, iterator, callback) {
     else
       iterator(list[nextItemIndex],report);
   }
-  iterator(list[0], report);
+  if (list.length != 0)
+    iterator(list[0], report);
+  else
+    callback();
 }
+
+app.post('/saveFeaturedList',urlencodedParser, function (req,res){
+  console.log(req.body.remove + "and" + req.body.add);
+
+  var temp_add_array = req.body.add.split("|");
+  var add_array = [];
+  for (var i = 0; i < temp_add_array.length -1;i++) {
+    add_array[i] = temp_add_array[i];
+  }
+
+  var temp_rem_array = req.body.remove.split("|");
+  var rem_array = [];
+  for (var i = 0; i < temp_rem_array.length -1;i++) {
+    rem_array[i] = temp_rem_array[i];
+  }
+
+  console.log("rem array lengt" + rem_array.length)
+
+  var prodCollection = bmgDB.collection('Product');
+
+  WaterfallOver(add_array,function (val,report){
+      prodCollection.update({"_id" : new ObjectId(val)},{$set:{"featured":1}}, function(err) {
+        if (!err) {report();}
+        else {console.log("Error in updating product status")}
+      });
+    },function() {
+      WaterfallOver(rem_array,function (val,report){
+          prodCollection.update({"_id" : new ObjectId(val)},{$unset:{"featured":1}}, function(err) {
+            if (!err) {report();}
+            else {console.log("Error in updating product status")}
+          });
+        },function() {
+          console.log("Work Done");
+          res.end("Posted");
+        });
+    });
+
+});
 
 app.post('/load_to_db',urlencodedParser,function(req,res){
     console.log(req.body.array);
@@ -609,6 +727,7 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
     WaterfallOver(prods.values, function (val, report) {
       collection.find({"ProdID":val.ProdID}).toArray(function (err,data) {
           if(data.length == 0) {
+            val.AddDate = new Date();
             collection.insert(val, function (err,result) {
               console.log("inserted" + result);
             });
@@ -622,6 +741,8 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
         });
 });
 
+
+
 app.get('/logout',function (req,res) {
   if ((req.session && req.session.user)) {
     req.session.user = null;
@@ -633,6 +754,18 @@ app.get('/logout',function (req,res) {
 
 });
 
+app.get('/admin_logout',function (req,res) {
+  if ((req.session && req.session.adminUser)) {
+    req.session.adminUser = null;
+    res.end("Log-off success");
+  } else {
+    console.log(req);
+    res.end("Un-Autorized Access. This request will be logged.");
+  }
+
+});
+
+
 app.get('/getFeaturedProducts', function (req,res){
   var prdCollection = bmgDB.collection('Product');
   //var qryStr = JSON.parse(req.body.Catg);
@@ -642,9 +775,9 @@ app.get('/getFeaturedProducts', function (req,res){
   //console.log("Event Type : "+evenTypeStr);
   //console.log("Count : "+qryStr.catgCount);
   //console.log("Category Array : "+qryStr.category);
+  console.log(req.query.event);
 
-
-    prdCollection.find({"eventType":{$elemMatch:{$eq:req.query.event}}}).toArray(function(err,docs) {
+    prdCollection.find({$and: [{"eventType":{$elemMatch:{$eq:req.query.event}}},{"featured":1}]}).sort({ AddDate : -1 }).toArray(function(err,docs) {
       if (!err){
         if (docs.length == 0) {res.send()}
         else {res.format({'application/json': function(){res.send(docs)}})}
@@ -655,6 +788,28 @@ app.get('/getFeaturedProducts', function (req,res){
 
 });
 
+
+app.get('/getAllProdsForCatPaged', function (req,res){
+  var prdCollection = bmgDB.collection('Product');
+  //var qryStr = JSON.parse(req.body.Catg);
+  //console.log("Query String - "+qryStr);
+  //var count = qryStr.catgCount;
+  //var evenTypeStr = qryStr.eventType;
+  //console.log("Event Type : "+evenTypeStr);
+  //console.log("Count : "+qryStr.catgCount);
+  //console.log("Category Array : "+qryStr.category);
+  console.log(req.query.event);
+
+    prdCollection.find({"eventType":{$elemMatch:{$eq:req.query.event}}}).sort({ AddDate : -1 }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.prod_per_page)).toArray(function(err,docs) {
+      if (!err){
+        if (docs.length == 0) {res.send()}
+        else {res.format({'application/json': function(){res.send(docs)}})}
+      }
+      else {console.log(err);res.send("Error in fetching documents")}
+    })
+
+
+});
 
 app.get('/checkIfEmailExists',function (req,res) {
   var wishList = bmgDB.collection('WishList');

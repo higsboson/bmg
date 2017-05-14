@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="../public/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="../public/bootstrap-3.3.7-dist/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="../public/css/main.css" >
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="../public/JSFiles/main.js"></script>
+  <script src="../public/JSFiles/sha256.js"></script>
+  <script>
+
+
+  $(document).ready(function(){
+    //alert ("here");
+
+  });
+
+  function genHash() {
+
+       alert($('#password').val());
+
+
+       var sha256 = new jsSHA('SHA-256', 'TEXT');
+       sha256.update($('#password').val() + $('#seed_value').val());
+       var hash = sha256.getHash("HEX");
+       var query = "db.AdminUser.insert({'username':'" + $('#username').val()  + "','hash':'" + hash + "','UPPU':'" + $('#seed_value').val() + "'})";
+       //alert(hash);
+       $('#db_query').val(query);
+
+  }
+  </script>
+</head>
+
+<!-- This WEBPAGE under no circumstances will be served by the webserver -->
+<!-- The purpose of this is to create a secret hash, which will then be used to perform a direct DB update into the Admin collection. To Validate an Admin User -->
+
+<body>
+
+
+<div class="container admin">
+  <div id="search_intro">
+
+    <div class="list-group">
+
+
+  <div class="row" >
+    <div class="col-sm-12" style="text-align:center">
+      <div id="amazon_search_result">
+          <h1> Account Creator for Admins</h1>
+          <p>
+             Unauthorized Access is punishible by law.
+          </p>
+      </div>
+    </div>
+  </div>
+  <br />
+  <br />
+<div class="row" >
+  <div class="col-sm-12" style="text-align:left">
+    <h3> <u>Step 1</u</h3>
+  </div>
+</div>
+    <div class="row" >
+      <div class="col-sm-4" style="text-align:right;font-size:20px">
+        <div class="form-group" id="seed_value_label">
+        <label for="seed_value">Admin Username:</label>
+        </div>
+      </div>
+      <div class="col-sm-6" style="text-align:center">
+        <input type="text" class="form-control"  name="username" id="username" />
+      </div>
+    </div>
+    <div class="row" >
+      <div class="col-sm-4" style="text-align:right;font-size:20px">
+        <div class="form-group" id="seed_value_label">
+        <label for="seed_value">Seed:</label>
+        </div>
+      </div>
+      <div class="col-sm-6" style="text-align:center">
+        <input type="seed_value" class="form-control"  name="seed_value" id="seed_value" />
+      </div>
+    </div>
+    <div class="row" >
+      <div class="col-sm-4" style="text-align:right;font-size:20px">
+        <div class="form-group" id="admin_password">
+        <label for="admin_password">Password:</label>
+        </div>
+      </div>
+
+      <div class="col-sm-6" style="text-align:center">
+        <input type="password" class="form-control" name="password" id="password" />
+      </div>
+
+      <div class="col-sm-2" style="text-align:center">
+      </div>
+    </div>
+    <div class="row" >
+      <div class="col-sm-12">
+        <button type="button"  class="btn btn-info btn-lg" onclick="genHash();">Generate SHA-256 Hash</button>
+      </div>
+    </div>
+    <div class="row" >
+      <div class="col-sm-12" style="text-align:left">
+        <h3> <u>Step 2</u></h3>
+          <p>
+            Copy the line below and execute against the database directly to create the admin user.
+          </p>
+          <div class="col-sm-12" style="text-align:center">
+            <input type="text" class="form-control"  name="db_query" id="db_query" onClick="this.select();" readonly/>
+          </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+</body>
+</html>

@@ -795,3 +795,54 @@ function showBabyProducts() {
       $('#baby-a-link').text("View Gifts " + $('#raqval').text());
     }
 }
+
+function doAdminLogin(action) {
+  try {
+    //alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
+    $.ajax({
+      type: 'POST',
+      url: '/getSaltForAdminUser',
+      data: {user: $('#admin_username').val()},
+      success: function (salt) {
+       alert(salt);
+       var sha256 = new jsSHA('SHA-256', 'TEXT');
+       alert("admin password is " + $('#admin_password').val());
+       sha256.update($('#admin_password').val() + salt);
+       var hash = sha256.getHash("HEX");
+       alert("Hashed val" + hash);
+       $.ajax({
+         type: 'POST',
+         url: '/getsalt',
+         success: function (newsalt) {
+          alert(newsalt);
+          var sha2562 = new jsSHA('SHA-256', 'TEXT');
+          sha2562.update(newsalt + hash);
+          var newhash = sha2562.getHash("HEX");
+          alert("New calculated Salt" + newhash);
+          $.ajax({
+            type: 'POST',
+            url: '/pAdminLogin',
+            data: {attempt: newhash,gensalt: newsalt,user: $('#admin_username').val()},
+            success: function (data) {
+             alert("Performing Login: Result is " + data);
+             if (action == "") {
+               window.location.href = "/admin";
+             }
+           },
+           error: function (err) {
+             alert("Unable to login")
+           }
+         });
+        },
+        error: function (err) {
+          alert("Unable to login")
+        }
+      });
+      },
+      error: function (err) {
+        alert("Unable to save wishlist")
+      }
+    })
+  }
+  catch (e) {alert("Error!!! - "+e)}
+}

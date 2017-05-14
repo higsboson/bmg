@@ -508,6 +508,19 @@ ul.dropdown-menu {
   color: #7a2b43;
   font-weight: bold;
 }
+
+.admin-link {
+  color: #FFFFFF;
+}
+
+.admin-link:focus, .admin-link:hover {
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
+.admin-link:visited {
+    color: #FFFFFF;
+}
 /* CSS animation */
 
 @-webkit-keyframes fadeIn {
