@@ -302,7 +302,9 @@
  .featurette-heading {
    font-size: 50px;
  }
-}
+
+
+
 
 .row-eq-height {
   display: -webkit-box;
@@ -546,6 +548,11 @@ ul.dropdown-menu {
 
 .admin-link:visited {
     color: #FFFFFF;
+}
+
+.forgot-password {
+  color: #3090C7;
+  font-size: 12px;
 }
 /* CSS animation */
 

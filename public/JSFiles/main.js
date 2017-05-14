@@ -2,6 +2,15 @@
   var _MS_PER_DAY = 1000 * 60 * 60 * 24;
   var signuporlogin = "";
 
+  function showLoginModal() {
+    $('#login').modal('show');
+  }
+
+  function clearFields() {
+    $('#login_username').val("");
+    $('#login_password').val("");
+  }
+
   function changePassword() {
     try {
       //alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
@@ -131,6 +140,8 @@
                  else if(action == "") {
                    window.location.href = "/home";
                  }
+               } else {
+                 $('#invalid_password').modal('show');
                }
              },
              error: function (err) {
