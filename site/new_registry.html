@@ -10,6 +10,7 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="JSFiles/main.js"></script>
+  <script src='https://www.google.com/recaptcha/api.js'></script>
 
 <script>
 
@@ -23,58 +24,70 @@ $(document).ready(function () {
   //Replace footer links here
   const baseURL = "http://localhost:8080";
   $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
-  
+
 });
 
 
 function getBasicInfo() {
   alert("getting basic info" + $('#age_group_sel').val());
-  if ($('#event_name').val() == '') {
-    alert("no data event");
-    return false;
-  }
-  if ($('#age_group_sel').val() == "Choose your age group"){
-    alert("no data age");
-    return false;
-  }
+  //alert("Captcha response ->"+grecaptcha.getResponse());
+  $.ajax({
+     type  : 'POST',
+     url   : '/verifyRecaptcha',
+     data  : {"Response":grecaptcha.getResponse()},
+     success: function(res) {
+       if (res.success) {
+          if ($('#event_name').val() == '') {
+            alert("no data event");
+            return false;
+          }
+          if ($('#age_group_sel').val() == "Choose your age group"){
+            alert("no data age");
+            return false;
+          }
 
-  if ($('#gender_sel').val() == "Choose your Gender"){
-    alert("no data gen");
-    return false;
-  }
+          if ($('#gender_sel').val() == "Choose your Gender"){
+            alert("no data gen");
+            return false;
+          }
 
-  if ($('#datepicker').val() == "") {
-    alert("there is no date");
-    return false;
-  } else {
-    var date = new Date($('#datepicker').val());
-    var origDate = new Date($('#datepicker').val());
-    var today = new Date();
-    if (dateDifferenceInDays(date,today) <= 0) {
-      alert("You seem to have selected a date that is not in the future. BMG requires that your event be scheduled atleast two weeks in the future to ensure on time delivery of gifts.");
-      return false;
-    }
-    date.setDate(date.getDate()-14);
-    if (dateDifferenceInDays(date,today) < 0) {
-      alert("Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.")
-    }
-  }
+          if ($('#datepicker').val() == "") {
+            alert("there is no date");
+            return false;
+          } else {
+            var date = new Date($('#datepicker').val());
+            var origDate = new Date($('#datepicker').val());
+            var today = new Date();
+            if (dateDifferenceInDays(date,today) <= 0) {
+              alert("You seem to have selected a date that is not in the future. BMG requires that your event be scheduled atleast two weeks in the future to ensure on time delivery of gifts.");
+              return false;
+            }
+            date.setDate(date.getDate()-14);
+            if (dateDifferenceInDays(date,today) < 0) {
+              alert("Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.")
+            }
+          }
 
-  if ($('#event_category_sel').val() == "Choose the even that you will be celebrating"){
-    alert("no data cat");
-    return false;
-  }
+          if ($('#event_category_sel').val() == "Choose the even that you will be celebrating"){
+            alert("no data cat");
+            return false;
+          }
 
-  var dISO = origDate.toISOString();
-  alert(dISO);
-  setCookie("age_group",$('#age_group_sel').val(),2);
-  setCookie("gender",$('#gender_sel').val(),2);
-  setCookie("event_category",$('#event_category_sel').val(),2);
-  setCookie("event_name",$('#event_name').val(),2);
-  setCookie("event_date",dISO,2);
-  document.getElementById("regForm").submit();
+          var dISO = origDate.toISOString();
+          alert(dISO);
+          setCookie("age_group",$('#age_group_sel').val(),2);
+          setCookie("gender",$('#gender_sel').val(),2);
+          setCookie("event_category",$('#event_category_sel').val(),2);
+          setCookie("event_name",$('#event_name').val(),2);
+          setCookie("event_date",dISO,2);
+          document.getElementById("regForm").submit();
+        }
+      },
+      error : function (res) {
+        alert("Error in validating captcha response - "+res.error_codes);
+      }
+    })
 }
-
 </script>
   </head>
 
@@ -217,8 +230,12 @@ function getBasicInfo() {
               <div class="col-sm-2" style="text-align:center">
               </div>
            </div>
-
+               <div class="row"><div class="col-sm-4"></div><div class="col-sm-4">
+               <div class="g-recaptcha" data-sitekey="6Ld_OyEUAAAAAMQh2o1KMDMaGhi6QlaiPEZDHGW8"></div> <!--recapcha widget-->
+             </div><div class="col-sm-4"></div></div>
+             <div class="row" style="padding-top:15px">
                <button type="submit" class="btn btn-primary btn-lg" onclick="return getBasicInfo();">Create your registry!</button>
+             </div>
                </form>
              </div>
            </div>

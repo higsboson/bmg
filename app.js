@@ -13,7 +13,7 @@ var http = require("http");
 var parseString = require("xml2js").parseString;
 var ObjectId = require('mongodb').ObjectID;
 var sha256 = require('sha256');
-
+var request = require('request');
 //3/24/2017 - Setting up a variable for database sessions
 //This will help bmg with session management
 var usersession = require('client-sessions');
@@ -29,6 +29,8 @@ var aws_access_key_id = "";
 var aws_secret_key = "";
 var associate_tag = "";
 var urlHost = "localhost:8080";
+const googleSiteVerify = "https://www.google.com/recaptcha/api/siteverify";
+var captchaSecret = "";
 
 
 var urlencodedParser = bodyParser.urlencoded({extended:true});
@@ -63,6 +65,7 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
         aws_access_key_id = doc[0].aws_access_key_id;
         aws_secret_key = doc[0].aws_secret_key;
         associate_tag = doc[0].associate_tag;
+        captchaSecret = doc[0].captchaSecret;
       }
     });
   }
@@ -817,6 +820,17 @@ app.get('/getAllProdsForCatPaged', function (req,res){
 
 
 });
+
+app.post('/verifyRecaptcha',urlencodedParser,function(req,res){
+  var captchaRes=req.body.Response;
+  request ({uri : googleSiteVerify,
+    method : 'POST',
+    json : true,
+    form : {secret : captchaSecret,response : captchaRes}
+  }, function(error,response,body) {
+    res.send(response.body);
+  })
+})
 
 app.get('/checkIfEmailExists',function (req,res) {
   var wishList = bmgDB.collection('WishList');
