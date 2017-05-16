@@ -14,6 +14,7 @@ var parseString = require("xml2js").parseString;
 var ObjectId = require('mongodb').ObjectID;
 var sha256 = require('sha256');
 var request = require('request');
+var bmgaux = require('./bmgaux/bmgaux.js');
 //3/24/2017 - Setting up a variable for database sessions
 //This will help bmg with session management
 var usersession = require('client-sessions');
@@ -21,7 +22,7 @@ var usersession = require('client-sessions');
 // 3/23/2017 - setting up variable rand for csprng package.
 // This will be used to generate a salt on which password will be hashed.
 var rand = require('csprng');
-
+bmgaux.test();
 const amazon_end_point = "http://webservices.amazon.in";
 const end_point = "webservices.amazon.in";
 const uri = "/onca/xml";
@@ -29,6 +30,7 @@ var aws_access_key_id = "";
 var aws_secret_key = "";
 var associate_tag = "";
 var urlHost = "localhost:8080";
+var emailPassword;
 const googleSiteVerify = "https://www.google.com/recaptcha/api/siteverify";
 var captchaSecret = "";
 
@@ -66,6 +68,7 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
         aws_secret_key = doc[0].aws_secret_key;
         associate_tag = doc[0].associate_tag;
         captchaSecret = doc[0].captchaSecret;
+        emailPassword = doc[0].mailconn;
       }
     });
   }
@@ -818,6 +821,14 @@ app.get('/getAllProdsForCatPaged', function (req,res){
       else {console.log(err);res.send("Error in fetching documents")}
     })
 
+
+});
+
+app.get('/sendmail', function (req,res) {
+
+  bmgaux.mailer(emailPassword,'support','test_user@hotmail.com','a new trial','<b> check out the cool body</b>',function(message,response) {
+    res.send('{"Message": "' + message + '","Response":"' + response + '"}');
+  });
 
 });
 

@@ -1,0 +1,10 @@
+Email Syntax
+--------------
+
+bmgaux.mailer(email password,'from','to','subject ','html body', callback)
+
+The 'from' field is further decoded in the function. Currently support = '"BMG Support" <no_reply@bemygenie.com>'
+
+eg. bmgaux.mailer(emailPassword,'support','testuser@hotmail.com','a new trial','<b> check out the cool body</b>',function(message,response) {
+  res.send('{"Message": "' + message + '","Response":"' + response + '"}');
+});
