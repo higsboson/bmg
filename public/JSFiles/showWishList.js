@@ -46,8 +46,7 @@ function changeGiftStatus(strStatus) {
   catch (e) {alert("error - "+e)}
 }
 
-window.onload = function() {
-  //var eventID = <%= eventID %>;
+function showProducts() {
   eventID = $("#evntID").val();
   //alert("Value of event ID is "+eventID);
   $.get("/showListProducts",{eventID:eventID}, function (data,status) {
@@ -84,4 +83,24 @@ window.onload = function() {
     alert("Error in fetching data from server");
    }
   })
+}
+
+function verifyCaptcha() {
+  $.ajax({
+     type  : 'POST',
+     url   : '/verifyRecaptcha',
+     data  : {"Response":grecaptcha.getResponse()},
+     success: function(res) {
+       if (res.success) {
+         showProducts();
+       }
+     },
+     error : function (res) {
+       alert("Error in validating captcha response - "+res.error_codes);
+     }
+   })
+}
+
+window.onload = function() {
+
 } //getWishList
