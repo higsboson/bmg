@@ -32,7 +32,7 @@
          var cnt = 0;
          var prcChkCnt = 0;
 
-         var genreAll = ['A','C','Y','U','B','D','E','X','V','H','G','L','M','N','O','P','S','F','R','T','I','W'];
+         var genreAll = ['A','C','Y','U','B','D','E','X','V','H','G','L','M','N','O','P','S','F','R','T','I','W','Q','K','J'];
          var priceAll = ['0','5','1','2','3'];
 
          $.each($("input[name='chkValGen']:checked"), function(){genreStr.push($(this).val());chkCnt++});
@@ -47,7 +47,6 @@
          else if (chkCnt == 0 && prcChkCnt > 0) {
            for (i=0;i<genreAll.length;i++) {for (j=0;j<priceStr.length;j++) {gpStr[cnt]='"'+genreAll[i]+priceStr[j]+'"';cnt++;}}
          }
-
           if (cnt > 0) {
             srchStr = '{"Catg":['+gpStr+'],"eventID":"'+eventID+'","catgCount":'+cnt+'}';
             $.ajax({
@@ -90,15 +89,15 @@
                 }
                 else {
                   htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-                  htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
-                  htmlStr = "</div></div>";
+                  htmlStr = htmlStr + '<p style = "padding-top:20px"><h5>No products found with your matching criteria</h5></p>';
+                  htmlStr = htmlStr + "</div></div>";
                   $('#carousel-wrapper').replaceWith(htmlStr);
                 }
               },
              error: function(res) {
                htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-               htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
-               htmlStr = "</div></div>";
+               htmlStr = htmlStr + '<p style = "padding-top:20px"><h5>No products found with your matching criteria</h5></p>';
+               htmlStr = htmlStr + "</div></div>";
                $('#carousel-wrapper').replaceWith(htmlStr);
              }
            });
@@ -145,15 +144,15 @@
                }
                else {
                  htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-                 htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
-                 htmlStr = "</div></div>";
+                 htmlStr = htmlStr + '<p style = "padding-top:20px"><h4>No products found with your matching criteria</h4></p>';
+                 htmlStr = htmlStr + "</div></div>";
                  $('#carousel-wrapper').replaceWith(htmlStr);
                }
              },
             error: function(res) {
               htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-              htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
-              htmlStr = "</div></div>";
+              htmlStr = htmlStr + '<p style = "padding-top:20px"><h4>No products found with your matching criteria</h4></p>';
+              htmlStr = htmlStr + "</div></div>";
               $('#carousel-wrapper').replaceWith(htmlStr);
             }
           });

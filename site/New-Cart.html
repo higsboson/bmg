@@ -229,8 +229,8 @@
                },
                error : function(res) {
                  htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-                 htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
-                 htmlStr = "</div></div>";
+                 htmlStr = htmlStr+'<p style = "padding-top:100px">No products found with your matching criteria</p>';
+                 htmlStr = htmlStr+"</div></div>";
                  $('#carousel-wrapper').replaceWith(htmlStr);
                }
              })
@@ -273,8 +273,8 @@
              },
              error : function (res){
                htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-               htmlStr = '<p style = "padding-top:100px">No products found with your matching criteria</p>'
-               htmlStr = "</div></div>";
+               htmlStr = htmlStr+'<p style = "padding-top:100px">No products found with your matching criteria</p>';
+               htmlStr = htmlStr+"</div></div>";
                $('#carousel-wrapper').replaceWith(htmlStr);
              }
            })
