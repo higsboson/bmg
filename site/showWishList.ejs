@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="JSFiles/main.js"></script>
     <script src="JSFiles/showWishList.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 
 
     <script>
@@ -19,7 +20,7 @@
        var eventID = $("#evntID").val();
 
        //Replace footer links here
-       const baseURL = "http://localhost:8080";
+       const baseURL = "http://bemygenie.com:8080";
        $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
 
 
@@ -285,6 +286,13 @@
               </div>
               <hr>
               <div class = "carousel-wrapper" id="carousel-wrapper">
+                <form class="form form-inline">
+                  <div class="row"><div class="col-xs-3">
+                  <div class="g-recaptcha" data-sitekey="6Ld_OyEUAAAAAMQh2o1KMDMaGhi6QlaiPEZDHGW8"></div> <!--recapcha widget-->
+                </div><div class="col-xs-2"><p style="text-align:center;padding-top:15px"><button type="button" class = "btn btn-primary btn-lg active" id="proceedBtn" onclick="verifyCaptcha()">GO <span class="glyphicon glyphicon-play"></span></button></p>
+                </div><div class="col-xs-7"></div></div>
+                </form>
+                <hr>
               </div> <!--wishlist-wrapper -->
           </div> <!-- wishlist row -->
           </div>
