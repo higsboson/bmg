@@ -11,6 +11,77 @@
     $('#login_password').val("");
   }
 
+
+  function validateAndReset() {
+    if ($('#password').val().length < 6) {
+      alert ('Password needs to be 6 characters or more');
+    }
+    else if ($('#password').val() == $('#repassword').val()) {
+      $.ajax({
+        type: 'POST',
+        url: '/getsalt',
+        success: function (salt) {
+         //alert(salt);
+         var sha256 = new jsSHA('SHA-256', 'TEXT');
+         sha256.update($("#password").val() + salt);
+         var hash = sha256.getHash("HEX");
+         //alert("Hashed val" + hash);
+       $.ajax({
+             type : 'POST',
+             url :"/setPassword",
+             data : {"c": $('#c').val() , "h" : hash, "s": salt},
+             success : function(res) {
+               if (res == "success") {
+                 alert('Password Changed');
+                window.location.href = "/";
+              }
+             },
+             error : function(res) {alert("Error in setting password")}
+           })
+        },
+        error: function (err) {
+          alert("Unable to get salt")
+        }
+      })
+    }
+  }
+
+  function passWordReset() {
+
+
+    if ($('#username').val() == '') {
+      alert("Please provide your registered email address.");
+      return false;
+    }
+
+    alert('posting');
+    $.ajax({
+       type  : 'POST',
+       url   : '/verifyRecaptcha',
+       data  : {"Response":grecaptcha.getResponse()},
+       success: function(res) {
+         if (res.success) {
+            $.ajax({
+              type  : 'POST',
+              url   : '/resetPassword',
+              data : {"username": $('#username').val()},
+              success : function (res) {
+                if (res == 'mailsent')
+                  window.location.href = "/"
+              },
+              error : function (err) {
+                alert ("Error: " + err);
+              }
+            })
+          } else if (res["error-codes"][0] == "missing-input-response")
+            alert('Please click checkbox to verify that you are a human :)')
+        },
+        error : function (res) {
+          alert("Error in validating captcha response - "+  res.error_codes);
+        }
+      })
+  }
+
   function changePassword() {
     try {
       //alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
