@@ -31,47 +31,50 @@ $(document).ready(function () {
 function getBasicInfo() {
   alert("getting basic info" + $('#age_group_sel').val());
   //alert("Captcha response ->"+grecaptcha.getResponse());
+
+  if ($('#event_name').val() == '') {
+    alert("no data event");
+    return false;
+  }
+  if ($('#age_group_sel').val() == "Choose your age group"){
+    alert("no data age");
+    return false;
+  }
+
+  if ($('#gender_sel').val() == "Choose your Gender"){
+    alert("no data gen");
+    return false;
+  }
+
+  if ($('#datepicker').val() == "") {
+    alert("there is no date");
+    return false;
+  } else {
+    var date = new Date($('#datepicker').val());
+    var origDate = new Date($('#datepicker').val());
+    var today = new Date();
+    if (dateDifferenceInDays(date,today) <= 0) {
+      alert("You seem to have selected a date that is not in the future. BMG requires that your event be scheduled atleast two weeks in the future to ensure on time delivery of gifts.");
+      return false;
+    }
+    date.setDate(date.getDate()-14);
+    if (dateDifferenceInDays(date,today) < 0) {
+      alert("Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.")
+    }
+  }
+
+  if ($('#event_category_sel').val() == "Choose the even that you will be celebrating"){
+    alert("no data cat");
+    return false;
+  }
+  alert('posting');
   $.ajax({
      type  : 'POST',
      url   : '/verifyRecaptcha',
      data  : {"Response":grecaptcha.getResponse()},
      success: function(res) {
        if (res.success) {
-          if ($('#event_name').val() == '') {
-            alert("no data event");
-            return false;
-          }
-          if ($('#age_group_sel').val() == "Choose your age group"){
-            alert("no data age");
-            return false;
-          }
 
-          if ($('#gender_sel').val() == "Choose your Gender"){
-            alert("no data gen");
-            return false;
-          }
-
-          if ($('#datepicker').val() == "") {
-            alert("there is no date");
-            return false;
-          } else {
-            var date = new Date($('#datepicker').val());
-            var origDate = new Date($('#datepicker').val());
-            var today = new Date();
-            if (dateDifferenceInDays(date,today) <= 0) {
-              alert("You seem to have selected a date that is not in the future. BMG requires that your event be scheduled atleast two weeks in the future to ensure on time delivery of gifts.");
-              return false;
-            }
-            date.setDate(date.getDate()-14);
-            if (dateDifferenceInDays(date,today) < 0) {
-              alert("Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.")
-            }
-          }
-
-          if ($('#event_category_sel').val() == "Choose the even that you will be celebrating"){
-            alert("no data cat");
-            return false;
-          }
 
           var dISO = origDate.toISOString();
           alert(dISO);
@@ -81,7 +84,8 @@ function getBasicInfo() {
           setCookie("event_name",$('#event_name').val(),2);
           setCookie("event_date",dISO,2);
           document.getElementById("regForm").submit();
-        }
+        } else if (res["error-codes"][0] == "missing-input-response")
+          alert('Please click checkbox to verify that you are a human :)')
       },
       error : function (res) {
         alert("Error in validating captcha response - "+res.error_codes);
