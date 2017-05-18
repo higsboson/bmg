@@ -203,8 +203,6 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
     var wishlistToBeAdded = JSON.parse(req.body.Wishlist);
     var prdIdArr = wishlistToBeAdded.ProductIDs.split(",");
     var wishList = {};
-    var hostEmail = "";
-    var hostName = "";
 
     prdCollection.find({ProdID:{$in:prdIdArr}}).toArray(function(err,docs){
       for (var i = 0;i < docs.length;i++) {
@@ -216,8 +214,6 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
         // If the user is not logged in then we set the wishlist record to primary.
         // A Primary record will store user informtation such as the user's name. phone, etc
         if (!(req.session && req.session.user)) {
-          hostEmail = wishlistToBeAdded.HostEmail;
-          hostName = wishlistToBeAdded.HostName;
           wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
                       "EventDate":new Date(wishlistToBeAdded.EventDate),
                       "HostName":wishlistToBeAdded.HostName,"RcvrName":wishlistToBeAdded.ContactName,
@@ -233,10 +229,9 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
           req.session.name = wishlistToBeAdded.HostName;
         }
         else {
-          hostEmail = req.session.user;
-          hostName = req.session.name;
           wishList = {"EventName":wishlistToBeAdded.EventName,"EventType":wishlistToBeAdded.EventType,
                       "HostEmail":req.session.user,"EventDate":new Date(wishlistToBeAdded.EventDate),
+                      "HostName":req.session.name,
                       // Event status 1 means open wishlist, 0 means closed wishlist
                       "EventStatus":1,
                       "Products":docs};
@@ -246,13 +241,17 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
           if (!err) {
             //we need to send back the link
             var wishListId = insertedObj["ops"][0]["_id"];
+            var hostName = insertedObj["ops"][0]["HostName"];
+            var hostEmail = insertedObj["ops"][0]["HostEmail"];
             //console.log("Wishlist is inserted in database");
             //25/4/2017 - Made a change to have URL domain automatically populated
             var wishListModalTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\" readonly/><br>We have also sent you the link via e-mail.";
-            var emailTxt = '<p style="font-family:"Merriweather", serif;font-size:16px">Dear '+hostName+',<br><br>We would like to thank you for choosing Bemygenie.</p>';
-            emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+wishListModalTxt+'<br><br><br>Team Bemygenie</p>';
+            var wishListEmailTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><a href=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\">";
+            var emailTxt = '<p style="font-family:"Merriweather", serif;font-size:16px">Dear '+hostName+',<br><br>Thank you for choosing Bemygenie.</p>';
+            emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+wishListEmailTxt+'<br><br><br>Team Bemygenie</p>';
 
-            bmgaux.mailer(emailPassword,'support',hostEmail,'New Wishlist Created',emailTxt,function(message,response) {res.send(wishListModalTxt)});
+            bmgaux.mailer(emailPassword,'support',hostEmail,'New Wishlist Created',emailTxt,function(message,response) {});
+            res.send(wishListModalTxt);
 
           }
           else {res.send("Error in saving wishlist. Please try again later")}
