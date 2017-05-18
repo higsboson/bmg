@@ -222,7 +222,13 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
             var wishListId = insertedObj["ops"][0]["_id"];
             //console.log("Wishlist is inserted in database");
             //25/4/2017 - Made a change to have URL domain automatically populated
-            res.send("Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\" readonly/><br>We have also sent you the link via e-mail.")}
+            var wishListModalTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\" readonly/><br>We have also sent you the link via e-mail.";
+            var emailTxt = '<p style="font-family:"Merriweather", serif;font-size:16px">Dear '+wishlistToBeAdded.HostName+',<br><br>We would like to thank you for choosing Bemygenie.</p>';
+            emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+wishListModalTxt+'<br><br><br>Team Bemygenie</p>';
+
+            bmgaux.mailer(emailPassword,wishlistToBeAdded.HostEmail,'New Wishlist Created',emailTxt,function(message,response) {res.send(wishListModalTxt)});
+
+          }
           else {res.send("Error in saving wishlist. Please try again later")}
 
         });
@@ -299,7 +305,7 @@ app.post('/setPassword', urlencodedParser, function (req,res){
               aux_passwordReset.remove({"FP": req.body.c}, function (err, result) {
                 if (!err) {
                       res.send("success")
-                }        
+                }
               })
             }
             else {res.send("Error setting Password")}
