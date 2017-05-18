@@ -29,7 +29,7 @@ const uri = "/onca/xml";
 var aws_access_key_id = "";
 var aws_secret_key = "";
 var associate_tag = "";
-var urlHost = "localhost:8080";
+var urlHost = "bemygenie.com:8080";
 var emailPassword;
 const googleSiteVerify = "https://www.google.com/recaptcha/api/siteverify";
 var captchaSecret = "";
@@ -246,7 +246,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
             //console.log("Wishlist is inserted in database");
             //25/4/2017 - Made a change to have URL domain automatically populated
             var wishListModalTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\" readonly/><br>We have also sent you the link via e-mail.";
-            var wishListEmailTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><a href=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\">";
+            var wishListEmailTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><a href=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\">http://"+ urlHost +"/showWishList?eventID=" + wishListId+"</a>";
             var emailTxt = '<p style="font-family:"Merriweather", serif;font-size:16px">Dear '+hostName+',<br><br>Thank you for choosing Bemygenie.</p>';
             emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+wishListEmailTxt+'<br><br><br>Team Bemygenie</p>';
 
