@@ -586,6 +586,59 @@ function getUserProfileDetails(user,div) {
      })
  }
 
+ function AddToCartUserProd(Id,MRP,PrdGrp) {
+   try {
+     var bmgId = "";
+     var cartProds = getCookie("ProdID");
+     var prodArr = [];
+     var cartLngth = 0;
+     if (Id.substring(0,3) != "BMG") {
+       bmgId = "BMG"+Id;
+       var proddsc = document.getElementById("detURL_"+Id);
+       var imageURL = document.getElementById("imgURL_"+Id).src;
+       var prodnm = document.getElementById("ProdNm_"+Id).innerHTML;
+       var evntType = getCookie("event_category");
+       switch (PrdGrp) {
+         case "Toy" : PrdGrp="Toys";break;
+         case "Book" : PrdGrp="Books";break;
+         case "Health & Personal Care" : PrdGrp="HealthPersonalCare";break;
+         case "Office Products" : PrdGrp="OfficeProducts";break;
+         case "PC Hardware" : PrdGrp="PCHardware";break;
+         case "Gift Cards" : PrdGrp="GiftCards";break;
+         case "Home & Garden" : PrdGrp="HomeGarden";break;
+         case "Sporting Goods" : PrdGrp="SportingGoods";break;
+         case "Video Games" : PrdGrp="VideoGames";break;
+         case "Musical Instruments" : PrdGrp="MusicalInstruments";break;
+       }
+       var catg = getCatg(MRP,PrdGrp);
+       //prodnm = prodnm.replace(/['"-()]+/g, ''); //need to handle escaping of /
+
+       //trznt - Adding another item to prod called Status: Open
+       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'","Reviewed":"TBD","eventType":["'+evntType+'"]}';
+       //Throwing error if the name has quotes in it
+       $.ajax({
+         type : 'POST',
+         url :"/addToDBByUser",
+         data : {"Product":prd},
+         success : function(res) {},
+         error : function(res) {alert("Error in adding product to cart!")}
+       })
+     } //Amazon product -- write to DB
+     else {bmgId = Id};
+
+     if (cartProds != "") {
+       if (cartProds.indexOf(",") >= 0) {prodArr = cartProds.split(',');cartLngth=prodArr.length}
+       else {prodArr[0]=bmgId;cartLngth=1};
+       cartProds = cartProds+','+bmgId;
+     }
+     else (cartProds=bmgId)
+     cartLngth++;
+     setCookie("ProdID",cartProds,2);
+
+     document.getElementById("CartId").innerHTML="Cart ("+cartLngth+")";
+   }
+   catch (e) {alert(e)}
+ };
 
  function AddToCart(Id,MRP,PrdGrp) {
    try {
@@ -752,7 +805,7 @@ function redirectToHome() {
            htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
            htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
            htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
-           htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
+           htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
            htmlStr = htmlStr + '</div></div>'
            cnt++;
            if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};

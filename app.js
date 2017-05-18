@@ -177,6 +177,25 @@ app.post('/addToDB',urlencodedParser,function(req,res){
   catch (e) {console.log(e);res.send("Error in adding product to cart!")}
 })
 
+app.post('/addToDBByUser',urlencodedParser,function(req,res){
+  try {
+    var prdCollection = bmgDB.collection('Product');
+    console.log("Body Product:" +req.body.Product);
+    var prdToBeAdded = JSON.parse(req.body.Product);
+
+    console.log("ProdID : "+prdToBeAdded.ProdID);
+    prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
+      if (docs.length != 0) {res.send("Already present in DB")}
+      else {
+        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"Reviewed":prdToBeAdded.Reviewed});
+        if (!err) {res.send("Success")}
+        else {res.send("Error")}
+      }
+    })
+  }
+  catch (e) {console.log(e);res.send("Error in adding product to cart!")}
+})
+
 app.post('/saveWishlist',urlencodedParser,function(req,res){
   try {
     var wishlistCollection = bmgDB.collection('WishList');
@@ -299,7 +318,7 @@ app.post('/setPassword', urlencodedParser, function (req,res){
               aux_passwordReset.remove({"FP": req.body.c}, function (err, result) {
                 if (!err) {
                       res.send("success")
-                }        
+                }
               })
             }
             else {res.send("Error setting Password")}
