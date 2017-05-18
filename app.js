@@ -88,6 +88,11 @@ app.get('/FAQ.html',function(req,res) {
   res.sendFile(__dirname + "/site/FAQ.html");
 })
 
+app.get('/forgotPassword',function(req,res) {
+  console.log("call made to forgot email.html")
+  res.sendFile(__dirname + "/site/forgotPassword.html");
+})
+
 app.get('/admin',function(req,res) {
   if (req.session.adminUser && req.session) {
     //rendering Home page with user ID
@@ -240,6 +245,71 @@ app.post('/updProductStatus',urlencodedParser,function(req,res) {//change the st
   catch (e) {console.log("Error - "+e)}
 })
 
+app.post('/resetPassword',urlencodedParser,function(req,res) {//change the status of the product
+  try {
+    var profileDetails = bmgDB.collection('WishList');
+    var aux_passwordReset = bmgDB.collection('AUX_PASSRESET');
+
+
+    profileDetails.find({$and: [{"HostEmail": req.body.username},{"Primary" : 1}]},{"_id":1,"HostName":1,"HostPhone":1,"HostEmail":1}).toArray(function(err,docs){
+      if (!err) {
+        if (docs.length) {
+          console.log('email found');
+          var setval = sha256(rand(160,36) + docs[0].HostEmail) + sha256(rand(160,36) + docs[0]._id);
+          aux_passwordReset.insert({"email":req.body.username,"FP":setval}, function(err,result) {
+            if (!err) {
+              console.log('inserted fp');
+              bmgaux.mailer(emailPassword,'support',req.body.username,'Password Reset','<b>This is your password reset link:</b><br>http://www.bemygenie.com/rpf?c=' + setval,function(message,response) {
+                res.end('mailsent');
+              });
+            }
+            else {res.end("Error in FP")}
+          })
+        } else {
+          res.end('mailsent');
+        }
+      }
+    });
+  }
+  catch (e) {console.log("Error - "+e)}
+})
+
+
+app.get('/rpf', function (req,res){
+  var fp = encodeURIComponent(req.query.c);
+  var aux_passwordReset = bmgDB.collection('AUX_PASSRESET');
+  aux_passwordReset.find({"FP": fp},{"_id":1,"email":1}).toArray(function(err,docs){
+    if (!err) {
+      if (docs.length) {
+          res.render(__dirname + "/site/newPassword.ejs",{c : req.query.c});
+      }
+    }
+  })
+
+});
+
+app.post('/setPassword', urlencodedParser, function (req,res){
+  var aux_passwordReset = bmgDB.collection('AUX_PASSRESET');
+  var profileDetails = bmgDB.collection('WishList');
+  aux_passwordReset.find({"FP": req.body.c},{"_id":1,"email":1}).toArray(function(err,docs){
+    if (!err) {
+      if (docs.length) {
+          profileDetails.update({$and:[{"HostEmail" : docs[0].email},{"Primary":1}]},{$set:{"KEY":req.body.h,"UPPU":req.body.s}}, function(err) {
+            if (!err) {
+              aux_passwordReset.remove({"FP": req.body.c}, function (err, result) {
+                if (!err) {
+                      res.send("success")
+                }        
+              })
+            }
+            else {res.send("Error setting Password")}
+          })
+      }
+    }
+  })
+
+});
+
 //3/24/2017 - Created a get to /home.
 app.post('/home',urlencodedParser, function (req,res) {
   // Checking if a valid session exists.
@@ -256,6 +326,9 @@ app.post('/home',urlencodedParser, function (req,res) {
     res.redirect('/');
   }
 });
+
+
+
 
 app.get('/home', function (req,res) {
   // Checking if a valid session exists.
