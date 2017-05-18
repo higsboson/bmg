@@ -84,7 +84,7 @@ function showProducts() {
    }
   })
 }
-
+/*
 function verifyCaptcha() {
   $.ajax({
      type  : 'POST',
@@ -99,8 +99,8 @@ function verifyCaptcha() {
        alert("Error in validating captcha response - "+res.error_codes);
      }
    })
-}
+}*/
 
 window.onload = function() {
-
+  showProducts();
 } //getWishList

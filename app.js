@@ -200,7 +200,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                       "Products":docs};
           // Creating a session variable named 'user' which will hold the email.
           // The variable 'user' will be used to validate if the session exists.
-          console.log("Wishlist is inserted for " + wishlistToBeAdded.HostEmail + " and " + wishlistToBeAdded.HostName );
+          //console.log("Wishlist is inserted for " + wishlistToBeAdded.HostEmail + " and " + wishlistToBeAdded.HostName );
           req.session.user = wishlistToBeAdded.HostEmail;
           req.session.name = wishlistToBeAdded.HostName;
         } else {
@@ -215,7 +215,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
           if (!err) {
             //we need to send back the link
             var wishListId = insertedObj["ops"][0]["_id"];
-            console.log("Wishlist is inserted in database");
+            //console.log("Wishlist is inserted in database");
             //25/4/2017 - Made a change to have URL domain automatically populated
             res.send("Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\" readonly/><br>We have also sent you the link via e-mail.")}
           else {res.send("Error in saving wishlist. Please try again later")}
@@ -278,7 +278,7 @@ app.get('/home', function (req,res) {
 app.get('/getWishListItems', function (req,res) {
   // Checking if a valid session exists.
   if (req.session && req.session.user) {
-    console.log("call made to /getWishListItems with valid session " + req.session.user + req.session.name);
+    //console.log("call made to /getWishListItems with valid session " + req.session.user + req.session.name);
     try {
       var wishList = bmgDB.collection('WishList');
       wishList.find({"_id":new ObjectId(req.query.id),"HostEmail":req.session.user},{_id:0,Products:1}).toArray(function(err,docs) {
