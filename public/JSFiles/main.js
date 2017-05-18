@@ -163,11 +163,11 @@
       $.ajax({
         type: 'POST',
         url: '/getSaltForUser',
-        data: {user: $(login_username).val()},
+        data: {user: $('#login_username').val()},
         success: function (salt) {
          //alert(salt);
          var sha256 = new jsSHA('SHA-256', 'TEXT');
-         sha256.update($(login_password).val() + salt);
+         sha256.update($('#login_password').val() + salt);
          var hash = sha256.getHash("HEX");
          //alert("Hashed val" + hash);
          $.ajax({
@@ -182,7 +182,7 @@
             $.ajax({
               type: 'POST',
               url: '/plogin',
-              data: {attempt: newhash,gensalt: newsalt,user: $(login_username).val()},
+              data: {attempt: newhash,gensalt: newsalt,user: $('#login_username').val()},
               success: function (data) {
                //alert("Performing Login: Result is " + data);
                if (data == "Login Success") {
@@ -191,7 +191,7 @@
                    var eventType = getCookie("event_category");
                    var selProducts = getCookie("ProdID");
                    var event_name = getCookie("event_name");
-                   var wishList = '{"EventName" :"'+ event_name +'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$(login_username).val()+'",';
+                   var wishList = '{"EventName" :"'+ event_name +'", "EventDate" : "'+eventDate+'", "EventType" : "'+eventType+'", "UsrName" : "'+$('#login_username').val()+'",';
                    wishList = wishList + ' "ProductIDs" : "'+ selProducts+ '"}';
                    $.ajax({
                        type : 'POST',
