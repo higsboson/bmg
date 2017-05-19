@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require("express");
+var fs = require('fs');
 var app = express();
 var bodyParser = require("body-parser");
 var JSON = require("json3");
@@ -15,9 +16,15 @@ var ObjectId = require('mongodb').ObjectID;
 var sha256 = require('sha256');
 var request = require('request');
 var bmgaux = require('./bmgaux/bmgaux.js');
+var https = require('https');
 //3/24/2017 - Setting up a variable for database sessions
 //This will help bmg with session management
 var usersession = require('client-sessions');
+
+var certoptions = {
+   key  : fs.readFileSync('nodejs.key'),
+   cert : fs.readFileSync('nodejs.crt')
+};
 
 // 3/23/2017 - setting up variable rand for csprng package.
 // This will be used to generate a salt on which password will be hashed.
@@ -31,6 +38,7 @@ var aws_secret_key = "";
 var associate_tag = "";
 var urlHost = "bemygenie.com:8080";
 var emailPassword;
+var certdir;
 const googleSiteVerify = "https://www.google.com/recaptcha/api/siteverify";
 var captchaSecret = "";
 
@@ -69,6 +77,18 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
         associate_tag = doc[0].associate_tag;
         captchaSecret = doc[0].captchaSecret;
         emailPassword = doc[0].mailconn;
+        certdir = doc[0].certdir;
+
+
+        var certoptions = {
+           key  : fs.readFileSync(certdir + "nodejs.key"),
+           cert : fs.readFileSync(certdir + "nodejs.crt")
+        };
+
+        var server = https.createServer(certoptions, app).listen(8080, function () {
+           console.log('Started!');
+        });
+
       }
     });
   }
@@ -77,6 +97,12 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
   };
 
 });
+
+//var server = app.listen(8080,function(){
+//  console.log("Server listening at 127.0.0.1:8080");
+//})
+
+
 
 app.get('/', function(req,res) {
   res.sendFile(__dirname + "/site/index.html");
@@ -608,9 +634,7 @@ app.get('/showListProducts',function(req,res){
   catch (e) {res.send(e)}
 }); //showListProducts
 
-var server = app.listen(8080,function(){
-  console.log("Server listening at 127.0.0.1:8080");
-})
+
 
 app.get('/new_registry', function (req,res){
   res.sendFile(__dirname + "/site/new_registry.html");
