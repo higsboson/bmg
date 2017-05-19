@@ -7,8 +7,13 @@
   <link rel="stylesheet" href="css/main.css" >
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <script src="JSFiles/main.js"></script>
+  <script src="JSFiles/admin.js"></script>
   <script src="JSFiles/sha256.js"></script>
-
+  <script>
+    $(document).ready(function () {
+      getProductReview();
+    });
+  </script>
 </head>
 <body class="admin-body">
 
@@ -74,7 +79,7 @@
                   <a class="admin-link" href="/review_product">Change Featured products</a>
                 </p>
                 <p>
-                  <a class="admin-link" href="/review_product" id="unreviewed"></a>
+                  <a class="admin-link" href="/review_product" id="unreviewed">Unreviewed</a>
                 </p>
               </div>
             </div>

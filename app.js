@@ -103,6 +103,11 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
 //})
 
 
+//delay test
+//for (var i = 0;i < 50;i++){
+//  for (var j = 0;j < 100000000;j++);
+//}
+
 
 app.get('/', function(req,res) {
   res.sendFile(__dirname + "/site/index.html");
@@ -112,6 +117,43 @@ app.get('/', function(req,res) {
 app.get('/FAQ.html',function(req,res) {
   console.log("call made to FAQ.html")
   res.sendFile(__dirname + "/site/FAQ.html");
+})
+
+app.get('/review_product',function(req,res) {
+  console.log("call made to review_products.html")
+  res.sendFile(__dirname + "/site/review_product.html");
+})
+
+app.get('/getProductReview',function(req,res) {
+  if (req.session.adminUser && req.session) {
+    var prdCollection = bmgDB.collection('Product');
+    console.log("test");
+    prdCollection.find({"Reviewed" : "TBD"}).toArray(function(err,docs){
+
+      if (!err){
+        res.send(docs.length + "");
+      }
+      else {res.send("Error in fetching documents")}
+    });
+  } else {
+    res.send("Un-Autorized Access. Your IP will be recorded.")
+  }
+})
+
+app.get('/getProductReviewItems',function(req,res) {
+  if (req.session.adminUser && req.session) {
+    var prdCollection = bmgDB.collection('Product');
+    console.log("test");
+    prdCollection.find({"Reviewed" : "TBD"}).toArray(function(err,docs){
+      if (!err){
+        if (docs.length == 0) {res.send()}
+        else {res.format({'application/json': function(){res.send(docs)}})}
+      }
+      else {res.send("Error in fetching documents")}
+    });
+  } else {
+    res.send("Un-Autorized Access. Your IP will be recorded.")
+  }
 })
 
 app.get('/forgotPassword',function(req,res) {
@@ -221,6 +263,20 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
   }
   catch (e) {console.log(e);res.send("Error in adding product to cart!")}
 })
+
+app.post('/saveReviewedProducts',urlencodedParser,function(req,res){
+  var prodCollection = bmgDB.collection('Product');
+  WaterfallOver(req.body.array,function (val,report){
+      prodCollection.update({"ProdID" : val.Prod},{$unset:{"Reviewed":"TBD"},$set :{"eventType":val.events}}, function(err) {
+        if (!err) {report();}
+        else {console.log("Error in updating product status")}
+      });
+    },function() {
+      console.log("Work Done");
+      res.end("Posted");
+    });
+
+});
 
 app.post('/saveWishlist',urlencodedParser,function(req,res){
   try {

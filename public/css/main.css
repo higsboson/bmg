@@ -554,6 +554,10 @@ ul.dropdown-menu {
   color: #3090C7;
   font-size: 12px;
 }
+
+a.product-review {
+  color: #FFFFFF;
+}
 /* CSS animation */
 
 @-webkit-keyframes fadeIn {

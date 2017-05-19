@@ -1,3 +1,5 @@
+var eventTypeList = ['Birthday','Anniversary','Baby Shower','Wedding','House Warming','Farewell'];
+
 function getFeaturedProducts (cat,div) {
   alert('getting featured products' + $('#catSelectHolder').val());
   $.ajax({
@@ -185,4 +187,92 @@ function saveFeaturedList() {
       alert ("Unable to save");
     }
   })
+}
+
+
+function getProductReview() {
+  $.ajax({
+    url: '/getProductReview',
+    method: 'GET',
+    success: function (res) {
+      alert ("Count is " + res);
+      $('#unreviewed').text("Review Products(" +  res + ")")
+    },
+    error : function (err) {
+      alert ("Unable to save");
+    }
+  })
+}
+
+
+function getProductItems() {
+  $.ajax({
+      method: 'GET',
+      url: '/getProductReviewItems',
+      success : function (res) {
+        var txt = "<table class='table'>"
+        alert(JSON.stringify(res));
+        $('#review_count').val(res.length);
+        for (var i = 0;i < res.length;i++) {
+          txt += '<tr><td><a class="product-review" href="' + res[i].ProdDsc + '" target="_blank"><img src="' + res[i].ImageURL + '"  /></a></td>'
+          txt += '<td style="width:300px"><a class="product-review" href="' + res[i].ProdDsc + '" target="_blank">' + res[i].ProdNm + '</a></td>';
+          txt += '<td>MRP ' + res[i].MRP + '</td>';
+          var eventType = res[i].eventType;
+          txt += "<td><ul style='text-align:left'>";
+          for (var j = 0;j < eventTypeList.length;j++) {
+            var found = 0;
+            for (var k = 0; k < eventType.length;k++) {
+                if (eventType[k] == eventTypeList[j]) {
+                found = 1;
+                break;
+              }
+            }
+            if (found == 1)
+             txt += '<li>' + '<div class="checkbox"><input type="checkbox" id = "eventTypeCheckProd' + eventTypeList[j].replace(/ /gi, "_") + i + '" value="' + eventTypeList[j].replace(/ /gi, "_") + i + '" checked>' + eventTypeList[j] + '</label><br />' + '</div></li>';
+           else
+             txt += '<li>' + '<div class="checkbox"><input type="checkbox" id = "eventTypeCheckProd' + eventTypeList[j].replace(/ /gi, "_") + i + '" value="' + eventTypeList[j].replace(/ /gi, "_") + i + '" >' + eventTypeList[j] + '</label><br />' + '</div></li>';
+
+          }
+          txt += "</ul></td>";
+          txt += "<td><input type='hidden' name='prod" + i + "' id='prod" + i + "' value='"+ res[i].ProdID  + "' /></td>"
+
+          txt += '</tr>';
+        }
+        txt += '</table>';
+        $('#preview').html(txt);
+      },
+      error : function (err) {
+        alert(err);
+      }
+  })
+}
+
+function calcProductReviewEvents() {
+  alert('calculating');
+  var arr = [];
+
+  for (var i = 0;i < parseInt($('#review_count').val()); i++) {
+    var obj = {};
+    obj.Prod = $('#prod' + i).val();
+    obj.events = [];
+    for (var j=0; j < eventTypeList.length;j++) {
+      if ( $("#eventTypeCheckProd" + eventTypeList[j].replace(/ /gi, "_") + i).prop( "checked" ) )
+        obj.events.push(eventTypeList[j]);
+    }
+    arr[i] = obj;
+  }
+  if ($('#review_count').val() != "0") {
+    $.ajax({
+      url: '/saveReviewedProducts',
+      method: 'POST',
+      data: {array: arr},
+      success : function (res) {
+        alert('res ' + res);
+        window.location.href = "/admin";
+      },
+      error : function (err) {
+        alert(err);
+      }
+    })
+  }
 }
