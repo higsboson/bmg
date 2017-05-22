@@ -39,11 +39,27 @@ const googleSiteVerify = "https://www.google.com/recaptcha/api/siteverify";
 var captchaSecret = "";
 
 
+var app2 = express();
+
+var httpServer = http.Server(app2);
+
+app2.get('*',function(req,res){
+  res.redirect('https://www.bemygenie.com' + req.url);
+})
+
+httpServer.listen(8080, function(err){
+  console.log('Listening on 8080');
+});
+
+
+
 var urlencodedParser = bodyParser.urlencoded({extended:true});
 app.use(express.static("public")); //define static directory
 app.use(bodyParser.json()); //to parse application-json
 app.use(urlencodedParser); // for parsing application/x-www-form-urlencoded
 app.set('view engine','ejs');
+
+
 
 // Making user of npm package client-rs.
 // Setting the app to make use of sessions.
@@ -81,8 +97,8 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
            cert : fs.readFileSync(certdir + "nodejs.crt")
         };
 
-        var server = https.createServer(certoptions, app).listen(8080, function () {
-           console.log('Started!');
+        var server = https.createServer(certoptions, app).listen(3000, function () {
+           console.log('Started https on 3000!');
         });
 
       }
