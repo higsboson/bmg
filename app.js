@@ -21,10 +21,6 @@ var https = require('https');
 //This will help bmg with session management
 var usersession = require('client-sessions');
 
-var certoptions = {
-   key  : fs.readFileSync('nodejs.key'),
-   cert : fs.readFileSync('nodejs.crt')
-};
 
 // 3/23/2017 - setting up variable rand for csprng package.
 // This will be used to generate a salt on which password will be hashed.
