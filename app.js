@@ -147,8 +147,12 @@ app.get('/FAQ.html',function(req,res) {
 })
 
 app.get('/review_product',function(req,res) {
-  console.log("call made to review_products.html")
-  res.sendFile(__dirname + "/site/review_product.html");
+  if (req.session.adminUser && req.session) {
+    console.log("call made to review_products.html")
+    res.sendFile(__dirname + "/site/review_product.html");
+  } else {
+    res.send("Un-Autorized Access. Your IP will be recorded.")
+  }
 })
 
 app.get('/getProductReview',function(req,res) {
@@ -947,7 +951,7 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
     var prods = JSON.parse(req.body.array);
     var collection = bmgDB.collection("Product");
     if (prods.values.length == 0) //nothing to add.
-      res.end("Posted");
+      res.end("Added0");
     WaterfallOver(prods.values, function (val, report) {
       collection.find({"ProdID":val.ProdID}).toArray(function (err,data) {
           if(data.length == 0) {

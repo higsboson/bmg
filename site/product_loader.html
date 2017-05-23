@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/main.css" >
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <script src="JSFiles/main.js"></script>
+  <script src="JSFiles/admin.js"></script>
   <script>
 
 var eventTypeList = ['Birthday','Anniversary','Baby Shower','Wedding','House Warming','Farewell'];
@@ -36,7 +37,7 @@ function showDirectVendor(){
       valid = false;
     }
 
-    alert("I am validating product entry!" + $('#image_link').val());
+    //alert("I am validating product entry!" + $('#image_link').val());
     $('#preview').html($('#image_link').val());
   }
 
@@ -60,10 +61,10 @@ function showDirectVendor(){
 
 
 function load_to_db() {
-     alert ("page is " + $('#amazon_search_page').val());
+     //alert ("page is " + $('#amazon_search_page').val());
     var productArray = [];
     if ($('#amazon_search').text() === "Add to DB and view more") {
-      alert("adding to db");
+      //alert("adding to db");
       var j = 0;
       var i;
       for (i = 0; i < 10; i++) {
@@ -78,29 +79,30 @@ function load_to_db() {
             var k = 0;
             for (var l = 0; l < eventTypeList.length;l++) {
               if ( $("#eventTypeCheckProd" + eventTypeList[l].replace(/ /gi, "_") + i).prop( "checked" ) ) {
-                //alert("bday");
+                ////alert("bday");
                 catArr[k] = eventTypeList[l];
                 k++;
               }
             }
             if (k == 0) {
-              alert("Event type is missing for atleast one product. Please check");
+              //alert("Event type is missing for atleast one product. Please check");
+              showWarningModal("Event Selection Missing","Event type is missing for atleast one product. Please check.")
               return;
             }
-            //alert(catArr[0] + catArr[1] + catArr[2] + catArr[3] + "lenght " + catArr.lenght);
+            ////alert(catArr[0] + catArr[1] + catArr[2] + catArr[3] + "lenght " + catArr.lenght);
             var cat = getCatg(parseInt($('#product_price' + i).val())/100,$('#amazon_search_cat').val());
-            //alert("cat is " + cat);
-            //alert ("i is " + i);
+            ////alert("cat is " + cat);
+            ////alert ("i is " + i);
             var catAddData = "";
             for (var l = 0; l < catArr.length;l++) {
               if (l > 0)
                 catAddData += ",";
               catAddData += '"' + catArr[l] + '"';
             }
-            alert ("cat arr done");
+            //alert ("cat arr done");
             productArray[j] = '{ "ProdID":\"BMG' + $('#product_id' + i).val() + '\","ProdNm":\"' + $('#product_name' + i).val() + '\","Catg":"'+ cat +'","MRP":\"' + parseInt($('#product_price' + i).val())/100 +
             '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"eventType":['+ catAddData +']}';
-            alert(productArray[j]);
+            //alert(productArray[j]);
             j++;
           }
         }
@@ -112,8 +114,8 @@ function load_to_db() {
         }
         test += productArray[i];
       }
-      //alert (test);
-      alert ('{"values": [' + test + ']}');
+      ////alert (test);
+      //alert ('{"values": [' + test + ']}');
       var tempJson = '{"values": [' + test + ']}';
 
       //var values = {"values": tempJson};
@@ -122,7 +124,11 @@ function load_to_db() {
             type: 'POST',
             url: '/load_to_db',
             data: {"array":tempJson},
-            success: function (data) { alert('data returned is: ' + data);run();}
+            success: function (data) {
+              if (data != "Added0")
+                showInformationModal('Products Added','The selected products have been added to the database.');
+              run();
+            }
         });
       /*$.ajax({
         url:"/load_to_db",
@@ -131,11 +137,11 @@ function load_to_db() {
         contentType:"application/json;",
         dataType:"json",
         success: function(msg){
-          alert(msg)
+          //alert(msg)
         }
       });*/
     } else {
-      alert ("Going straight to run");
+      //alert ("Going straight to run");
       run();
     }
 
@@ -144,14 +150,19 @@ function load_to_db() {
 
 
   function run(){
-    alert ("page is " + $('#amazon_search_page').val());
+    //alert ("page is " + $('#amazon_search_page').val());
     var searchIndex = '';
     var priRange = '';
+    if ($('#search_product').val() == "") {
+      showWarningModal('Missing Inforamtion','Please enter the name of the product that you would like to search for.');
+      return;
+    }
     if ($('#amazon_search_cat').val() === "") {
       $.each($("input[name='prod_cat']:checked"),function(){searchIndex = $(this).val()});
       $('#amazon_search_cat').val(searchIndex);
       if (searchIndex == "") {
-        alert("Please select a category.");
+        //alert("Please select a category.");
+        showWarningModal('Missing Inforamtion','Please select a category from the list.')
         $('#amazon_search_cat').val("")
         $('#amazon_price_range').val("");
         return;
@@ -160,7 +171,8 @@ function load_to_db() {
       $.each($("input[name='price_range']:checked"),function(){priRange = $(this).val()});
       $('#amazon_price_range').val(priRange);
       if (priRange == "") {
-        alert("Please select a price range.");
+        //alert("Please select a price range.");
+        showWarningModal('Missing Inforamtion','Please select a price range.')
         $('#amazon_search_cat').val("")
         $('#amazon_price_range').val("");
         return;
@@ -178,24 +190,29 @@ function load_to_db() {
       function(data) {
           if (data === "error") {
             $('#preview').html('');
-            alert("There has been an error loading the search results. Please try again");
+            //alert("There has been an error loading the search results. Please try again");
           } else {
             txt = "";
             parser = new DOMParser();
             xmlDoc = parser.parseFromString(data,"text/xml");
-            txt += '<div class="row"><p> There are a total of ' + xmlDoc.getElementsByTagName("Items")[0].getElementsByTagName("TotalResults")[0].childNodes[0].nodeValue + ' result(s).</p><br /><br /> </div>';
             if (xmlDoc.getElementsByTagName("IsValid")[0].childNodes[0].nodeValue !== "True") {
               $('#preview').html('');
-              alert("The amazon search request was invalid." + xmlDoc.getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+              //alert("The amazon search request was invalid." + xmlDoc.getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+              showErrorModal('Serious Error',"The amazon search request was invalid. Error Code: " + xmlDoc.getElementsByTagName("Message")[0].childNodes[0].nodeValue);
             } else {
               if (typeof xmlDoc.getElementsByTagName("Error")[0] !== 'undefined') {
                 $('#preview').html('');
-                alert(xmlDoc.getElementsByTagName("Error")[0].getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+                //alert(xmlDoc.getElementsByTagName("Error")[0].getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+                showErrorModal('General Error',xmlDoc.getElementsByTagName("Error")[0].getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+                $('#preview').html('<a href="/product_loader" style="color:#FFFFFF;font-size:30px;"><button class="btn btn-default btn-lg">Try a new Search!</button></a>');
+                $('#amazon_search').hide();
+                //window.location.href = "/product_loader";
               } else {
                 var page = $('#amazon_search_page').val();
                 page = parseInt(page) + 1;
                 $('#amazon_search_page').val(page);
                 x = xmlDoc.getElementsByTagName("Item");
+                txt += '<div class="row"><p> There are a total of ' + xmlDoc.getElementsByTagName("Items")[0].getElementsByTagName("TotalResults")[0].childNodes[0].nodeValue + ' result(s).</p><br /><br /> </div>';
                 txt += '<div class="row">';
                 for (i = 0; i < x.length; i++) {
                   var image_url = "";
@@ -277,7 +294,7 @@ function load_to_db() {
                   txt += '</div><br />';
                 $('#preview').html(txt);
                 window.scrollTo(0, 0);
-                $('#amazon_search').text("Add to DB and view more");
+                $('#amazon_search').text("Add to DB / View More");
                 $('#amazon_search').prop("onclick",'alert("tester");');
                 $('#search_product').prop("disabled",true);
               }
@@ -291,6 +308,69 @@ function load_to_db() {
 </head>
 <body class="admin-body">
 
+
+<div class="modal fade" id="information_modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="information_modal-title-id"></h4>
+      </div>
+      <div class="modal-body">
+      <span class="glyphicon glyphicon-info-sign"></span>
+        <p id="information_modal-p-id">
+
+        </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="warning_modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="warning_modal-title-id"></h4>
+      </div>
+      <div class="modal-body">
+      <span class="glyphicon glyphicon-warning-sign"></span>
+        <p id="warning_modal-p-id" style="text-align:left">
+
+        </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="error_modal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="error_modal-title-id"></h4>
+      </div>
+      <div class="modal-body">
+      <span class="glyphicon glyphicon-remove-sign"></span>
+        <p id="error_modal-p-id">
+
+        </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" data-dismiss="modal" class="btn btn-primary" id="error_modal-close">Close</button>
+    </div>
+
+  </div>
+</div>
+</div>
 
 <nav class="navbar navbar-default navbar-fixed-top">
       <div class="nav-container">

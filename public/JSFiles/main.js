@@ -978,17 +978,17 @@ function doAdminLogin(action) {
       url: '/getSaltForAdminUser',
       data: {user: $('#admin_username').val()},
       success: function (salt) {
-       alert(salt);
+       //alert(salt);
        var sha256 = new jsSHA('SHA-256', 'TEXT');
-       alert("admin password is " + $('#admin_password').val());
+       //alert("admin password is " + $('#admin_password').val());
        sha256.update($('#admin_password').val() + salt);
        var hash = sha256.getHash("HEX");
-       alert("Hashed val" + hash);
+       //alert("Hashed val" + hash);
        $.ajax({
          type: 'POST',
          url: '/getsalt',
          success: function (newsalt) {
-          alert(newsalt);
+          //alert(newsalt);
           var sha2562 = new jsSHA('SHA-256', 'TEXT');
           sha2562.update(newsalt + hash);
           var newhash = sha2562.getHash("HEX");
@@ -998,7 +998,7 @@ function doAdminLogin(action) {
             url: '/pAdminLogin',
             data: {attempt: newhash,gensalt: newsalt,user: $('#admin_username').val()},
             success: function (data) {
-             alert("Performing Login: Result is " + data);
+             //alert("Performing Login: Result is " + data);
              if (action == "") {
                window.location.href = "/admin";
              }

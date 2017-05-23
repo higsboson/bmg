@@ -558,6 +558,25 @@ ul.dropdown-menu {
 a.product-review {
   color: #FFFFFF;
 }
+
+.glyphicon-warning-sign {
+    padding: 10px;
+    font-size: 50px;
+    color: #ffd800;
+}
+
+.glyphicon-info-sign {
+    padding: 10px;
+    font-size: 50px;
+    color: #00cbff;
+}
+
+.glyphicon-remove-sign {
+  padding: 10px;
+  font-size: 50px;
+  color: #d11b1b;
+}
+
 /* CSS animation */
 
 @-webkit-keyframes fadeIn {
