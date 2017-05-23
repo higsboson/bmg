@@ -11,8 +11,17 @@
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="JSFiles/main.js"></script>
   <script src='https://www.google.com/recaptcha/api.js'></script>
+  <link href="https://fonts.googleapis.com/css?family=Droid+Serif|Merriweather|Rochester|Sue+Ellen+Francisco" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
+  <style>
+    nav {
+      font-family: 'Rochester', cursive;
+    }
+  </style>
+
 
 <script>
+function dateOk() {document.getElementById("regForm").submit()};
 
 $(document).ready(function () {
   $('#datepicker').datepicker({format: 'dd/mm/yyyy'});
@@ -25,65 +34,79 @@ $(document).ready(function () {
   const baseURL = "http://localhost:8080";
   $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
 
+  $('#event_name').on('keypress',function(event){
+    var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+      event.preventDefault();
+      return false;
+    }
+  });
 });
 
 
 function getBasicInfo() {
-  alert("getting basic info" + $('#age_group_sel').val());
+  //alert("getting basic info" + $('#age_group_sel').val());
   //alert("Captcha response ->"+grecaptcha.getResponse());
+  var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
 
-  if ($('#event_name').val() == '') {
-    alert("no data event");
+  if ($('#event_name').val() == '' || (!(regex.test($('#event_name').val()))) ) {
+    document.getElementById("modalMessage").innerHTML = "Please enter a valid - Event Name";
+    $("#validateModal").modal('show');
     return false;
   }
   if ($('#age_group_sel').val() == "Choose your age group"){
-    alert("no data age");
+    document.getElementById("modalMessage").innerHTML = "Please choose a valid value for - Age";
+    $("#validateModal").modal('show');
     return false;
   }
 
   if ($('#gender_sel').val() == "Choose your Gender"){
-    alert("no data gen");
+    document.getElementById("modalMessage").innerHTML = "Please choose a valid value for - Gender";
+    $("#validateModal").modal('show');
     return false;
   }
 
   if ($('#datepicker').val() == "") {
-    alert("there is no date");
+    document.getElementById("modalMessage").innerHTML = "Please choose a valid value for - Event Date";
+    $("#validateModal").modal('show');
     return false;
-  } else {
+  }
+  else {
     var date = new Date($('#datepicker').val());
     var origDate = new Date($('#datepicker').val());
     var today = new Date();
     if (dateDifferenceInDays(date,today) <= 0) {
-      alert("You seem to have selected a date that is not in the future. BMG requires that your event be scheduled atleast two weeks in the future to ensure on time delivery of gifts.");
+      document.getElementById("modalMessage").innerHTML = "Please choose a valid future date for your event";
+      $("#validateModal").modal('show');
       return false;
     }
     date.setDate(date.getDate()-14);
     if (dateDifferenceInDays(date,today) < 0) {
-      alert("Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.")
+      //alert("Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.");
+      $("#validateDateModal").modal('show');
+      //return false;
     }
   }
 
-  if ($('#event_category_sel').val() == "Choose the even that you will be celebrating"){
-    alert("no data cat");
+  if ($('#event_category_sel').val() == "Choose the event that you will be celebrating"){
+    document.getElementById("modalMessage").innerHTML = "Please choose an event type";
+    $("#validateModal").modal('show');
     return false;
   }
-  alert('posting');
+
   $.ajax({
      type  : 'POST',
      url   : '/verifyRecaptcha',
      data  : {"Response":grecaptcha.getResponse()},
      success: function(res) {
        if (res.success) {
-
-
           var dISO = origDate.toISOString();
-          alert(dISO);
           setCookie("age_group",$('#age_group_sel').val(),2);
           setCookie("gender",$('#gender_sel').val(),2);
           setCookie("event_category",$('#event_category_sel').val(),2);
           setCookie("event_name",$('#event_name').val(),2);
           setCookie("event_date",dISO,2);
-          document.getElementById("regForm").submit();
         } else if (res["error-codes"][0] == "missing-input-response")
           alert('Please click checkbox to verify that you are a human :)')
       },
@@ -97,6 +120,40 @@ function getBasicInfo() {
 
 
   <body>
+    <div id="validateModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="validateModalLabel">
+      <div class="modal-dialog">
+        <div class = "modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Invalid input</h4>
+          </div>
+          <div class="modal-body">
+              <p style="font-family:'Merriweather', serif;font-size:16px" id="modalMessage"></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="validateDateModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="validateDateModalLabel">
+        <div class="modal-dialog">
+          <div class = "modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Warning</h4>
+            </div>
+            <div class="modal-body">
+                <p style="font-family:'Merriweather', serif;font-size:16px">Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal" onclick="dateOk()">Proceed</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Choose another date</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
     <nav class="navbar navbar-default navbar-fixed-top">
           <div class="nav-container">
@@ -113,9 +170,9 @@ function getBasicInfo() {
               <ul class="nav navbar-nav">
               </ul>
               <ul class="nav navbar-nav navbar-right">
-                <li><a href="/login">Login</a></li>
-                <li><a href="#contact">Find a registry</a></li>
-                <li><a href="#contact">Track your order</a></li>
+                <li><a href="/login" class="invisible">Login</a></li>
+                <li><a href="#contact" class="invisible">Find a registry</a></li>
+                <li><a href="#contact" class="invisible">Track your order</a></li>
               </ul>
             </div><!--/.nav-collapse -->
           </div>

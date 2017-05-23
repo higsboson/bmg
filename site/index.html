@@ -39,7 +39,7 @@ $(document).ready(function () {
  $("#homeProducts").hide();
  $("#babyProducts").hide();
   $("#myiframe").click(function(){
-    alert("I am caputring my event here.");
+    //alert("I am caputring my event here.");
   });
 
   //Replace footer links here
@@ -52,7 +52,7 @@ $(document).ready(function () {
 });
 
 function checkEvents() {
-  alert(getCookie("event_name"));
+  //alert(getCookie("event_name"));
   if(getCookie("event_name") == "") {
     window.location.href = "/new_registry";
     // Just a fail safe for deleteing ProdID

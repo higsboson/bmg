@@ -19,6 +19,14 @@
     <!-- Include the plugin's CSS and JS: -->
     <script type="text/javascript" src="JSFiles/bootstrap-multiselect.js"></script>
     <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Serif|Merriweather|Rochester|Sue+Ellen+Francisco" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
+
+    <style>
+      nav {
+        font-family: 'Rochester', cursive;
+      }
+    </style>
 
     <script>
      $(document).ready(function () {
@@ -64,8 +72,8 @@
                var cnt =0;
                htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
                htmlStr = htmlStr+'<div class="row"><div class="col-md-8"><p style="font-size:18px">Your selected products</p></div><div class="col-md-2">';
-               htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="loadNewCart()">Search more products</button></div><div class="col-md-2">';
-               htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" data-toggle="modal" data-target="#signUpOrNot">Proceed to save wishlist</button></div></div>';
+               htmlStr = htmlStr+'<button type="button" class = "btn btn-primary" onclick="loadNewCart()">Search more products</button></div><div class="col-md-2">';
+               htmlStr = htmlStr+'<button type="button" class = "btn btn-success" data-toggle="modal" data-target="#signUpOrNot">Proceed to save wishlist</button></div></div>';
                htmlStr = htmlStr+'<hr>';
                $.each(data, function(key,doc){
                  try {
@@ -161,10 +169,13 @@
               }
             });
           }
-          else {
+          else if (srchprod==""){
             //show modal
-            $("#invalidSearchKeyModal").modal('show');
+            //$("#prdGrpSelect").select(['All']);
+            //$("#prdGrpSelect").multiselect('refresh');
+            searchCatg();
           }
+          else {$("#invalidSearchKeyModal").modal('show')}
        });//searchbutton
        $("#chkGenre").change(function() {searchCatg()});
        $("#chkPrice").change(function() {searchCatg()});
