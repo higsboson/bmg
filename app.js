@@ -32,9 +32,10 @@ const uri = "/onca/xml";
 var aws_access_key_id = "";
 var aws_secret_key = "";
 var associate_tag = "";
-var urlHost = "bemygenie.com:8080";
+var urlHost;
 var emailPassword;
 var certdir;
+var envmode;
 const googleSiteVerify = "https://www.google.com/recaptcha/api/siteverify";
 var captchaSecret = "";
 
@@ -44,12 +45,15 @@ var app2 = express();
 var httpServer = http.Server(app2);
 
 app2.get('*',function(req,res){
-  res.redirect('https://www.bemygenie.com' + req.url);
+  if (envmode == "prod") {
+    res.redirect('https://www.bemygenie.com' + req.url);
+  }
+  else if (envmode == "dev") {
+    res.redirect('https://dev.bemygenie.com:3000' + req.url);
+  }
 })
 
-httpServer.listen(8080, function(err){
-  console.log('Listening on 8080');
-});
+
 
 
 
@@ -90,6 +94,13 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
         captchaSecret = doc[0].captchaSecret;
         emailPassword = doc[0].mailconn;
         certdir = doc[0].certdir;
+        envmode = doc[0].envmode;
+
+        if (envmode == "prod") {
+          urlHost = "www.bemygenie.com";
+        } else if (envmode == "dev") {
+          urlHost = "dev.bemygenie.com";
+        }
 
 
         var certoptions = {
@@ -99,6 +110,10 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
 
         var server = https.createServer(certoptions, app).listen(3000, function () {
            console.log('Started https on 3000!');
+        });
+
+        httpServer.listen(8080, function(err){
+          console.log('Listening on 8080');
         });
 
       }
