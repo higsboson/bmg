@@ -107,7 +107,9 @@
        $("#searchbutton").click(function() {
          var srchprod="";
          srchprod = $("#searchitem").val();
-         if (srchprod!="") {
+         var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
+
+         if (srchprod!="" && regex.test(srchprod)) {
              $("#page-number").val(1);
              $.get( "/srchProductByName",{PageNumber:$("#page-number").val(),ProdNm:srchprod,ProdGrp:prdGrpSel}, function( data, status ) {
                if (status == 'success'){
@@ -117,7 +119,7 @@
                  var prdName1="";
                  var prdId = "";
                  var cnt =0;
-                 htmlStr = '<hr><div class = "carousel-wrapper" id="carousel-wrapper">';
+                 htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
                  $.each(data, function(key,doc){
                    try {
                      prdName1 = doc.ProdNm;
@@ -158,6 +160,10 @@
                alert("Error in fetching data from server");
               }
             });
+          }
+          else {
+            //show modal
+            $("#invalidSearchKeyModal").modal('show');
           }
        });//searchbutton
        $("#chkGenre").change(function() {searchCatg()});
@@ -283,6 +289,15 @@
            })
          }
        }//end search category
+       $("#searchitem").on('keypress',function(event){
+         var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
+         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+         if (!regex.test(key)) {
+           event.preventDefault();
+           return false;
+         }
+         if (event.keyCode == 13) {$("#searchbutton").click()}
+       });
      }); //ready
 
 
@@ -373,6 +388,23 @@ Modal Ends here-->
       </div>
     </div>
   </div>
+
+  <div id="invalidSearchKeyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="invalidSearchKeyModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Invalid input</h4>
+        </div>
+        <div class="modal-body">
+            <p style="font-family:'Merriweather', serif;font-size:16px">Please enter a valid search string.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   <body>
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -504,6 +536,7 @@ Modal Ends here-->
              </form>
            </div> <!-- Search product row -->
             <div class = "row" style="padding-top:10px">
+              <hr>
               <div class = "carousel-wrapper" id="carousel-wrapper"></div> <!--carousel-wrapper -->
               <div class = "row"><div class="col-sm-5"></div><div class="col-sm-1"><form><input class="form-control" id="page-number" value="1" type="hidden"></form></div><div class="col-sm-6"></div></div>
             </div> <!-- Carousel row -->
