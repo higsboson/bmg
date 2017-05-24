@@ -1048,6 +1048,7 @@ app.get('/sendmail', function (req,res) {
 });
 
 app.post('/verifyRecaptcha',urlencodedParser,function(req,res){
+  console.log('checking captcha');
   var captchaRes=req.body.Response;
   request ({uri : googleSiteVerify,
     method : 'POST',

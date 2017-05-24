@@ -21,7 +21,7 @@
 
 
 <script>
-function dateOk() {document.getElementById("regForm").submit()};
+function dateOk() {submitForm()};
 
 $(document).ready(function () {
   $('#datepicker').datepicker({format: 'dd/mm/yyyy'});
@@ -43,6 +43,31 @@ $(document).ready(function () {
     }
   });
 });
+
+function submitForm() {
+  $.ajax({
+   type  : 'POST',
+   url   : '/verifyRecaptcha',
+   data  : {"Response":grecaptcha.getResponse()},
+   success: function(res) {
+     if (res.success) {
+        var origDate = new Date($('#datepicker').val());
+        var dISO = origDate.toISOString();
+        setCookie("age_group",$('#age_group_sel').val(),2);
+        setCookie("gender",$('#gender_sel').val(),2);
+        setCookie("event_category",$('#event_category_sel').val(),2);
+        setCookie("event_name",$('#event_name').val(),2);
+        setCookie("event_date",dISO,2);
+        document.getElementById("regForm").submit();
+      } else if (res["error-codes"][0] == "missing-input-response")
+        document.getElementById("modalMessage").innerHTML = "Please click checkbox to verify that you are a human :)";
+        $("#validateModal").modal('show');
+    },
+    error : function (res) {
+      alert("Error in validating captcha response - "+res.error_codes);
+    }
+  })
+}
 
 
 function getBasicInfo() {
@@ -67,6 +92,12 @@ function getBasicInfo() {
     return false;
   }
 
+  if ($('#event_category_sel').val() == "Choose the event that you will be celebrating"){
+    document.getElementById("modalMessage").innerHTML = "Please choose an event type";
+    $("#validateModal").modal('show');
+    return false;
+  }
+
   if ($('#datepicker').val() == "") {
     document.getElementById("modalMessage").innerHTML = "Please choose a valid value for - Event Date";
     $("#validateModal").modal('show');
@@ -85,35 +116,15 @@ function getBasicInfo() {
     if (dateDifferenceInDays(date,today) < 0) {
       //alert("Your Selected date is less than two weeks away. So it may be possible that your gifts may not arrive on time.");
       $("#validateDateModal").modal('show');
-      //return false;
+      return false;
+    } else {
+      //submitForm();
     }
   }
 
-  if ($('#event_category_sel').val() == "Choose the event that you will be celebrating"){
-    document.getElementById("modalMessage").innerHTML = "Please choose an event type";
-    $("#validateModal").modal('show');
-    return false;
-  }
 
-  $.ajax({
-     type  : 'POST',
-     url   : '/verifyRecaptcha',
-     data  : {"Response":grecaptcha.getResponse()},
-     success: function(res) {
-       if (res.success) {
-          var dISO = origDate.toISOString();
-          setCookie("age_group",$('#age_group_sel').val(),2);
-          setCookie("gender",$('#gender_sel').val(),2);
-          setCookie("event_category",$('#event_category_sel').val(),2);
-          setCookie("event_name",$('#event_name').val(),2);
-          setCookie("event_date",dISO,2);
-        } else if (res["error-codes"][0] == "missing-input-response")
-          alert('Please click checkbox to verify that you are a human :)')
-      },
-      error : function (res) {
-        alert("Error in validating captcha response - "+res.error_codes);
-      }
-    })
+
+
 }
 </script>
   </head>
@@ -204,7 +215,7 @@ function getBasicInfo() {
                 </div>
 
                 <div class="col-sm-6" style="text-align:center">
-                  <input type="email" class="form-control" name="email" id="event_name" placeholder="eg. Buffy's birthday bash!" />
+                  <input type="text" class="form-control" name="email" id="event_name" placeholder="eg. Buffy's birthday bash!" />
                 </div>
                 <div class="col-sm-2" style="text-align:center">
                 </div>

@@ -360,7 +360,7 @@
             <label for="password">Password:</label>
           </div>
           <input type="password" class="form-control" name="email" id="login_password" required/>
-          <p class="forgot-password"> <a href="/forgotPassword">Forgot password</a></p>
+          <p class="forgot-password"> <a href="/forgotPassword" target="_blank">Forgot password</a></p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" data-dismiss="modal"  onclick="doLogin('saveWishList')">Login</button>
@@ -385,6 +385,28 @@
     </div>
   </div>
 Modal Ends here-->
+
+<!-- Modal Starts here-->
+  <div class="modal fade" id="invalid_password" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Uh - oh!</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+             The username or password is incorrect.
+          </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-primary" onclick="showLoginModal()">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Modal Ends here-->
 
 <div id="wishListURLModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="wishListURLModalLabel">
   <div class="modal-dialog">

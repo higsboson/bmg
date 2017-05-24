@@ -5,6 +5,7 @@ function buyNow(prodid,prodURL) {
   //setCookie("BuyingPrdURL",prodURL);
   buyingProdID = prodid;
   buyingProdURL = prodURL;
+  $("#buyBtn").html('<a href="' + prodURL + '" target="_blank"><button type="button" class="btn btn-success" style="display:default" onclick="openAmznPage()">Proceed to Buy</button></a>')
   $("#myModal").modal('show');
 }
 
@@ -20,7 +21,7 @@ function openAmznPage() {
         $("#buyBtn").toggle();
         $("#didNotBuy").toggle();
         $("#closeBtn").toggle();
-        window.open(buyingProdURL);
+        //window.open(buyingProdURL);
       },
       error : function(res) {alert("Error in blocking product. Please try after sometime!")}
     })

@@ -221,17 +221,20 @@
             <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button></div>
             <div class="modal-body">
               <p>Hi There!!!,</p>
-              <p>You will now be redirected to the third party website where you can buy and ship the product to your desired destination.</p>
-              <p>Please note, that this product will be blocked as bought by you. For some reason if you do not complete your purchase, We urge you to kindly
-                comeback to this page and notify us of the same.</p>
+              <p>Thanks for opting to purchase this product. Please click on the <button type="button" class="btn btn-success">Proceed to Buy</button> button below to continue. <br /><br />You will then be redirected to the third party website where you can buy the product and have it shipped to you.</p>
+              <p>Once you have made the purchase, we request you to come back to this page and click on the <button type="button"  class="btn btn-primary btn-sm">Purchase Completed</button>.
+                <br /><br />In case you change your mind about purchasing the product, we then request you to click on the  <button type="button"  class="btn btn-warning btn-sm" >Changed my mind</button> button.
+                comeback to this page and 'click'.</p>
               <br>
-              <p>We Thank You for your kind support in helping us serve better</p>
+              <p>We thank you for your kind support in helping us serve better.</p>
             </div>
             <div class="modal-footer">
-              <button type="button" id="closeBtn" class="btn btn-default" style="display:default" data-dismiss="modal">Close</button>
-              <button type="button" id="buyBtn" class="btn btn-success" style="display:default" onclick="openAmznPage()">Proceed to Buy</button>
-              <button type="button" id="boughtButton" class="btn btn-success" style="display:none" onclick="changeGiftStatus('Bought')">Purchase Completed</button>
-              <button type="button" id="didNotBuy" class="btn btn-warning" style="display:none" onclick="changeGiftStatus('Available')">Did not Buy</button>
+              <button type="button" id="closeBtn" class="btn btn-default" style="display:default;float:left" data-dismiss="modal">Close</button>
+              <div id="buyBtn">
+                <a href="" target="_blank"><button type="button" class="btn btn-success" style="display:default" onclick="openAmznPage()">Proceed to Buy</button></a>
+              </div>
+              <button type="button" id="boughtButton" class="btn btn-primary" style="display:none" onclick="changeGiftStatus('Bought')">Purchase Completed</button>
+              <button type="button" id="didNotBuy" class="btn btn-warning" style="display:none;float:left" onclick="changeGiftStatus('Available')">Changed my mind</button>
             </div>
           </div>
         </div>
