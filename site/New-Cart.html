@@ -46,7 +46,7 @@
 
        //replace the footer links
        $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
-       $("#prdGrpSelect").multiselect({
+       /*$("#prdGrpSelect").multiselect({
          includeSelectAllOption:true,
          includeSelectAllDivider:true,
          enableCaseInsensitiveFiltering: true,
@@ -54,7 +54,7 @@
          enableFiltering: true,
          onChange : function() {prdGrpSel = this.$select.val()},
          onSelectAll : function() {prdGrpSel = "All"}
-       }); //multiple select option
+       }); //multiple select option*/
        searchCatg(); //search by event type right at the start
 
        $("#CartId").click(function() {
@@ -113,12 +113,15 @@
        })
 
        $("#searchbutton").click(function() {
+
          var srchprod="";
          srchprod = $("#searchitem").val();
          var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
 
          if (srchprod!="" && regex.test(srchprod)) {
-             $("#page-number").val(1);
+           $('#searchingFor').text('Searching for "' + srchprod + '"');
+           searchCatg();
+             /*$("#page-number").val(1);
              $.get( "/srchProductByName",{PageNumber:$("#page-number").val(),ProdNm:srchprod,ProdGrp:prdGrpSel}, function( data, status ) {
                if (status == 'success'){
                  var htmlStr = "";
@@ -172,13 +175,18 @@
           else if (srchprod==""){
             //show modal
             //$("#prdGrpSelect").select(['All']);
-            //$("#prdGrpSelect").multiselect('refresh');
-            searchCatg();
+            //$("#prdGrpSelect").multiselect('refresh');*/
           }
           else {$("#invalidSearchKeyModal").modal('show')}
        });//searchbutton
-       $("#chkGenre").change(function() {searchCatg()});
-       $("#chkPrice").change(function() {searchCatg()});
+
+       $('input[name="chkValGen"]').change(function() {
+         $('#searchingFor').text("Showing all " + getCheckBoxCategory($(this).val()) + ":");
+         $('#currentCat').val(getCheckBoxCategory($(this).val()));
+         $('input[name="chkValGen"]').not(this).prop('checked', false);
+         searchCatg();
+       });
+       $('input[name="chkValPrc"]').change(function() {$('#searchingFor').text("");$('input[name="chkValPrc"]').not(this).prop('checked', false);searchCatg()});
        $("#searchToys").click(function() {document.getElementById("genreToys").checked = true;searchCatg()});
        $("#searchApparel").click(function() {document.getElementById("genreApparel").checked = true;searchCatg()});
        $("#searchSports").click(function() {document.getElementById("genreSports").checked = true;searchCatg()});
@@ -198,6 +206,14 @@
           $.each($("input[name='chkValGen']:checked"), function(){genreStr.push($(this).val());chkCnt++});
           $.each($("input[name='chkValPrc']:checked"), function(){priceStr.push($(this).val());prcChkCnt++});
 
+          if (chkCnt == 0 && $("#searchitem").val().length == 0) {
+            $('#searchingFor').text("Showing all products:");
+          } else if (chkCnt == 0 && $("#searchitem").val().length > 0) {
+            $('#searchingFor').text('Searching for "' + $("#searchitem").val() + '"');
+          } else if (chkCnt > 0&& $("#searchitem").val().length > 0) {
+            $('#searchingFor').text('Searching for "' + $("#searchitem").val() + '" in ' + $('#currentCat').val() + ":");
+          }
+
           if (chkCnt > 0 && prcChkCnt > 0) {
             for (i=0;i<genreStr.length;i++) {for (j=0;j<priceStr.length;j++) {gpStr[cnt]='"'+genreStr[i]+priceStr[j]+'"';cnt++;}}
           }
@@ -207,9 +223,31 @@
           else if (chkCnt == 0 && prcChkCnt > 0) {
             for (i=0;i<genreAll.length;i++) {for (j=0;j<priceStr.length;j++) {gpStr[cnt]='"'+genreAll[i]+priceStr[j]+'"';cnt++;}}
           }
+          else if (chkCnt == 0 && prcChkCnt == 0) {
+            for (i=0;i<genreAll.length;i++) {for (j=0;j<priceAll.length;j++) {gpStr[cnt]='"'+genreAll[i]+priceAll[j]+'"';cnt++;}}
+          }
           var evntStr = getCookie("event_category");
+          alert(gpStr);
           if (cnt > 0) {
-             srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+']}';
+            if ($('#searchitem').val().length == 0) {
+             srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0"}';
+             alert('no item');
+           }
+            else {
+              var keywords = $('#searchitem').val().split(' ');
+              var keywordArr = "";
+              for (var m = 0,n = 0; m < keywords.length; m++) {
+                if (keywords[m].length >= 3) {
+                  if (n != 0) {
+                    keywordArr += ",";
+                  }
+                  keywords[m] = keywords[m].replace(/[^a-zA-Z0-9]/g, '');
+                  keywordArr += '"' + keywords[m].toLowerCase() + '"';
+                  n++;
+                }
+              }
+             srchStr = '{"productNameKeywords":['+keywordArr+'],"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"1"}';
+           }
              //alert("Search Str : "+srchStr);
              $.ajax({
                type : 'POST',
@@ -241,6 +279,7 @@
                      if (loop%4 == 0){htmlStr = htmlStr + "</div>"};
                   }
                   catch (e) {}
+                  $("#searchitem").val("");
                  }) //for each
                  if (loop%4 != 0) {htmlStr = htmlStr + "</div>"};
                  htmlStr = htmlStr + endStr + "</div>";
@@ -256,7 +295,7 @@
              })
          }
          else {
-           srchStr = '{"eventType":"'+evntStr+'","catgCount":'+0+'}';
+           srchStr = '{"eventType":"'+evntStr+'","catgCount":'+0+',"pNameFlag":"0"}';
 
            $.ajax({
              type : 'POST',
@@ -285,6 +324,7 @@
                    if (loop%4 == 0){htmlStr = htmlStr + "</div>"};
                 }
                 catch (e) {}
+                $("#searchitem").val("");
                }) //for each
                if (loop%4 != 0) {htmlStr = htmlStr + "</div>"};
                htmlStr = htmlStr + endStr + "</div>";
@@ -476,32 +516,32 @@ Modal Ends here-->
                 <div id="collapseGenre" class="panel-collapse collapse">
                   <form>
                     <div class = "checkbox" id = "chkGenre">
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="A">Apparel</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="C">Automobile</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Q">Appliances</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Y">Baby Items</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="U">Beauty Products</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="B">Books</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="D">DVD</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="E">Electronics</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="A">Apparel</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="C">Automobile</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="Q">Appliances</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="Y">Baby Items</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="U">Beauty Products</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="B">Books</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="D">DVD</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="E">Electronics</label><br>
                       <!--<label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="">Experiences</label><br>-->
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="K">Furniture</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="V">Gift Cards</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="H">Health & Personal Care</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="G">Home & Garden</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="J">Jewelry</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="L">Luggage</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="X">Luxury Beauty</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="M">Music</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="N">Musical Instruments</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="O">Office Products</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="P">PC Hardware</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="S">Shoes</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="F">Software</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="R">Sports Goods</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="T">Toys</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="I">Video Games</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="W">Watches</label>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="K">Furniture</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="V">Gift Cards</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="H">Health & Personal Care</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="G">Home & Garden</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="J">Jewelry</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="L">Luggage</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="X">Luxury Beauty</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="M">Music</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="N">Musical Instruments</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="O">Office Products</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="P">PC Hardware</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="S">Shoes</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="F">Software</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="R">Sports Goods</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="T">Toys</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="I">Video Games</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="W">Watches</label>
                     </div>
                   </form>
                 </div><!--Panel items-->
@@ -515,11 +555,11 @@ Modal Ends here-->
                 <div id="collapsePrice" class="panel-collapse collapse">
                   <form>
                     <div class = "checkbox" id="chkPrice">
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="0">0 - 500</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="5">501 - 1000</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="1">1001 - 2000</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="2">2001 - 3000</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="3"> 3001 - More </label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="0">&#8377;0 - &#8377;500</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="5">&#8377;500 - &#8377;1000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="1">&#8377;1000 - &#8377;2000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="2">&#8377;2000 - &#8377;3000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="3"> > &#8377;3000</label><br>
                     </div>
                   </form>
                 </div><!--Panel items-->
@@ -535,7 +575,7 @@ Modal Ends here-->
                   <!--p style="color:#FFFFFF;font-size:72px"> Search</p-->
                  <label for="search-item" style="color:#000000;font-size:18px" class = "control-label">Search for a product:</label>
                  <input type="text" class="form-control" id="searchitem">
-                 <select id="prdGrpSelect">
+                <!-- <select id="prdGrpSelect">
                    <option value="All">All</option>
                    <option value="Apparel">Apparel</option>
                    <option value="Appliances">Appliances</option>
@@ -545,7 +585,7 @@ Modal Ends here-->
                    <option value="Books">Books</option>
                    <option value="DVD">DVD</option>
                    <option value="Electronics">Electronics</option>
-                   <!--<option value="Experiences">Experiences</option>-->
+                   <!--<option value="Experiences">Experiences</option>
                    <option value="Furniture">Furniture</option>
                    <option value="GiftCards">Gift Cards</option>
                    <option value="HealthPersonalCare">Health & Personal Care</option>
@@ -563,11 +603,18 @@ Modal Ends here-->
                    <option value="Toys">Toys</option>
                    <option value="VideoGames">Video Games</option>
                    <option value="Watches">Watches</option>
-                 </select>
+                 </select>-->
                  <button type="button" class = "btn btn-primary active" id="searchbutton"><span class="glyphicon glyphicon-search"></span></button>
                </div>
              </form>
            </div> <!-- Search product row -->
+           <div class="row" style="padding-top:40px">
+             <p style="font-size:24px" id="searchingFor">
+
+             </p>
+
+           </div>
+           <input type="hidden" id="currentCat" value="" name="currentCat" />
             <div class = "row" style="padding-top:10px">
               <hr>
               <div class = "carousel-wrapper" id="carousel-wrapper"></div> <!--carousel-wrapper -->

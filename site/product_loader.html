@@ -63,7 +63,7 @@ function showDirectVendor(){
 function load_to_db() {
      //alert ("page is " + $('#amazon_search_page').val());
     var productArray = [];
-    if ($('#amazon_search').text() === "Add to DB and view more") {
+    if ($('#amazon_search').text() === "Add to DB / View More") {
       //alert("adding to db");
       var j = 0;
       var i;
@@ -100,9 +100,21 @@ function load_to_db() {
               catAddData += '"' + catArr[l] + '"';
             }
             //alert ("cat arr done");
+            var keywords = $('#product_name' + i).val().split(' ');
+            var keywordArr = "";
+            for (var m = 0,n = 0; m < keywords.length; m++) {
+              if (keywords[m].length >= 3) {
+                if (n != 0) {
+                  keywordArr += ",";
+                }
+                keywords[m] = keywords[m].replace(/[^a-zA-Z0-9]/g, '');
+                keywordArr += '"' + keywords[m].toLowerCase() + '"';
+                n++;
+              }
+            }
             productArray[j] = '{ "ProdID":\"BMG' + $('#product_id' + i).val() + '\","ProdNm":\"' + $('#product_name' + i).val() + '\","Catg":"'+ cat +'","MRP":\"' + parseInt($('#product_price' + i).val())/100 +
-            '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"eventType":['+ catAddData +']}';
-            //alert(productArray[j]);
+            '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"eventType":['+ catAddData +'],"prodNameKeyWords":[' + keywordArr  + ']}';
+            alert(productArray[j]);
             j++;
           }
         }

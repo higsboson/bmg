@@ -217,24 +217,49 @@ app.post('/getProdByCatg',function(req,res){
     //console.log("Event Type : "+evenTypeStr);
     //console.log("Count : "+qryStr.catgCount);
     //console.log("Category Array : "+qryStr.category);
+    console.log("pNameFlag is " + qryStr.pNameFlag);
+    if (qryStr.pNameFlag == "0") {
+      console.log("no item names searched")
+      if (count == 0) {
+        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).toArray(function(err,docs) {
+          if (!err){
+            if (docs.length == 0) {res.send()}
+            else {res.format({'application/json': function(){res.send(docs)}})}
+          }
+          else {console.log(err);res.send("Error in fetching documents")}
+        })
+      }
+      else {
+        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).toArray(function(err,docs) {
+          if (!err){
+            if (docs.length == 0) {res.send()}
+            else {res.format({'application/json': function(){res.send(docs)}})}
+          }
+          else {console.log(err);res.send("Error in fetching documents")}
+        })
+      }
+    } else {
 
-    if (count == 0) {
-      prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).toArray(function(err,docs) {
-        if (!err){
-          if (docs.length == 0) {res.send()}
-          else {res.format({'application/json': function(){res.send(docs)}})}
-        }
-        else {console.log(err);res.send("Error in fetching documents")}
-      })
-    }
-    else {
-      prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).toArray(function(err,docs) {
-        if (!err){
-          if (docs.length == 0) {res.send()}
-          else {res.format({'application/json': function(){res.send(docs)}})}
-        }
-        else {console.log(err);res.send("Error in fetching documents")}
-      })
+      var searchKeyWords = qryStr.productNameKeywords;
+      console.log(searchKeyWords);
+      if (count == 0) {
+        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords}}).toArray(function(err,docs) {
+          if (!err){
+            if (docs.length == 0) {res.send()}
+            else {res.format({'application/json': function(){res.send(docs)}})}
+          }
+          else {console.log(err);res.send("Error in fetching documents")}
+        })
+      }
+      else {
+        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category}}).toArray(function(err,docs) {
+          if (!err){
+            if (docs.length == 0) {res.send()}
+            else {res.format({'application/json': function(){res.send(docs)}})}
+          }
+          else {console.log(err);res.send("Error in fetching documents")}
+        })
+      }
     }
   }
   catch (e) {console.log("getProdByCatg -->"+e.message)}

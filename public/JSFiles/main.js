@@ -615,7 +615,19 @@ function getUserProfileDetails(user,div) {
        //prodnm = prodnm.replace(/['"-()]+/g, ''); //need to handle escaping of /
 
        //trznt - Adding another item to prod called Status: Open
-       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'","Reviewed":"TBD","eventType":["'+evntType+'"]}';
+       var keywords = prodnm.val().split(' ');
+       var keywordArr = "";
+       for (var m = 0,n = 0; m < keywords.length; m++) {
+         if (keywords[m].length >= 3) {
+           if (n != 0) {
+             keywordArr += ",";
+           }
+           keywords[m] = keywords[m].replace(/[^a-zA-Z0-9]/g, '');
+           keywordArr += '"' + keywords[m].toLowerCase() + '"';
+           n++;
+         }
+       }
+       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'","Reviewed":"TBD","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + ']}';
        //Throwing error if the name has quotes in it
        $.ajax({
          type : 'POST',
@@ -669,7 +681,19 @@ function getUserProfileDetails(user,div) {
        //prodnm = prodnm.replace(/['"-()]+/g, ''); //need to handle escaping of /
 
        //trznt - Adding another item to prod called Status: Open
-       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"]}';
+       var keywords = prodnm.val().split(' ');
+       var keywordArr = "";
+       for (var m = 0,n = 0; m < keywords.length; m++) {
+         if (keywords[m].length >= 3) {
+           if (n != 0) {
+             keywordArr += ",";
+           }
+           keywords[m] = keywords[m].replace(/[^a-zA-Z0-9]/g, '');
+           keywordArr += '"' + keywords[m].toLowerCase() + '"';
+           n++;
+         }
+       }
+       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + ']}';
        //Throwing error if the name has quotes in it
        $.ajax({
          type : 'POST',
@@ -1019,4 +1043,34 @@ function doAdminLogin(action) {
     })
   }
   catch (e) {alert("Error!!! - "+e)}
+}
+
+
+function getCheckBoxCategory(val) {
+  if ("A" == val) return "Apparel";
+  if ("C" == val) return "Automobile";
+  if ("Q" == val) return "Appliances";
+  if ("Y" == val) return "Baby Items";
+  if ("U" == val) return "Beauty Products";
+  if ("B" == val) return "Books";
+  if ("D" == val) return "DVD";
+  if ("E" == val) return "Electronics";
+  if ("K" == val) return "Furniture";
+  if ("V" == val) return "Gift Cards";
+  if ("H" == val) return "Health & Personal Care";
+  if ("G" == val) return "Home & Garden";
+  if ("J" == val) return "Jewelry";
+  if ("L" == val) return "Luggage";
+  if ("X" == val) return "Luxury Beauty";
+  if ("M" == val) return "Music";
+  if ("N" == val) return "Musical Instruments";
+  if ("O" == val) return "Office Products";
+  if ("P" == val) return "PC Hardware";
+  if ("S" == val) return "Shoes";
+  if ("F" == val) return "Software";
+  if ("R" == val) return "Sports Goods";
+  if ("T" == val) return "Toys";
+  if ("I" == val) return "Video Games";
+  if ("W" == val) return "Watches";
+  else return "Unknown";
 }
