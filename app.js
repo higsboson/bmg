@@ -221,7 +221,7 @@ app.post('/getProdByCatg',function(req,res){
     if (qryStr.pNameFlag == "0") {
       console.log("no item names searched")
       if (count == 0) {
-        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).toArray(function(err,docs) {
+        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
           if (!err){
             if (docs.length == 0) {res.send()}
             else {res.format({'application/json': function(){res.send(docs)}})}
@@ -230,7 +230,7 @@ app.post('/getProdByCatg',function(req,res){
         })
       }
       else {
-        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).toArray(function(err,docs) {
+        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
           if (!err){
             if (docs.length == 0) {res.send()}
             else {res.format({'application/json': function(){res.send(docs)}})}
@@ -243,7 +243,7 @@ app.post('/getProdByCatg',function(req,res){
       var searchKeyWords = qryStr.productNameKeywords;
       console.log(searchKeyWords);
       if (count == 0) {
-        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords}}).toArray(function(err,docs) {
+        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
           if (!err){
             if (docs.length == 0) {res.send()}
             else {res.format({'application/json': function(){res.send(docs)}})}
@@ -252,7 +252,7 @@ app.post('/getProdByCatg',function(req,res){
         })
       }
       else {
-        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category}}).toArray(function(err,docs) {
+        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
           if (!err){
             if (docs.length == 0) {res.send()}
             else {res.format({'application/json': function(){res.send(docs)}})}
@@ -655,7 +655,7 @@ function getProductsFrmAmzn(req,callback) {
       if (statusCode != 200) {error = new Error('Request Failed.\n' +'Status Code: ${statusCode}')}
       else if (!/^text\/xml/.test(contentType)) {error = new Error('Invalid content-type.\n'
                                                 +'Expected text/xml but received ${contentType}')}
-      if (error) {console.log("Error message = "+error.message);response.resume();return}
+      if (error) {console.log("Error message = "+error.message);callback(true,[])}
 
       response.setEncoding('utf8');
       response.on('data', (chunk) => rawData += chunk);
@@ -664,7 +664,7 @@ function getProductsFrmAmzn(req,callback) {
           parseString(rawData,function(err,resJSON) {
             if (err) {console.log("Error in converting to json")}
             else {
-              if (resJSON.ItemSearchResponse.Items[0].Item.length == 0) {vJSON = []}
+              if (typeof resJSON.ItemSearchResponse.Items[0].Item === 'undefined') {vJSON = []}
               else {
                   for (var i=0;i<resJSON.ItemSearchResponse.Items[0].Item.length;i++) {
                     try {
@@ -685,11 +685,11 @@ function getProductsFrmAmzn(req,callback) {
               callback(error,vJSON);
           }) //parseString
         }
-        catch (e) {console.log(e.message)}
+        catch (e) {callback(true,[]);console.log(e.message);}
       });
-   }).on('error', (e) => {console.log('Got error: ${e.message} - '+e.message)}); //end of http.get
+   }).on('error', (e) => {console.log('Got error: ${e.message} - '+e.message);callback(true,[])}); //end of http.get
   }
-  catch (e) {console.log("Error - ")}
+  catch (e) {console.log("Error - ");callback(true,[])}
 }
 
 app.get('/New-Cart.html',function(req,res){

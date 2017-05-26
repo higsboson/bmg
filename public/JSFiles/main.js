@@ -806,11 +806,14 @@ function redirectToHome() {
  }
 
  function srchInAmazon(pageNum,prdGrpSel) { //called from New-Cart.html to search products in Amazon forcefully
+
    var srchprod = $("#searchitem").val();
    //var pageNum = $("#page-number").val();
    try {
      var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
      if (regex.test(srchprod)) {
+       $('#carousel-wrapper').replaceWith('<div class = "carousel-wrapper" id="carousel-wrapper"><div class="row"><div class="col-sm-12" style="text-align:center;padding-top:100px"><i class="fa fa-circle-o-notch fa-spin" style="font-size:96px;"></i></div></div></div>');
+       $('#pageNavigation').html('');
        $.get( "/srchInAmazon",{PageNumber:pageNum,ProdNm:srchprod,ProdGrp:prdGrpSel}, function( data, status ) {
          if (status == 'success'){
            var htmlStr = "";
@@ -819,42 +822,68 @@ function redirectToHome() {
            var prdName1="";
            var cnt =0;
            htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
-           $.each(data, function(key,doc){
-             try {
-               prdName1 = doc.ProdNm.toString();
-               if (prdName1.length>60) {prdName=prdName1.slice(0,30)+'...'+prdName1.slice(-25)}
-               else {prdName=prdName1};
-               if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
-               htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
-               htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
-               htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
-               htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
-               htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-               htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
-               htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
-               //htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\',\''+prdName1+'\')">Add to wishlist</button></p>';
-               htmlStr = htmlStr + '</div></div>'
-               cnt++;
-               if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+           //alert(data);
+           if(data.length != 0) {
+             $.each(data, function(key,doc){
+               try {
+                 prdName1 = doc.ProdNm.toString();
+                 if (prdName1.length>60) {prdName=prdName1.slice(0,30)+'...'+prdName1.slice(-25)}
+                 else {prdName=prdName1};
+                 if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+                 htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
+                 htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
+                 htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
+                 htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
+                 htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
+                 htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
+                 htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
+                 //htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\',\''+prdName1+'\')">Add to wishlist</button></p>';
+                 htmlStr = htmlStr + '</div></div>'
+                 cnt++;
+                 if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+               }
+               catch (e) {}
+             }) //for eachs
+             if (cnt%4 != 0) {htmlStr = htmlStr + '</div>'};
+             htmlStr = htmlStr +'<div class="row"><div class="col-sm-2">';
+             var prevPage=pageNum-1;
+             var nextPage=pageNum+1;
+             if (pageNum > 1) {htmlStr = htmlStr +'<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon('+prevPage+',\''+prdGrpSel+'\')">Previous Page</button>'}
+             htmlStr = htmlStr +'</div><div class="col-sm-8"></div>';
+             if ($('#amazonLastPage').val() == "100" || $('#amazonLastPage').val() != pageNum) {
+               htmlStr = htmlStr + '<div class="col-sm-2"><button type="button" class="btn btn-primary" id="nextButton" onclick="srchInAmazon('+nextPage+',\''+prdGrpSel+'\')">Next Page</button></div>';
+             } else if ($('#amazonLastPage').val() == pageNum) {
+               htmlStr = htmlStr + '<div class="col-sm-2"></div>';
              }
-             catch (e) {}
-           }) //for eachs
-           if (cnt%4 != 0) {htmlStr = htmlStr + '</div>'};
-           htmlStr = htmlStr +'<div class="row"><div class="col-xs-1">';
-           var prevPage=pageNum-1;
-           var nextPage=pageNum+1;
-           if (pageNum > 1) {htmlStr = htmlStr +'<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon('+prevPage+',\''+prdGrpSel+'\')">Previous</button>'}
-           htmlStr = htmlStr +'</div><div class="col-xs-10"></div>';
-           htmlStr = htmlStr + '<div class="col-xs-1"><button type="button" class="btn btn-primary" id="nextButton" onclick="srchInAmazon('+nextPage+',\''+prdGrpSel+'\')">Next</button></div>';
-           htmlStr = htmlStr + '<hr></div>';
-           $("#page-number").val(pageNum);
-           //alert(htmlStr);
-           $('#carousel-wrapper').replaceWith(htmlStr);
+             htmlStr = htmlStr + '<hr></div><br><br>';
+             $("#page-number").val(pageNum);
+             //alert(htmlStr);
+             $('#carousel-wrapper').replaceWith(htmlStr);
+           } else {
+             if(pageNum > 1) {
+              htmlStr += '<div class="row"><div class="col-sm-12" style="padding-top:100px;text-align:center"><h2>Sorry, we were unable to find any more matches. Why not search for something different?</h2>' + '<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon('+(parseInt(pageNum) - 1)+',\''+prdGrpSel+'\')">Previous</button>' + '</div></div></div>';
+              $('#amazonLastPage').val((parseInt(pageNum) - 1));
+             }
+             else
+              htmlStr += '<div class="row"><div class="col-sm-12" style="padding-top:100px;text-align:center"><h2>Sorry, we were unable to find a match. Why not search for something different?</h2></div></div></div>'
+             $('#carousel-wrapper').replaceWith(htmlStr);
+           }
+
          }
        })
      }
      else {
-       $("#invalidSearchKeyModal").modal('show')}
+       $('#pageNavigation').html('');
+       if (prdGrpSel == 'All') {
+         $('#searchHeading').text("Searching all products:")
+       } else {
+         $('#searchHeading').text("Searching in " + prdGrpSel)
+       }
+       $("#textSearchKeyModal").modal('show')}
+       document.body.scrollTop = document.documentElement.scrollTop = 0;
+       $("#searchItemForm").addClass("has-error");
+       $("#searchbutton").attr("onclick","$('#amazonLastPage').val('" + 100 + "');srchInAmazon(" + pageNum + ",'" + prdGrpSel + "')");
+       $("#searchbutton").unbind("click");
     } catch (e) {alert(e.message)}
  }
 
@@ -1073,4 +1102,33 @@ function getCheckBoxCategory(val) {
   if ("I" == val) return "Video Games";
   if ("W" == val) return "Watches";
   else return "Unknown";
+}
+
+function getAmazonSearchCode(val) {
+  if ("A" == val) return "Apparel";
+  if ("C" == val) return "Automobile";
+  if ("Q" == val) return "Appliances";
+  if ("Y" == val) return "Baby";
+  if ("U" == val) return "Beauty";
+  if ("B" == val) return "Books";
+  if ("D" == val) return "DVD";
+  if ("E" == val) return "Electronics";
+  if ("K" == val) return "HomeGarden";
+  if ("V" == val) return "GiftCards";
+  if ("H" == val) return "HealthPersonalCare";
+  if ("G" == val) return "HomeGarden";
+  if ("J" == val) return "Jewelry";
+  if ("L" == val) return "Luggage";
+  if ("X" == val) return "Beauty";
+  if ("M" == val) return "Music";
+  if ("N" == val) return "MusicalInstruments";
+  if ("O" == val) return "OfficeProducts";
+  if ("P" == val) return "PCHardware";
+  if ("S" == val) return "Shoes";
+  if ("F" == val) return "Software";
+  if ("R" == val) return "SportingGoods";
+  if ("T" == val) return "Toys";
+  if ("I" == val) return "VideoGames";
+  if ("W" == val) return "Watches";
+  else return "All";
 }

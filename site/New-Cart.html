@@ -113,7 +113,7 @@
        })
 
        $("#searchbutton").click(function() {
-
+         $('#amazonLastPage').val("100");
          var srchprod="";
          srchprod = $("#searchitem").val();
          var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
@@ -184,6 +184,7 @@
          $('#searchingFor').text("Showing all " + getCheckBoxCategory($(this).val()) + ":");
          $('#currentCat').val(getCheckBoxCategory($(this).val()));
          $('input[name="chkValGen"]').not(this).prop('checked', false);
+         $('#page-number').val("0");
          searchCatg();
        });
        $('input[name="chkValPrc"]').change(function() {$('#searchingFor').text("");$('input[name="chkValPrc"]').not(this).prop('checked', false);searchCatg()});
@@ -193,6 +194,10 @@
        $("#searchBooks").click(function() {document.getElementById("genreBooks").checked = true;searchCatg()});
 
        function searchCatg() {
+         $('#carousel-wrapper').replaceWith('<div class = "carousel-wrapper" id="carousel-wrapper"><div class="row"><div class="col-sm-12" style="text-align:center;padding-top:100px"><i class="fa fa-circle-o-notch fa-spin" style="font-size:96px;"></i></div></div></div>');
+         var skip = parseInt($('#page-number').val());
+         var limit = 78;
+         document.body.scrollTop = document.documentElement.scrollTop = 0;
           var genreStr = [];
           var priceStr = [];
           var gpStr = [];
@@ -227,11 +232,11 @@
             for (i=0;i<genreAll.length;i++) {for (j=0;j<priceAll.length;j++) {gpStr[cnt]='"'+genreAll[i]+priceAll[j]+'"';cnt++;}}
           }
           var evntStr = getCookie("event_category");
-          alert(gpStr);
+          //alert(gpStr);
           if (cnt > 0) {
             if ($('#searchitem').val().length == 0) {
              srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0"}';
-             alert('no item');
+             //alert('no item');
            }
             else {
               var keywords = $('#searchitem').val().split(' ');
@@ -252,7 +257,7 @@
              $.ajax({
                type : 'POST',
                url :"/getProdByCatg",
-               data : {"Catg":srchStr},
+               data : {"Catg":srchStr, skip: skip * limit, limit: limit},
                success : function(res) {
                  var htmlStr = "";
                  var endStr = "";
@@ -270,7 +275,7 @@
                      htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
                      htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
                      htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
-                     htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
+                     htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
                      htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
                      htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
                      htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\')">Add to wishlist</button></p>';
@@ -279,12 +284,61 @@
                      if (loop%4 == 0){htmlStr = htmlStr + "</div>"};
                   }
                   catch (e) {}
-                  $("#searchitem").val("");
+                  //$("#searchitem").val("");
                  }) //for each
                  if (loop%4 != 0) {htmlStr = htmlStr + "</div>"};
                  htmlStr = htmlStr + endStr + "</div>";
                  //alert(htmlStr);
+                 var pageNavigation = "";
+                 if (loop == 0 && $('#page-number').val() == 0) {
+                   //htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"><div class="row"><div class="col-sm-12" style="padding-top:100px;text-align:center"><h2>Unable to find your desired product?</h2>';
+                   if (genreStr.length != 1) {
+                     //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\'All\')">Click Here</button></p></div></div><hr></div>';
+                     srchInAmazon(1,'All');
+                     return;
+                   } else {
+                    //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div></div><hr></div>';
+                    srchInAmazon(1,getAmazonSearchCode(genreStr[0]));
+                    return;
+                  }
+                } else if (loop == 0 && $('#page-number').val() != 0) {
+                    htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"><div class="row"><div class="col-sm-12" style="padding-top:100px;text-align:center"><h2>No more results.</h2></div></div></div>';
+                    if ($('#page-number').val() != "0")
+                       pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"><button class="btn btn-info" id="previous">Previous Page</button></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
+                       else
+                       pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
+                    if (genreStr.length != 1) {
+                         pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\'All\')">Search Here</button></p></div><hr></div>';
+                       } else {
+                        pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div><hr></div>';
+                      }
+                } else if (loop < 30) {
+                   if ($('#page-number').val() != "0")
+                      pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"><button class="btn btn-info" id="previous">Previous Page</button></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
+                      else
+                      pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
+                    if (genreStr.length != 1) {
+                      pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\'All\')">Search Here</button></p></div><hr></div>';
+                    } else {
+                     pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div><hr></div>';
+                   }
+                 } else if (loop == 30 && skip > 0) {
+                   pageNavigation = pageNavigation + '<div class="row" style="text-align:center"><div class="col-sm-2"><button class="btn btn-info" id="previous">Previous Page</button></div> <div class="col-sm-8"></div><div class="col-sm-2"><button class="btn btn-info" id="next">Next Page</button></div></div><br /><br />';
+                 } else {
+                   pageNavigation = pageNavigation + '<div class="row" style="text-align:center"><div class="col-sm-2"></div> <div class="col-sm-8"></div><div class="col-sm-2"><button class="btn btn-info" id="next">Next Page</button></div></div><br /><br />';
+                 }
                  $('#carousel-wrapper').replaceWith(htmlStr);
+                 $('#pageNavigation').html(pageNavigation);
+                 $('#next').click(function () {
+                       var page = $('#page-number').val();
+                       $('#page-number').val(parseInt(page) + 1);
+                       searchCatg();
+                 })
+                 $('#previous').click(function () {
+                       var page = $('#page-number').val();
+                       $('#page-number').val(parseInt(page) - 1)
+                       searchCatg();
+                 })
                },
                error : function(res) {
                  htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
@@ -294,13 +348,13 @@
                }
              })
          }
-         else {
+         /*else {
            srchStr = '{"eventType":"'+evntStr+'","catgCount":'+0+',"pNameFlag":"0"}';
 
            $.ajax({
              type : 'POST',
              url :"/getProdByCatg",
-             data : {"Catg":srchStr},
+             data : {"Catg":srchStr, skip: skip, limit: limit},
              success : function(res) {
                var htmlStr = "";
                var endStr = "";
@@ -315,7 +369,7 @@
                    htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
                    htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
                    htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
-                   htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
+                   htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'>"';
                    htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
                    htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
                    htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\')">Add to wishlist</button></p>';
@@ -324,7 +378,7 @@
                    if (loop%4 == 0){htmlStr = htmlStr + "</div>"};
                 }
                 catch (e) {}
-                $("#searchitem").val("");
+                //$("#searchitem").val("");
                }) //for each
                if (loop%4 != 0) {htmlStr = htmlStr + "</div>"};
                htmlStr = htmlStr + endStr + "</div>";
@@ -338,7 +392,7 @@
                $('#carousel-wrapper').replaceWith(htmlStr);
              }
            })
-         }
+         }*/
        }//end search category
        $("#searchitem").on('keypress',function(event){
          var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
@@ -351,6 +405,56 @@
        });
      }); //ready
 
+     function searchMore() {
+       $('#amazonLastPage').val("100");
+       var genreStr = [];
+       var priceStr = [];
+       var gpStr = [];
+       var srchStr = [];
+       var chkCnt = 0;
+       var cnt = 0;
+       var prcChkCnt = 0;
+       var genreAll = ['A','C','Y','U','B','D','E','X','V','H','G','L','M','N','O','P','S','F','R','T','I','W','Q','K','J'];
+       var priceAll = ['0','5','1','2','3'];
+
+       $.each($("input[name='chkValGen']:checked"), function(){genreStr.push($(this).val());chkCnt++});
+       $.each($("input[name='chkValPrc']:checked"), function(){priceStr.push($(this).val());prcChkCnt++});
+
+
+
+       if (chkCnt > 0 && prcChkCnt > 0) {
+         for (i=0;i<genreStr.length;i++) {for (j=0;j<priceStr.length;j++) {gpStr[cnt]='"'+genreStr[i]+priceStr[j]+'"';cnt++;}}
+       }
+       else if (chkCnt > 0 && prcChkCnt == 0) {
+         for (i=0;i<genreStr.length;i++) {for (j=0;j<priceAll.length;j++) {gpStr[cnt]='"'+genreStr[i]+priceAll[j]+'"';cnt++;}}
+       }
+       else if (chkCnt == 0 && prcChkCnt > 0) {
+         for (i=0;i<genreAll.length;i++) {for (j=0;j<priceStr.length;j++) {gpStr[cnt]='"'+genreAll[i]+priceStr[j]+'"';cnt++;}}
+       }
+       else if (chkCnt == 0 && prcChkCnt == 0) {
+         for (i=0;i<genreAll.length;i++) {for (j=0;j<priceAll.length;j++) {gpStr[cnt]='"'+genreAll[i]+priceAll[j]+'"';cnt++;}}
+       }
+
+       if ($('#searchmore').val().length < 3) {
+         $("#invalidSearchKeyModal").modal('show');
+       } else {
+         $('#searchitem').val($('#searchmore').val());
+         if (chkCnt == 0 && $("#searchitem").val().length == 0) {
+           $('#searchingFor').text("Showing all products:");
+         } else if (chkCnt == 0 && $("#searchitem").val().length > 0) {
+           $('#searchingFor').text('Searching for "' + $("#searchitem").val() + '"');
+         } else if (chkCnt > 0 && $("#searchitem").val().length > 0) {
+           $('#searchingFor').text('Searching for "' + $("#searchitem").val() + '" in ' + $('#currentCat').val() + ":");
+         }
+         if (genreStr.length != 1) {
+           //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\'All\')">Click Here</button></p></div></div><hr></div>';
+           srchInAmazon(1,'All');
+         } else {
+          //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div></div><hr></div>';
+          srchInAmazon(1,getAmazonSearchCode(genreStr[0]));
+        }
+       }
+     }
 
      </script>
 
@@ -462,22 +566,46 @@ Modal Ends here-->
     </div>
   </div>
 
-  <div id="invalidSearchKeyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="invalidSearchKeyModalLabel">
+  <div id="textSearchKeyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="textSearchKeyModalLabel">
     <div class="modal-dialog">
       <div class = "modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Invalid input</h4>
+          <h4 class="modal-title" id="searchHeading">Search</h4>
         </div>
         <div class="modal-body">
-            <p style="font-family:'Merriweather', serif;font-size:16px">Please enter a valid search string.</p>
+            <p style="font-family:'Merriweather', serif;font-size:16px">What would you like to search for?</p>
+            <div class="input-group input-group-lg">
+              <input type="text" class="form-control" id="searchmore" placeholder="Search for a product">
+              <div class="input-group-btn">
+                <button type="button" class = "btn btn-primary active" id="searchmbutton" data-dismiss="modal" onclick="searchMore();"><span class="glyphicon glyphicon-search"></span> Search</button>
+              </div>
+
+             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
     </div>
+
+    <div id="invalidSearchKeyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="invalidSearchKeyModalLabel">
+      <div class="modal-dialog">
+        <div class = "modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Search</h4>
+          </div>
+          <div class="modal-body">
+              <p style="font-family:'Merriweather', serif;font-size:16px">Please type in a valid search entry.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
   <body>
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -513,7 +641,7 @@ Modal Ends here-->
                   <h4 class="panel-title">
                     <a data-toggle="collapse" href="#collapseGenre">Product Group</a></h4>
                 </div> <!--Panel heading-->
-                <div id="collapseGenre" class="panel-collapse collapse">
+                <div id="collapseGenre" class="panel-collapse collapse in">
                   <form>
                     <div class = "checkbox" id = "chkGenre">
                       <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="A">Apparel</label><br>
@@ -571,10 +699,17 @@ Modal Ends here-->
           <div class = "col-sm-10">
             <div class = "row">
               <form class = "form-inline">
-                <div class="form-group">
+                <div class="form-group" id="searchItemForm">
                   <!--p style="color:#FFFFFF;font-size:72px"> Search</p-->
-                 <label for="search-item" style="color:#000000;font-size:18px" class = "control-label">Search for a product:</label>
-                 <input type="text" class="form-control" id="searchitem">
+                 <label for="search-item" style="color:#000000;font-size:18px" class = "control-label"></label>
+                 <div class="input-group input-group-lg">
+                   <input type="text" class="form-control" id="searchitem" placeholder="Search for a product">
+                   <div class="input-group-btn">
+                     <button class="btn btn-default"><span id="searchclear" class="glyphicon glyphicon-remove"></span></button>
+                     <button type="button" class = "btn btn-primary active" id="searchbutton"><span class="glyphicon glyphicon-search"></span> Search</button>
+                   </div>
+
+                  </div>
                 <!-- <select id="prdGrpSelect">
                    <option value="All">All</option>
                    <option value="Apparel">Apparel</option>
@@ -604,7 +739,7 @@ Modal Ends here-->
                    <option value="VideoGames">Video Games</option>
                    <option value="Watches">Watches</option>
                  </select>-->
-                 <button type="button" class = "btn btn-primary active" id="searchbutton"><span class="glyphicon glyphicon-search"></span></button>
+
                </div>
              </form>
            </div> <!-- Search product row -->
@@ -615,10 +750,14 @@ Modal Ends here-->
 
            </div>
            <input type="hidden" id="currentCat" value="" name="currentCat" />
+           <input type="hidden" id="amazonLastPage" value="100" name="amazonLastPage" />
             <div class = "row" style="padding-top:10px">
               <hr>
               <div class = "carousel-wrapper" id="carousel-wrapper"></div> <!--carousel-wrapper -->
-              <div class = "row"><div class="col-sm-5"></div><div class="col-sm-1"><form><input class="form-control" id="page-number" value="1" type="hidden"></form></div><div class="col-sm-6"></div></div>
+              <div id="pageNavigation">
+
+              </div>
+              <div class = "row"><div class="col-sm-5"></div><div class="col-sm-1"><form><input class="form-control" id="page-number" value="0" type="hidden"></form></div><div class="col-sm-6"></div></div>
             </div> <!-- Carousel row -->
           </div>
         <!--/div-->

@@ -240,7 +240,7 @@ function load_to_db() {
                           image_url = x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue;
                       } else {
                         txt += '</a><br /><br /><div>No Image Available.</div><br />';
-                        image_url = 'No Image Available'
+                        image_url = '/images/no_image_available.png'
                       }
                       txt += '<div class="prod_load_item price">' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0].getElementsByTagName("FormattedPrice")[0].childNodes[0].nodeValue + '</div>';
                       txt += '<button type="button" id="select_item_' + i + '"  class="btn btn-default" onclick="selectQueriedProduct(' + i + ')">Select Item</button>';
@@ -277,7 +277,7 @@ function load_to_db() {
                               image_url = x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue;
                           } else {
                             txt += '</a><br /><br /><div>No Image Available.</div><br />';
-                            image_url = 'No Image Available';
+                            image_url = '/images/no_image_available.png';
                           }
                           txt += '<div class="prod_load_item price">' + x[i].getElementsByTagName("OfferSummary")[0].getElementsByTagName("LowestNewPrice")[0].getElementsByTagName("FormattedPrice")[0].childNodes[0].nodeValue + '</div>';
                           txt += '<button type="button" id="select_item_' + i + '"  class="btn btn-default" onclick="selectQueriedProduct(' + i + ')">Select Item</button>';
