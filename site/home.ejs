@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
   <link rel="stylesheet" href="css/main.css" >
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
   <script src="JSFiles/main.js"></script>
   <script src="JSFiles/sha256.js"></script>
 
@@ -19,12 +20,40 @@
 
       window.onbeforeunload = function() { alert("Your work will be lost."); };
 
+      if (getCookie("NewRegistryCreated") != "")
+      {
+        $('#personalizeHeading').text("Personalize - " + getCookie('event_name'))
+        $('#saveMessageButton').attr("onclick","saveMessage('" + getCookie('wishlistIdReference') + "')")
+        $('#saveMessageDefault').attr("onclick","saveMessageDefault('" + getCookie('wishlistIdReference') + "')")
+        alert('show modal' + getCookie("NewRegistryCreated"));
+        $('#personalizationModal').modal('show');
+        //deleteCookie("NewRegistryCreated");
+        //deleteCookie('event_name');
+
+      }
+
    });
 
 
   </script>
 
 </head>
+
+<div id="personalizationModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="personalizationModalLabel">
+  <div class="modal-dialog">
+    <div class = "modal-content">
+      <div class="modal-header"><h1 class="modal-title" style="font-family:'Merriweather', serif" id="personalizeHeading"><b>Planning Event...</b></h1></div>
+      <div class="modal-body">
+          <p id="personalize" style="font-family:'Merriweather', serif;font-size:16px">Want to personalize your wishlist? Leave a special message for the people who will be viewing your wishlist.</p>
+          <textarea class="form-control" rows="5" id="message" placeholder="Hello There!&#10;&#13;&#10;&#13;Thanks for taking the time to go through my wishlist. :)&#10;&#13;&#10;&#13;See you soon!"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" style="display:default;float:left" data-dismiss="modal" id="saveMessageDefault">Skip</button>
+          <button type="button" class="btn btn-info" style="display:default;float:right" data-dismiss="modal" id="saveMessageButton">Save Message</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <body class="admin-body">
 

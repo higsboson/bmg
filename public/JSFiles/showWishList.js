@@ -69,7 +69,7 @@ function showProducts() {
         else if (doc.Status == "Bought")
          {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Already Bought</button></p>'}
         else
-         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc.ProdID+'","'+doc.ProdDsc+'") id="btn_'+doc.ProdID+'">Buy Now</button></p>'}
+         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc.ProdID+'","'+doc.ProdDsc+'") id="btn_'+doc.ProdID+'">Grant Wish</button></p>'}
 
         htmlStr = htmlStr + '</div></div>';
         cnt++;
@@ -85,6 +85,29 @@ function showProducts() {
    }
   })
 }
+
+function showEventDetails() {
+  var eventID = $("#evntID").val();
+  $.ajax({
+    url: '/getEventInfo',
+    method: 'GET',
+    data: {eventID : eventID},
+    success: function (res) {
+      alert('event ID read' + JSON.stringify(res));
+      $('#pageTitle').text("Bemygenie Register: " + res.EventName)
+      $('#title').text(res.EventName);
+      $('#hostedby').text('Hosted by ' + res.HostName);
+      var newline = String.fromCharCode(13, 10);
+      var text = res.wishlistMsg;
+      text =  text.replace(/(?:\r\n|\r|\n)/g, '<br />');
+      $('#welcomeMessage').html(text);
+    },
+    error: function (err) {
+      alert('Unable to read event information');
+    }
+  })
+}
+
 /*
 function verifyCaptcha() {
   $.ajax({

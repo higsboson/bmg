@@ -201,6 +201,7 @@
                          //The following alert will need to be replaced by a modal dialog
                          document.getElementById("wishListLink").innerHTML = res;
                          signuporlogin = "login";
+                         setCookie("wishlistIdReference",$('#wishlistIdReference').val(),2);
                          $("#signUpOrNot").modal('hide');
                          $("#wishListURLModal").modal('show');
 
@@ -586,7 +587,7 @@ function getUserProfileDetails(user,div) {
      })
  }
 
- function AddToCartUserProd(Id,MRP,PrdGrp) {
+/* function AddToCartUserProd(Id,MRP,PrdGrp) {
    try {
      var bmgId = "";
      var cartProds = getCookie("ProdID");
@@ -615,7 +616,7 @@ function getUserProfileDetails(user,div) {
        //prodnm = prodnm.replace(/['"-()]+/g, ''); //need to handle escaping of /
 
        //trznt - Adding another item to prod called Status: Open
-       var keywords = prodnm.val().split(' ');
+       var keywords = prodnm.split(' ');
        var keywordArr = "";
        for (var m = 0,n = 0; m < keywords.length; m++) {
          if (keywords[m].length >= 3) {
@@ -651,7 +652,7 @@ function getUserProfileDetails(user,div) {
      document.getElementById("CartId").innerHTML="Cart ("+cartLngth+")";
    }
    catch (e) {alert(e)}
- };
+ };*/
 
  function AddToCart(Id,MRP,PrdGrp) {
    try {
@@ -681,7 +682,7 @@ function getUserProfileDetails(user,div) {
        //prodnm = prodnm.replace(/['"-()]+/g, ''); //need to handle escaping of /
 
        //trznt - Adding another item to prod called Status: Open
-       var keywords = prodnm.val().split(' ');
+       var keywords = prodnm.split(' ');
        var keywordArr = "";
        for (var m = 0,n = 0; m < keywords.length; m++) {
          if (keywords[m].length >= 3) {
@@ -693,11 +694,11 @@ function getUserProfileDetails(user,div) {
            n++;
          }
        }
-       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + ']}';
+       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","Reviewed":"TBD","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + ']}';
        //Throwing error if the name has quotes in it
        $.ajax({
          type : 'POST',
-         url :"/addToDB",
+         url :"/addToDBByUser",
          data : {"Product":prd},
          success : function(res) {},
          error : function(res) {alert("Error in adding product to cart!")}
@@ -752,14 +753,13 @@ function redirectToHome() {
   deleteCookie('age_group');
   deleteCookie('event_date');
   deleteCookie('event_category');
-  deleteCookie('event_name');
   deleteCookie('gender');
 
   $("#wishListURLModal").modal('hide');
   signuporlogin = "";
   // Posting to Home.
-  if (signuporlogin = "login") {window.location.href = "/home"}
-  else if (signuporlogin = "signup") {document.getElementById("signup").submit()}
+  if (signuporlogin = "login") {setCookie("NewRegistryCreated","True",2),window.location.href = "/home"}
+  else if (signuporlogin = "signup") {setCookie("NewRegistryCreated","True",2),document.getElementById("signup").submit()}
 }
 
 //Amazon Search Tags need to be - [ 'All','Beauty','Grocery','Industrial','PetSupplies','OfficeProducts','Electronics','Watches','Jewelry','Luggage','Shoes','Furniture','KindleStore','Automotive','Pantry','MusicalInstruments','GiftCards','Toys','SportingGoods','PCHardware','Books','LuxuryBeauty','Baby','HomeGarden','VideoGames','Apparel','Marketplace','DVD','Appliances','Music','LawnAndGarden','HealthPersonalCare','Software' ].
@@ -836,7 +836,7 @@ function redirectToHome() {
                  htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
                  htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
                  htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
-                 htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
+                 htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
                  //htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\',\''+prdName1+'\')">Add to wishlist</button></p>';
                  htmlStr = htmlStr + '</div></div>'
                  cnt++;
@@ -1131,4 +1131,41 @@ function getAmazonSearchCode(val) {
   if ("I" == val) return "VideoGames";
   if ("W" == val) return "Watches";
   else return "All";
+}
+
+
+function saveMessage(id) {
+  alert('Saving Message for ' + id);
+  $.ajax({
+    url: '/saveMessage',
+    method: 'POST',
+    data: {message: $('#message').val(),id :id},
+    success :  function (res) {
+      alert("Message Saved " + res);
+    },
+    error : function (err) {
+      alert("Message Not Saved " + err)
+    }
+  });
+  deleteCookie("NewRegistryCreated");
+  deleteCookie('event_name');
+  deleteCookie('wishlistIdReference');
+}
+
+function saveMessageDefault(id) {
+  var text = "Hello, \n\n Thanks very much for taking the time to go through my gift registry. \n\n See you Soon :)"
+  $.ajax({
+    url: '/saveMessage',
+    method: 'POST',
+    data: {message: text,id :id},
+    success :  function (res) {
+      alert("Message Saved " + res);
+    },
+    error : function (err) {
+      alert("Message Not Saved " + err)
+    }
+  });
+  deleteCookie("NewRegistryCreated");
+  deleteCookie('event_name');
+  deleteCookie('wishlistIdReference');
 }

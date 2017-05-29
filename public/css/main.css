@@ -357,7 +357,7 @@
 
 .list-group-create-registry {
   padding: 40px;
-  color: #87AFC7;
+  color: #454282;
   text-align: center;
   background: #FFFFFF;
   border-radius: 20px
@@ -575,6 +575,40 @@ a.product-review {
   padding: 10px;
   font-size: 50px;
   color: #d11b1b;
+}
+
+.title {
+  font-family:         'Merriweather', serif;
+  text-align: center;
+}
+
+.hostedby {
+  font-family:         'Merriweather', serif;
+  text-align: center;
+}
+
+.welcomeMessage {
+  font-family:         'Merriweather', serif;
+  font-size: 20px;
+  color: #454282;
+  padding:20px;
+  font-weight: bold;
+}
+
+
+.stitched {
+   padding: 20px;
+   margin: 10px;
+   background: #945266;
+   color: #fff;
+   font-size: 21px;
+   font-weight: bold;
+   line-height: 1.3em;
+   border: 2px dashed #fff;
+   border-radius: 10px;
+   box-shadow: 0 0 0 4px #945266, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
+   text-shadow: -1px -1px #aa3030;
+   font-weight: normal;
 }
 
 /* CSS animation */

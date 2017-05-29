@@ -282,25 +282,6 @@ app.get('/fetchCartProducts',function(req,res) {
   catch (e) {res.end("Error in fetching products")}
 })
 
-app.post('/addToDB',urlencodedParser,function(req,res){
-  try {
-    var prdCollection = bmgDB.collection('Product');
-    console.log("Body Product:" +req.body.Product);
-    var prdToBeAdded = JSON.parse(req.body.Product);
-
-    console.log("ProdID : "+prdToBeAdded.ProdID);
-    prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
-      if (docs.length != 0) {res.send("Already present in DB")}
-      else {
-        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType});
-        if (!err) {res.send("Success")}
-        else {res.send("Error")}
-      }
-    })
-  }
-  catch (e) {console.log(e);res.send("Error in adding product to cart!")}
-})
-
 app.post('/addToDBByUser',urlencodedParser,function(req,res){
   try {
     var prdCollection = bmgDB.collection('Product');
@@ -311,7 +292,7 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
       if (docs.length != 0) {res.send("Already present in DB")}
       else {
-        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"Reviewed":prdToBeAdded.Reviewed});
+        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed});
         if (!err) {res.send("Success")}
         else {res.send("Error")}
       }
@@ -389,7 +370,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
             emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+wishListEmailTxt+'<br><br><br>Team Bemygenie</p>';
 
             bmgaux.mailer(emailPassword,'support',hostEmail,'New Wishlist Created',emailTxt,function(message,response) {});
-            res.send(wishListModalTxt);
+            res.send(wishListModalTxt + '<input type="hidden" name="wishlistIdReference" id="wishlistIdReference" value="' + wishListId + '" >');
 
           }
           else {res.send("Error in saving wishlist. Please try again later")}
@@ -746,6 +727,21 @@ app.get('/showListProducts',function(req,res){
   catch (e) {res.send(e)}
 }); //showListProducts
 
+app.get('/getEventInfo',function(req,res){
+  var wishList = bmgDB.collection('WishList');
+  var qryStr = req.query.eventID;
+  try {
+    wishList.find({"_id" : new ObjectId(qryStr)},{_id:0,EventName:1,HostName:1,wishlistMsg:1}).toArray(function(err,docs) {
+      if (!err){
+      if (docs.length == 0) {res.send("Unable to find the desired wishlist")}
+      else {res.format({'application/json': function(){res.send(docs[0])}})}
+      }
+      else {res.send("Error in fetching documents")}
+    });
+  }
+  catch (e) {res.send(e)}
+}); //showListProducts
+
 
 
 app.get('/new_registry', function (req,res){
@@ -1083,6 +1079,15 @@ app.post('/verifyRecaptcha',urlencodedParser,function(req,res){
     res.send(response.body);
   })
 })
+
+app.post('/saveMessage', urlencodedParser, function (req,res){
+  var wishList = bmgDB.collection('WishList');
+  console.log(req.body.id  + req.body.message)
+  wishList.update({"_id" : new ObjectId(req.body.id)},{$set:{"wishlistMsg":req.body.message}}, function(err) {
+    if (!err) {res.send("Success")}
+    else {res.send("Error in updating wishlist message")}
+  })
+});
 
 app.get('/checkIfEmailExists',function (req,res) {
   var wishList = bmgDB.collection('WishList');

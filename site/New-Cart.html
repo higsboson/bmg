@@ -58,6 +58,7 @@
        searchCatg(); //search by event type right at the start
 
        $("#CartId").click(function() {
+         document.body.scrollTop = document.documentElement.scrollTop = 0;
          cookieStr = getCookie("ProdID");
          prodArr = [];
          if (cookieStr != "") {
@@ -71,9 +72,9 @@
                var prdName ="";
                var cnt =0;
                htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
-               htmlStr = htmlStr+'<div class="row"><div class="col-md-8"><p style="font-size:18px">Your selected products</p></div><div class="col-md-2">';
-               htmlStr = htmlStr+'<button type="button" class = "btn btn-primary" onclick="loadNewCart()">Search more products</button></div><div class="col-md-2">';
-               htmlStr = htmlStr+'<button type="button" class = "btn btn-success" data-toggle="modal" data-target="#signUpOrNot">Proceed to save wishlist</button></div></div>';
+               htmlStr = htmlStr+'<div class="row"><div class="col-md-2"><button type="button" class = "btn btn-primary btn-lg" onclick="loadNewCart()">Search more products</button></div>';
+               htmlStr = htmlStr+'<div class="col-md-8"><p class="title" style="font-size:36px">Your selected products</p></div>';
+               htmlStr = htmlStr+'<div class="col-md-2"><button type="button" class = "btn btn-success btn-lg" data-toggle="modal" data-target="#signUpOrNot">Proceed to save wishlist</button></div></div>';
                htmlStr = htmlStr+'<hr>';
                $.each(data, function(key,doc){
                  try {
