@@ -666,9 +666,9 @@ function getProductsFrmAmzn(req,callback) {
               callback(error,vJSON);
           }) //parseString
         }
-        catch (e) {callback(true,[]);console.log(e.message);}
+        catch (e) {console.log(e.message);}
       });
-   }).on('error', (e) => {console.log('Got error: ${e.message} - '+e.message);callback(true,[])}); //end of http.get
+   }).on('error', (e) => {console.log('Got error: ${e.message} - '+e.message);}); //end of http.get
   }
   catch (e) {console.log("Error - ");callback(true,[])}
 }

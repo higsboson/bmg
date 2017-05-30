@@ -1135,16 +1135,16 @@ function getAmazonSearchCode(val) {
 
 
 function saveMessage(id) {
-  alert('Saving Message for ' + id);
+  //alert('Saving Message for ' + id);
   $.ajax({
     url: '/saveMessage',
     method: 'POST',
     data: {message: $('#message').val(),id :id},
     success :  function (res) {
-      alert("Message Saved " + res);
+      //alert("Message Saved " + res);
     },
     error : function (err) {
-      alert("Message Not Saved " + err)
+      //alert("Message Not Saved " + err)
     }
   });
   deleteCookie("NewRegistryCreated");
@@ -1159,10 +1159,10 @@ function saveMessageDefault(id) {
     method: 'POST',
     data: {message: text,id :id},
     success :  function (res) {
-      alert("Message Saved " + res);
+      //alert("Message Saved " + res);
     },
     error : function (err) {
-      alert("Message Not Saved " + err)
+      //alert("Message Not Saved " + err)
     }
   });
   deleteCookie("NewRegistryCreated");
