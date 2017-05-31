@@ -233,10 +233,33 @@
             for (i=0;i<genreAll.length;i++) {for (j=0;j<priceAll.length;j++) {gpStr[cnt]='"'+genreAll[i]+priceAll[j]+'"';cnt++;}}
           }
           var evntStr = getCookie("event_category");
-          //alert(gpStr);
+          var age = getCookie("age_group");
+          var ageCat;
+           if (age == '0 - 5')
+             ageCat = 0;
+           if (age == '6 - 10')
+             ageCat = 1;
+           if (age == '11 - 14')
+             ageCat = 2;
+           if (age == '15 - 17')
+             ageCat = 3;
+           if (age == '18 - 25')
+             ageCat = 4;
+           if (age == '26 - 34')
+             ageCat = 5;
+           if (age == '35 - 45')
+             ageCat = 6;
+           if (age == '46 - 55')
+             ageCat = 7;
+           if (age == '> 55')
+             ageCat = 8;
+          alert(ageCat + "");
           if (cnt > 0) {
             if ($('#searchitem').val().length == 0) {
-             srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0"}';
+              if (evntStr == 'Baby Shower')
+                  srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0","ageCat":-1}';
+              else
+                  srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0","ageCat":' + ageCat + '}';
              //alert('no item');
            }
             else {
@@ -252,7 +275,8 @@
                   n++;
                 }
               }
-             srchStr = '{"productNameKeywords":['+keywordArr+'],"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"1"}';
+
+              srchStr = '{"productNameKeywords":['+keywordArr+'],"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"1","ageCat":-1}';
            }
              //alert("Search Str : "+srchStr);
              $.ajax({

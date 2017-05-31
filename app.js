@@ -220,23 +220,44 @@ app.post('/getProdByCatg',function(req,res){
     console.log("pNameFlag is " + qryStr.pNameFlag);
     if (qryStr.pNameFlag == "0") {
       console.log("no item names searched")
-      if (count == 0) {
-        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
-          if (!err){
-            if (docs.length == 0) {res.send()}
-            else {res.format({'application/json': function(){res.send(docs)}})}
-          }
-          else {console.log(err);res.send("Error in fetching documents")}
-        })
-      }
-      else {
-        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
-          if (!err){
-            if (docs.length == 0) {res.send()}
-            else {res.format({'application/json': function(){res.send(docs)}})}
-          }
-          else {console.log(err);res.send("Error in fetching documents")}
-        })
+      if (parseInt(qryStr.ageCat) == -1) {
+        if (count == 0) {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            if (!err){
+              if (docs.length == 0) {res.send()}
+              else {res.format({'application/json': function(){res.send(docs)}})}
+            }
+            else {console.log(err);res.send("Error in fetching documents")}
+          })
+        }
+        else {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            if (!err){
+              if (docs.length == 0) {res.send()}
+              else {res.format({'application/json': function(){res.send(docs)}})}
+            }
+            else {console.log(err);res.send("Error in fetching documents")}
+          })
+        }
+      } else {
+        if (count == 0) {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            if (!err){
+              if (docs.length == 0) {res.send()}
+              else {res.format({'application/json': function(){res.send(docs)}})}
+            }
+            else {console.log(err);res.send("Error in fetching documents")}
+          })
+        }
+        else {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            if (!err){
+              if (docs.length == 0) {res.send()}
+              else {res.format({'application/json': function(){res.send(docs)}})}
+            }
+            else {console.log(err);res.send("Error in fetching documents")}
+          })
+        }
       }
     } else {
 
