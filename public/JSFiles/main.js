@@ -679,6 +679,26 @@ function getUserProfileDetails(user,div) {
          case "Musical Instruments" : PrdGrp="MusicalInstruments";break;
        }
        var catg = getCatg(MRP,PrdGrp);
+       var age = getCookie("age_group");
+       var ageCat = [];
+        if (age == '0 - 5')
+          ageCat[0] = 0;
+        if (age == '6 - 10')
+          ageCat[0] = 1;
+        if (age == '11 - 14')
+          ageCat[0] = 2;
+        if (age == '15 - 17')
+          ageCat[0] = 3;
+        if (age == '18 - 25')
+          ageCat[0] = 4;
+        if (age == '26 - 34')
+          ageCat[0] = 5;
+        if (age == '35 - 45')
+          ageCat[0] = 6;
+        if (age == '46 - 55')
+          ageCat[0] = 7;
+        if (age == '> 55')
+          ageCat[0] = 8;
        //prodnm = prodnm.replace(/['"-()]+/g, ''); //need to handle escaping of /
 
        //trznt - Adding another item to prod called Status: Open
@@ -694,7 +714,7 @@ function getUserProfileDetails(user,div) {
            n++;
          }
        }
-       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","Reviewed":"TBD","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + ']}';
+       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","Reviewed":"TBD","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +']}';
        //Throwing error if the name has quotes in it
        $.ajax({
          type : 'POST',

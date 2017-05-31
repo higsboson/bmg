@@ -1076,6 +1076,7 @@ app.post('/verifyRecaptcha',urlencodedParser,function(req,res){
     json : true,
     form : {secret : captchaSecret,response : captchaRes}
   }, function(error,response,body) {
+    console.log('Captcha:' + error + " - " + JSON.stringify(response) + " - " + JSON.stringify(body));
     res.send(response.body);
   })
 })

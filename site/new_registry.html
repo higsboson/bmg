@@ -51,6 +51,7 @@ function submitForm() {
    data  : {"Response":grecaptcha.getResponse()},
    success: function(res) {
      if (res.success) {
+       alert('setting cookie' + res);
         var origDate = new Date($('#datepicker').val());
         var dISO = origDate.toISOString();
         setCookie("age_group",$('#age_group_sel').val(),2);
@@ -64,7 +65,9 @@ function submitForm() {
         $("#validateModal").modal('show');
     },
     error : function (res) {
+      alert('Invalid captcha response' + JSON.stringify(res));
       alert("Error in validating captcha response - "+res.error_codes);
+      return false;
     }
   })
 }
@@ -118,7 +121,7 @@ function getBasicInfo() {
       $("#validateDateModal").modal('show');
       return false;
     } else {
-      //submitForm();
+      submitForm();
     }
   }
 
@@ -235,6 +238,7 @@ function getBasicInfo() {
                       <option>Anniversary</option>
                       <option>Wedding</option>
                       <option>Farewell</option>
+                      <option>House Warming</option>
                     </select>
                   </div>
                 </div>
@@ -277,7 +281,7 @@ function getBasicInfo() {
                      <option>26 - 34</option>
                      <option>35 - 45</option>
                      <option>46 - 55</option>
-                     <option> > 55 </option>
+                     <option>> 55</option>
                    </select>
                  </div>
                </div>
@@ -306,7 +310,7 @@ function getBasicInfo() {
                <div class="g-recaptcha" data-sitekey="6Ld_OyEUAAAAAMQh2o1KMDMaGhi6QlaiPEZDHGW8"></div> <!--recapcha widget-->
              </div><div class="col-sm-4"></div></div>
              <div class="row" style="padding-top:15px">
-               <button type="submit" class="btn btn-primary btn-lg" onclick="return getBasicInfo();">Create your registry!</button>
+               <button type="button" class="btn btn-primary btn-lg" onclick="return getBasicInfo();">Create your registry!</button>
              </div>
                </form>
              </div>
