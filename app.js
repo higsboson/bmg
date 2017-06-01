@@ -633,12 +633,30 @@ function getProductsFrmAmzn(req,callback) {
     var vJSON = [];
     var itempage = parseInt(req.query.PageNumber);
     console.log("query = "+JSON.stringify(req.query));
-
-    var canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&AssociateTag=" + associate_tag +
+    var canonical_query_string;
+    if (req.query.min == "-1" && req.query.max == "-1") {
+    canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&AssociateTag=" + associate_tag +
                                   "\&Availability=Available"+"\&ItemPage=" + itempage +"\&Keywords=" +
                                   encodeURIComponent(req.query.ProdNm) + "\&Operation=" + operation + "\&ResponseGroup=" +
                                   encodeURIComponent(response_group) + "\&SearchIndex=" + search_index + "\&Service=" + service +
                                   "\&Timestamp=" + encodeURIComponent(new Date().toISOString());
+    }
+    else if (req.query.min == "3000" && req.query.max == "-1") {
+    canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&AssociateTag=" + associate_tag +
+                                  "\&Availability=Available"+"\&ItemPage=" + itempage +"\&Keywords=" +
+                                  encodeURIComponent(req.query.ProdNm) + "\&" + "MinimumPrice=" + 300000 + "\&" + "Operation=" + operation + "\&ResponseGroup=" +
+                                  encodeURIComponent(response_group) + "\&SearchIndex=" + search_index + "\&Service=" + service +
+                                  "\&Timestamp=" + encodeURIComponent(new Date().toISOString());
+    }
+    else {
+    canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&AssociateTag=" + associate_tag +
+                                  "\&Availability=Available"+"\&ItemPage=" + itempage +"\&Keywords=" +
+                                  encodeURIComponent(req.query.ProdNm) + "\&" +"MaximumPrice=" + (parseInt(req.query.max) * 100) +
+                                  "\&" + "MinimumPrice=" + (parseInt(req.query.min) * 100) + "\&" + "Operation=" + operation + "\&ResponseGroup=" +
+                                  encodeURIComponent(response_group) + "\&SearchIndex=" + search_index + "\&Service=" + service +
+                                  "\&Timestamp=" + encodeURIComponent(new Date().toISOString());
+    }
+
     var string_to_sign = "GET\n" + end_point + "\n" + uri + "\n" + canonical_query_string;
     console.log("string to sign - "+string_to_sign);
     console.log("secret key - "+aws_secret_key);
@@ -664,7 +682,7 @@ function getProductsFrmAmzn(req,callback) {
       response.on('end', () => {
       try {
           parseString(rawData,function(err,resJSON) {
-            if (err) {console.log("Error in converting to json")}
+            if (err) {console.log("Error in converting to json" + rawData)}
             else {
               if (typeof resJSON.ItemSearchResponse.Items[0].Item === 'undefined') {vJSON = []}
               else {

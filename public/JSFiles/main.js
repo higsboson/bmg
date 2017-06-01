@@ -825,7 +825,7 @@ function redirectToHome() {
   return catg;
  }
 
- function srchInAmazon(pageNum,prdGrpSel) { //called from New-Cart.html to search products in Amazon forcefully
+ function srchInAmazon(min,max,pageNum,prdGrpSel) { //called from New-Cart.html to search products in Amazon forcefully
 
    var srchprod = $("#searchitem").val();
    //var pageNum = $("#page-number").val();
@@ -834,8 +834,10 @@ function redirectToHome() {
      if (regex.test(srchprod)) {
        $('#carousel-wrapper').replaceWith('<div class = "carousel-wrapper" id="carousel-wrapper"><div class="row"><div class="col-sm-12" style="text-align:center;padding-top:100px"><i class="fa fa-circle-o-notch fa-spin" style="font-size:96px;"></i></div></div></div>');
        $('#pageNavigation').html('');
-       $.get( "/srchInAmazon",{PageNumber:pageNum,ProdNm:srchprod,ProdGrp:prdGrpSel}, function( data, status ) {
+       alert('Page num is ' + pageNum);
+       $.get( "/srchInAmazon",{PageNumber:pageNum,ProdNm:srchprod,ProdGrp:prdGrpSel,min:min,max:max}, function( data, status ) {
          if (status == 'success'){
+           //alert(data);
            var htmlStr = "";
            var endStr = "";
            var prdName ="";
@@ -868,10 +870,10 @@ function redirectToHome() {
              htmlStr = htmlStr +'<div class="row"><div class="col-sm-2">';
              var prevPage=pageNum-1;
              var nextPage=pageNum+1;
-             if (pageNum > 1) {htmlStr = htmlStr +'<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon('+prevPage+',\''+prdGrpSel+'\')">Previous Page</button>'}
+             if (pageNum > 1) {htmlStr = htmlStr +'<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon(' + min + ',' + max + ','+prevPage+',\''+prdGrpSel+'\')">Previous Page</button>'}
              htmlStr = htmlStr +'</div><div class="col-sm-8"></div>';
              if ($('#amazonLastPage').val() == "100" || $('#amazonLastPage').val() != pageNum) {
-               htmlStr = htmlStr + '<div class="col-sm-2"><button type="button" class="btn btn-primary" id="nextButton" onclick="srchInAmazon('+nextPage+',\''+prdGrpSel+'\')">Next Page</button></div>';
+               htmlStr = htmlStr + '<div class="col-sm-2"><button type="button" class="btn btn-primary" id="nextButton" onclick="srchInAmazon(' + min + ',' + max + ','+nextPage+',\''+prdGrpSel+'\')">Next Page</button></div>';
              } else if ($('#amazonLastPage').val() == pageNum) {
                htmlStr = htmlStr + '<div class="col-sm-2"></div>';
              }
@@ -881,7 +883,7 @@ function redirectToHome() {
              $('#carousel-wrapper').replaceWith(htmlStr);
            } else {
              if(pageNum > 1) {
-              htmlStr += '<div class="row"><div class="col-sm-12" style="padding-top:100px;text-align:center"><h2>Sorry, we were unable to find any more matches. Why not search for something different?</h2>' + '<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon('+(parseInt(pageNum) - 1)+',\''+prdGrpSel+'\')">Previous</button>' + '</div></div></div>';
+              htmlStr += '<div class="row"><div class="col-sm-12" style="padding-top:100px;text-align:center"><h2>Sorry, we were unable to find any more matches. Why not search for something different?</h2>' + '<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon(' + min + ',' + max + ','+(parseInt(pageNum) - 1)+',\''+prdGrpSel+'\')">Previous</button>' + '</div></div></div>';
               $('#amazonLastPage').val((parseInt(pageNum) - 1));
              }
              else
@@ -902,7 +904,7 @@ function redirectToHome() {
        $("#textSearchKeyModal").modal('show')}
        document.body.scrollTop = document.documentElement.scrollTop = 0;
        $("#searchItemForm").addClass("has-error");
-       $("#searchbutton").attr("onclick","$('#amazonLastPage').val('" + 100 + "');srchInAmazon(" + pageNum + ",'" + prdGrpSel + "')");
+       $("#searchbutton").attr("onclick","$('#amazonLastPage').val('" + 100 + "');srchInAmazon(" + min + "," + max + "," + pageNum + ",'" + prdGrpSel + "')");
        $("#searchbutton").unbind("click");
     } catch (e) {alert(e.message)}
  }
@@ -1121,7 +1123,7 @@ function getCheckBoxCategory(val) {
   if ("T" == val) return "Toys";
   if ("I" == val) return "Video Games";
   if ("W" == val) return "Watches";
-  else return "Unknown";
+  else return "All";
 }
 
 function getAmazonSearchCode(val) {
