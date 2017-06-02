@@ -146,6 +146,11 @@ app.get('/FAQ.html',function(req,res) {
   res.sendFile(__dirname + "/site/FAQ.html");
 })
 
+app.get('/howitworks.html',function(req,res) {
+  console.log("call made to FAQ.html")
+  res.sendFile(__dirname + "/site/howitworks.html");
+})
+
 app.get('/review_product',function(req,res) {
   if (req.session.adminUser && req.session) {
     console.log("call made to review_products.html")

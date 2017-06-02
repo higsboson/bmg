@@ -43,8 +43,9 @@ $(document).ready(function () {
   });
 
   //Replace footer links here
-  const baseURL = "http://localhost:8080";
+  const baseURL = "http://dev.bemygenie.com:8080";
   $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
+  $("#HowItWrks").replaceWith('<a id="HowItWrks" href="'+baseURL+'/howitworks.html" target="_blank"> How it works </a>');
 
 
 
@@ -301,7 +302,7 @@ function checkEvents() {
                          <li> <a id="FAQpage" href="#" target="_blank"> FAQs </a> </li>
                          <li> <a href="#"> Terms & Conditions </a> </li>
                          <li> <a href="#"> Privacy Policy </a> </li>
-                         <li> <a href="#"> Shipping & Returns Policy </a> </li>
+                         <li> <a id="HowItWrks" href="#" target="_blank"> How it works </a> </li>
                      </ul>
                  </div>
 
