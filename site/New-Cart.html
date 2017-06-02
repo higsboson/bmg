@@ -188,7 +188,13 @@
          $('#page-number').val("0");
          searchCatg();
        });
-       $('input[name="chkValPrc"]').change(function() {$('#searchingFor').text("");$('input[name="chkValPrc"]').not(this).prop('checked', false);searchCatg()});
+       $('input[name="chkValPrc"]').change(function() {
+         $('#searchingFor').text("");
+         $('#currentCat').val(getCheckBoxCategory($(this).val()));
+         $('input[name="chkValPrc"]').not(this).prop('checked', false);
+         $('#page-number').val("0");
+         searchCatg()
+       });
        $("#searchToys").click(function() {document.getElementById("genreToys").checked = true;searchCatg()});
        $("#searchApparel").click(function() {document.getElementById("genreApparel").checked = true;searchCatg()});
        $("#searchSports").click(function() {document.getElementById("genreSports").checked = true;searchCatg()});
@@ -253,7 +259,7 @@
              ageCat = 7;
            if (age == '> 55')
              ageCat = 8;
-          alert(ageCat + "");
+          //alert(ageCat + "");
           if (cnt > 0) {
             if ($('#searchitem').val().length == 0) {
               if (evntStr == 'Baby Shower')
@@ -315,15 +321,39 @@
                  htmlStr = htmlStr + endStr + "</div>";
                  //alert(htmlStr);
                  var pageNavigation = "";
+                 var min = -1,max = -1;
+                 if ($('input[name="chkValPrc"]:checked').val() == "0") {
+                  min = 0;
+                  max = 499;
+                 }
+                 if ($('input[name="chkValPrc"]:checked').val() == "5") {
+                  min = 500;
+                  max = 999;
+                 }
+                 if ($('input[name="chkValPrc"]:checked').val() == "1") {
+                  min = 1000;
+                  max = 1999;
+                 }
+                 if ($('input[name="chkValPrc"]:checked').val() == "2") {
+                  min = 2000;
+                  max = 2999;
+                 }
+                 if ($('input[name="chkValPrc"]:checked').val() == "3") {
+                  min = 3000;
+                  max = -1;
+                 }
                  if (loop == 0 && $('#page-number').val() == 0) {
+
+
                    //htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"><div class="row"><div class="col-sm-12" style="padding-top:100px;text-align:center"><h2>Unable to find your desired product?</h2>';
                    if (genreStr.length != 1) {
                      //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\'All\')">Click Here</button></p></div></div><hr></div>';
-                     srchInAmazon(1,'All');
+                     srchInAmazon(min,max,1,'All');
                      return;
                    } else {
+                     alert(genreStr[0]);
                     //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div></div><hr></div>';
-                    srchInAmazon(1,getAmazonSearchCode(genreStr[0]));
+                    srchInAmazon(min,max,1,getAmazonSearchCode(genreStr[0]));
                     return;
                   }
                 } else if (loop == 0 && $('#page-number').val() != 0) {
@@ -333,9 +363,9 @@
                        else
                        pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
                     if (genreStr.length != 1) {
-                         pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\'All\')">Search Here</button></p></div><hr></div>';
+                         pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\'All\')">Search Here</button></p></div><hr></div>';
                        } else {
-                        pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div><hr></div>';
+                        pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div><hr></div>';
                       }
                 } else if (loop < 30) {
                    if ($('#page-number').val() != "0")
@@ -343,9 +373,9 @@
                       else
                       pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
                     if (genreStr.length != 1) {
-                      pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\'All\')">Search Here</button></p></div><hr></div>';
+                      pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\'All\')">Search Here</button></p></div><hr></div>';
                     } else {
-                     pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div><hr></div>';
+                     pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div><hr></div>';
                    }
                  } else if (loop == 30 && skip > 0) {
                    pageNavigation = pageNavigation + '<div class="row" style="text-align:center"><div class="col-sm-2"><button class="btn btn-info" id="previous">Previous Page</button></div> <div class="col-sm-8"></div><div class="col-sm-2"><button class="btn btn-info" id="next">Next Page</button></div></div><br /><br />';
@@ -430,6 +460,11 @@
        });
      }); //ready
 
+
+     function reload() {
+       document.getElementById('searchForm').submit();
+     }
+
      function searchMore() {
        $('#amazonLastPage').val("100");
        var genreStr = [];
@@ -471,12 +506,33 @@
          } else if (chkCnt > 0 && $("#searchitem").val().length > 0) {
            $('#searchingFor').text('Searching for "' + $("#searchitem").val() + '" in ' + $('#currentCat').val() + ":");
          }
+         var min = -1,max = -1;
+         if ($('input[name="chkValPrc"]:checked').val() == "0") {
+          min = 0;
+          max = 499;
+         }
+         if ($('input[name="chkValPrc"]:checked').val() == "5") {
+          min = 500;
+          max = 999;
+         }
+         if ($('input[name="chkValPrc"]:checked').val() == "1") {
+          min = 1000;
+          max = 1999;
+         }
+         if ($('input[name="chkValPrc"]:checked').val() == "2") {
+          min = 2000;
+          max = 2999;
+         }
+         if ($('input[name="chkValPrc"]:checked').val() == "3") {
+          min = 3000;
+          max = -1;
+         }
          if (genreStr.length != 1) {
            //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\'All\')">Click Here</button></p></div></div><hr></div>';
-           srchInAmazon(1,'All');
+           srchInAmazon(min,max,1,'All');
          } else {
           //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div></div><hr></div>';
-          srchInAmazon(1,getAmazonSearchCode(genreStr[0]));
+          srchInAmazon(min,max,1,getAmazonSearchCode(genreStr[0]));
         }
        }
      }
@@ -609,7 +665,7 @@ Modal Ends here-->
              </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary"  onclick="reload();" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
@@ -723,7 +779,7 @@ Modal Ends here-->
           <!--Category Carousel & Thumbnails-->
           <div class = "col-sm-10">
             <div class = "row">
-              <form class = "form-inline">
+              <form class = "form-inline" id="searchForm">
                 <div class="form-group" id="searchItemForm">
                   <!--p style="color:#FFFFFF;font-size:72px"> Search</p-->
                  <label for="search-item" style="color:#000000;font-size:18px" class = "control-label"></label>
