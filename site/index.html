@@ -46,6 +46,7 @@ $(document).ready(function () {
   const baseURL = "http://dev.bemygenie.com:8080";
   $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
   $("#HowItWrks").replaceWith('<a id="HowItWrks" href="'+baseURL+'/howitworks.html" target="_blank"> How it works </a>');
+  $("#LearnMore").replaceWith('<a id="LearnMore" href="'+baseURL+'/learnmore.html" target="_blank"> Learn more </a>');
 
 
 
@@ -283,31 +284,40 @@ function checkEvents() {
                      <h3> bemygenie.com </h3>
                      <ul>
                          <li> <a href="#"> About Us </a> </li>
-                         <li> <a href="#"> Careers </a> </li>
-                         <li> <a href="#"> Advertise with us </a> </li>
+                         <!--<li> <a href="#"> Careers </a> </li>
+                         <li> <a href="#"> Advertise with us </a> </li>-->
 
                      </ul>
                  </div>
-                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                 <!--<div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
                    <h3> Products & Services </h3>
                    <ul>
                          <li> <a href="#"> Gift Registers </a> </li>
                          <li> <a href="#"> Sell your products on our site. </a> </li>
                          <li> <a href="#"> Partner Login. </a> </li>
                      </ul>
-                 </div>
-                 <div class="col-lg-2  col-md-3 col-sm-6 col-xs-12 ">
+                 </div>-->
+                 <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 ">
                    <h3> Help </h3>
                    <ul>
-                         <li> <a id="FAQpage" href="#" target="_blank"> FAQs </a> </li>
-                         <li> <a href="#"> Terms & Conditions </a> </li>
-                         <li> <a href="#"> Privacy Policy </a> </li>
+                         <li> <a id="FAQpage" href="#" target="_blank"> FAQs + T&C </a> </li>
                          <li> <a id="HowItWrks" href="#" target="_blank"> How it works </a> </li>
+                         <!--<li> <a href="#"> Privacy Policy </a> </li>-->
                      </ul>
                  </div>
+                 <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 ">
+                   <h3> Connect with us </h3>
+                   <ul class="social">
+                       <li> <a href="https://www.facebook.com/Bemygenie-434638670261992/" target="#"> <i class=" fa fa-facebook">   </i> </a> </li>
+                       <li> <a href="https://twitter.com/bemygenie_" target="#"> <i class="fa fa-twitter">   </i> </a> </li>
+                       <li> <a href="https://in.pinterest.com/bemygenie/" target="#"> <i class="fa fa-pinterest">   </i> </a> </li>
+                       <li> <a href="#" target="#"> <i class="fa fa-youtube">   </i> </a> </li>
+                       <li> <a href="https://www.instagram.com/bmygenie/" target="#"> <i class="fa fa-instagram">   </i> </a> </li>
+                   </ul>
+                 </div>
 
-                 <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
-                     <h3> Join our newsletter </h3>
+                 <div class="col-lg-4 col-md-3 col-sm-6 col-xs-12 ">
+                <!--     <h3> Join our newsletter </h3>
                      <ul>
                          <li>
                              <div class="input-append newsletter-box text-center">
@@ -315,14 +325,13 @@ function checkEvents() {
                                  <button class="btn btn-success" type="button"> Thank you! <i class="fa fa-long-arrow-right"> </i> </button>
                              </div>
                          </li>
-                     </ul>
-                     <ul class="social">
-                         <li> <a href="#"> <i class=" fa fa-facebook">   </i> </a> </li>
-                         <li> <a href="#"> <i class="fa fa-twitter">   </i> </a> </li>
-                         <li> <a href="#"> <i class="fa fa-pinterest">   </i> </a> </li>
-                         <li> <a href="#"> <i class="fa fa-youtube">   </i> </a> </li>
-                     </ul>
+                     </ul>-->
+                     <h3> Learn More </h3>
+                     <p> Have you ever received a duplicate gift?<br>Have you ever received an undesirable gift?<br>Have you ever wondered what to give as gift to someone?
+                       <br>Bemygenie is here to help!!! Click <a href="#" id="LearnMore" target="_blank">here to learn more</a>
+                     </p>
                  </div>
+
              </div>
              <!--/.row-->
          </div>
