@@ -50,11 +50,13 @@ function showDirectVendor(){
       //$('#age-field' + i).prop("disabled", false);
       //$('#age-field-button' + i).prop("disabled", false);
       $('.multiselect-ui.multiselect' + i).multiselect('enable');
+      $('.multiselect-ui.gender' + i).multiselect('enable');
       for (var j = 0; j < eventTypeList.length;j++) {
         $("#eventTypeCheckProd" + eventTypeList[j].replace(/ /gi, "_") + i).prop("disabled", false);
       }
     } else {
       $('.multiselect-ui.multiselect' + i).multiselect('disable');
+      $('.multiselect-ui.gender' + i).multiselect('disable');
       $('#select_item_' + i).text("Select Item");
       $("#item" + i).css("background-color", "#FFFFFF");
       for (var j = 0; j < eventTypeList.length;j++) {
@@ -81,6 +83,8 @@ function load_to_db() {
             //alert($('.multiselect-ui.multiselect' + i).val() + "");
             var ageCat = [];
             ageCat = $('.multiselect-ui.multiselect' + i).val();
+            var genderCat = [];
+            genderCat = $('.multiselect-ui.gender' + i).val();
             //alert("Selecting: " + $('#product_name' + i).val() + " with price: " + $('#product_price' + i).val() + " with desc: " +
         //  $('#product_desc' + i).val());
           //  alert('{ "prod_name":\"' + $('#product_name' + i).val() + '\","prod_price":\"' + $('#product_price' + i).val() +
@@ -106,6 +110,11 @@ function load_to_db() {
               showWarningModal("Age Selection Missing","Age  is missing for atleast one product. Please check.")
               return;
             }
+            if (genderCat.length == 0) {
+              //alert("Event type is missing for atleast one product. Please check");
+              showWarningModal("Gender Selection Missing","Gender  is missing for atleast one product. Please check.")
+              return;
+            }
             ////alert(catArr[0] + catArr[1] + catArr[2] + catArr[3] + "lenght " + catArr.lenght);
             var cat = getCatg(parseInt($('#product_price' + i).val())/100,$('#amazon_search_cat').val());
             ////alert("cat is " + cat);
@@ -115,6 +124,12 @@ function load_to_db() {
               if (l > 0)
                 catAddData += ",";
               catAddData += '"' + catArr[l] + '"';
+            }
+            var genderArrData = "";
+            for (var o = 0; o < genderCat.length;o++) {
+              if (o > 0)
+                genderArrData += ",";
+              genderArrData += '"' + genderCat[o] + '"';
             }
             //alert ("cat arr done");
             var keywords = $('#product_name' + i).val().split(' ');
@@ -130,7 +145,7 @@ function load_to_db() {
               }
             }
             productArray[j] = '{ "ProdID":\"BMG' + $('#product_id' + i).val() + '\","ProdNm":\"' + $('#product_name' + i).val() + '\","Catg":"'+ cat +'","MRP":\"' + parseInt($('#product_price' + i).val())/100 +
-            '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"eventType":['+ catAddData +'],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +']}';
+            '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"eventType":['+ catAddData +'],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +'], "genderCat":[' + genderArrData + ']}';
             //alert(productArray[j]);
             j++;
           }
@@ -277,6 +292,11 @@ function load_to_db() {
                       txt += '<option value="6">36 - 45</option>'
                       txt += '<option value="7">46 - 55</option>'
                       txt += '<option value="8"> > 55 </option></select></td></tr></table></div>'
+                      txt += '<br /><div style="padding-top:20px"><table style="text-align:center;width:100%"><tr><td><div><label for="rolename">Gender</label></div></td></tr>';
+                      txt += '<tr><td><select id="gender-field' + i + '" class="multiselect-ui ' + 'gender' + i + ' form-control" multiple="false">'
+                      txt += '<option value="m">Male</option>'
+                      txt += '<option value="f">Female</option>'
+                      txt += '</select></td></tr></table></div>'
 
                       //if (typeof x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] !== 'undefined' || x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] === null)
                       //  txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0].childNodes[0].nodeValue + "\">";
@@ -326,6 +346,11 @@ function load_to_db() {
                           txt += '<option value="6">36 - 45</option>'
                           txt += '<option value="7">46 - 55</option>'
                           txt += '<option value="8"> > 55 </option></select></td></tr></table></div>'
+                          txt += '<br /><div style="padding-top:20px"><table style="text-align:center;width:100%"><tr><td><div><label for="rolename">Gender</label></div></td></tr>';
+                          txt += '<tr><td><select id="gender-field' + i + '" class="multiselect-ui ' + 'gender' + i + ' form-control" multiple="false">'
+                          txt += '<option value="m">Male</option>'
+                          txt += '<option value="f">Female</option>'
+                          txt += '</select></td></tr></table></div>'
                           //if (typeof x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] !== 'undefined' || x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0] === null)
                             //txt += '<input type="hidden" name="product_group' + i + '" id="product_group' + i + '" value="' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Binding")[0].childNodes[0].nodeValue + "\">";
                           //else

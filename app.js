@@ -219,6 +219,7 @@ app.post('/getProdByCatg',function(req,res){
     //console.log("Query String - "+qryStr);
     var count = qryStr.catgCount;
     var evenTypeStr = qryStr.eventType;
+    var genderVal = qryStr.genderCat;
     //console.log("Event Type : "+evenTypeStr);
     //console.log("Count : "+qryStr.catgCount);
     //console.log("Category Array : "+qryStr.category);
@@ -246,7 +247,7 @@ app.post('/getProdByCatg',function(req,res){
         }
       } else {
         if (count == 0) {
-          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
               if (docs.length == 0) {res.send()}
               else {res.format({'application/json': function(){res.send(docs)}})}
@@ -255,7 +256,7 @@ app.post('/getProdByCatg',function(req,res){
           })
         }
         else {
-          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
               if (docs.length == 0) {res.send()}
               else {res.format({'application/json': function(){res.send(docs)}})}
@@ -1012,6 +1013,7 @@ app.post('/saveFeaturedList',urlencodedParser, function (req,res){
 });
 
 app.post('/load_to_db',urlencodedParser,function(req,res){
+  if ((req.session && req.session.adminUser)) {
     console.log(req.body.array);
     var prods = JSON.parse(req.body.array);
     var collection = bmgDB.collection("Product");
@@ -1021,6 +1023,7 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
       collection.find({"ProdID":val.ProdID}).toArray(function (err,data) {
           if(data.length == 0) {
             val.AddDate = new Date();
+            val['created_by'] = req.session.adminUser;
             collection.insert(val, function (err,result) {
               console.log("inserted" + result);
             });
@@ -1032,6 +1035,10 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
           console.log("insert complete");
           res.end("Posted");
         });
+      }
+      else {
+        res.end('Unauthorized Access')
+      }
 });
 
 

@@ -240,6 +240,11 @@
           }
           var evntStr = getCookie("event_category");
           var age = getCookie("age_group");
+          var gender = getCookie("gender");
+          if (gender == "Male")
+            genderVal = "m";
+          else
+            genderVal = "f";
           var ageCat;
            if (age == '0 - 5')
              ageCat = 0;
@@ -265,7 +270,7 @@
               if (evntStr == 'Baby Shower')
                   srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0","ageCat":-1}';
               else
-                  srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0","ageCat":' + ageCat + '}';
+                  srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0","ageCat":' + ageCat + ',"genderCat":\"' + genderVal + '\"}';
              //alert('no item');
            }
             else {
@@ -646,6 +651,23 @@ Modal Ends here-->
       </div>
     </div>
   </div>
+
+  <div id="validateModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="validateModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Invalid input</h4>
+        </div>
+        <div class="modal-body">
+            <p style="font-family:'Merriweather', serif;font-size:16px" id="modalMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
   <div id="textSearchKeyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="textSearchKeyModalLabel">
     <div class="modal-dialog">

@@ -201,9 +201,11 @@
                          //The following alert will need to be replaced by a modal dialog
                          document.getElementById("wishListLink").innerHTML = res;
                          signuporlogin = "login";
+                         //alert('Wish list ref ID is ' + $('#wishlistIdReference').val())
                          setCookie("wishlistIdReference",$('#wishlistIdReference').val(),2);
                          $("#signUpOrNot").modal('hide');
                          $("#wishListURLModal").modal('show');
+
 
                        },
                        error : function(res) {alert("Error in saving wishlist!")}
@@ -305,11 +307,15 @@
         url: '/checkIfEmailExists',
         data: {email: $('#emailaddr').val()},
         success: function (res) {
-          alert ("Email is " + res);
-          if (res == "EmailDoesNotExist")
+          //alert ("Email is " + res);
+          if (res == "EmailDoesNotExist") {
             $('#emailvalidate').val("1");
-            else
+          }
+            else {
+              document.getElementById("modalMessage").innerHTML = "The email ID provided already exists.";
+              $("#validateModal").modal('show');
               $('#emailvalidate').val("0");
+            }
         },
         error: function (res) {
           alert ("unable to reach server");
@@ -413,6 +419,7 @@ function validFields() {
               success : function(res) {
                 document.getElementById("wishListLink").innerHTML = res;
                 signuporlogin = "signup";
+                setCookie("wishlistIdReference",$('#wishlistIdReference').val(),2);
                 $("#login").modal('hide');
                 $("#signUpOrNot").modal('hide');
                 $("#wishListURLModal").modal('show');
