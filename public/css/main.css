@@ -93,6 +93,14 @@
 	background-image: -moz-linear-gradient(center bottom, #BBBBBB 0%, #F0F0F0 100%);
 	box-shadow: 0 1px 0 #B4B3B3;
 }
+
+.learnMoreItem li {
+  font-family: Droid Serif;
+  font-size: 14px;
+  padding-bottom: 5px;
+  padding-left: 25px;
+}
+
 .social li {
 	background: none repeat scroll 0 0 #B5B5B5;
 	border: 2px solid #B5B5B5;
@@ -236,7 +244,6 @@
   padding: 20px;
 
 }
-
 
 .carousel {
   height: 500px;

@@ -147,8 +147,13 @@ app.get('/FAQ.html',function(req,res) {
 })
 
 app.get('/howitworks.html',function(req,res) {
-  console.log("call made to FAQ.html")
+  console.log("call made to how it works")
   res.sendFile(__dirname + "/site/howitworks.html");
+})
+
+app.get('/learnmore.html',function(req,res) {
+  console.log("call made to learn more.html")
+  res.sendFile(__dirname + "/site/learnmore.html");
 })
 
 app.get('/review_product',function(req,res) {
