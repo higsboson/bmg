@@ -38,10 +38,10 @@
          if (cookieStr.indexOf(",") >= 0) {prodArr = cookieStr.split(',');cartLngth=prodArr.length}
          else {cartLngth=1};
        }
-       document.getElementById("CartId").innerHTML="Cart ("+cartLngth+")";
+       document.getElementById("CartId").innerHTML="Cart <span class=\"glyphicon glyphicon-gift\" aria-hidden=\"true\"></span> ("+cartLngth+")";
        var eventName = getCookie("event_name");
-       if (eventName != "") {document.getElementById("eventHeader").innerHTML = "Welcome, You are planning event : "+eventName}
-       else {document.getElementById("eventHeader").innerHTML = "Welcome, You are planning a new event"}
+       if (eventName != "") {document.getElementById("eventHeader").innerHTML = "Planning event : "+eventName}
+       else {document.getElementById("eventHeader").innerHTML = "Planning a new event"}
 
        /*$("#prdGrpSelect").multiselect({
          includeSelectAllOption:true,
@@ -68,10 +68,10 @@
                var endStr = "";
                var prdName ="";
                var cnt =0;
-               htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
-               htmlStr = htmlStr+'<div class="row"><div class="col-md-2"><button type="button" class = "btn btn-primary btn-lg" onclick="loadNewCart()">Search more products</button></div>';
+               htmlStr = '<div class = "container-fluid" style="padding-top:150px" id="mainContentPage">';
+               htmlStr = htmlStr+'<div class="row" style="margin-right:0px"><div class="col-md-2"><button type="button" class = "btn btn-primary btn-lg" onclick="loadNewCart()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Search more products</button></div>';
                htmlStr = htmlStr+'<div class="col-md-8"><p class="title" style="font-size:36px">Your selected products</p></div>';
-               htmlStr = htmlStr+'<div class="col-md-2"><button type="button" class = "btn btn-success btn-lg" data-toggle="modal" data-target="#signUpOrNot">Proceed to save wishlist</button></div></div>';
+               htmlStr = htmlStr+'<div class="col-md-2"><button type="button" class = "btn btn-success btn-lg" data-toggle="modal" data-target="#signUpOrNot">Proceed to save wishlist <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button></div></div>';
                htmlStr = htmlStr+'<hr>';
                $.each(data, function(key,doc){
                  try {
@@ -100,9 +100,9 @@
             else {alert("Error in fetching data from server")}
            })}
          else {
-           htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
-           htmlStr = htmlStr+'<div class="row"><div class="col-sm-9"><p style="font-size:18px">Your selected products</p></div><div class="col-sm-3">';
-           htmlStr = htmlStr+'<button type="button" class = "btn btn-block" onclick="loadNewCart()">Search more products</button></div></div>';
+           htmlStr = '<div class = "container-fluid" style="padding-top:150px" id="mainContentPage">';
+           htmlStr = htmlStr+'<div class="row" style="margin-right:0px"><div class="col-sm-9"><p style="font-size:18px">Your selected products</p></div><div class="col-sm-3">';
+           htmlStr = htmlStr+'<button type="button" class = "btn btn-block" onclick="loadNewCart()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Search more products</button></div></div>';
            htmlStr = htmlStr+'<hr>';
            htmlStr = htmlStr+'<p>You do not have any products in the wishlist</p>'
            $('#mainContentPage').replaceWith(htmlStr);
@@ -361,23 +361,23 @@
                 } else if (loop == 0 && $('#page-number').val() != 0) {
                     htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"><div class="row"><div class="col-sm-12" style="padding-top:100px;text-align:center"><h2>No more results.</h2></div></div></div>';
                     if ($('#page-number').val() != "0")
-                       pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"><button class="btn btn-info" id="previous">Previous Page</button></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
+                       pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"><button class="btn btn-info" id="previous">Previous Page</button></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right"><b>Unable to find your desired product? </b>';
                        else
-                       pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
+                       pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right"><b>Unable to find your desired product?  </b> ';
                     if (genreStr.length != 1) {
-                         pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\'All\')">Search Here</button></p></div><hr></div>';
+                         pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\'All\')"><span class="glyphicon glyphicon-search"></span>Search Here</button></p></div><hr></div>';
                        } else {
-                        pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div><hr></div>';
+                        pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\''+getAmazonSearchCode(genreStr[0])+'\')"><span class="glyphicon glyphicon-search"></span>Search Here</button></p></div><hr></div>';
                       }
                 } else if (loop < 30) {
                    if ($('#page-number').val() != "0")
-                      pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"><button class="btn btn-info" id="previous">Previous Page</button></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
+                      pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"><button class="btn btn-info" id="previous">Previous Page</button></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right"><b>Unable to find your desired product?  </b> ';
                       else
-                      pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
+                      pageNavigation = pageNavigation + '<hr><div class="row"><div class="col-sm-2"></div><div class="col-sm-4"></div><div class="col-sm-6"><p align="right"><b>Unable to find your desired product?  </b>';
                     if (genreStr.length != 1) {
-                      pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\'All\')">Search Here</button></p></div><hr></div>';
+                      pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\'All\')"><span class="glyphicon glyphicon-search"></span> Search Here</button></p></div><hr></div>';
                     } else {
-                     pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div><hr></div>';
+                     pageNavigation = pageNavigation + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(' + min + ',' + max + ',1,\''+getAmazonSearchCode(genreStr[0])+'\')"><span class="glyphicon glyphicon-search"></span> Search Here</button></p></div><hr></div>';
                    }
                  } else if (loop == 30 && skip > 0) {
                    pageNavigation = pageNavigation + '<div class="row" style="text-align:center"><div class="col-sm-2"><button class="btn btn-info" id="previous">Previous Page</button></div> <div class="col-sm-8"></div><div class="col-sm-2"><button class="btn btn-info" id="next">Next Page</button></div></div><br /><br />';
@@ -709,30 +709,28 @@ Modal Ends here-->
 
   <body>
     <nav class="navbar navbar-default navbar-fixed-top">
-          <div class="nav-container">
+      <div class="nav-container">
+
+      <div class="row">
+
+        <div class="col-sm-2">
             <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand wide" href="#">bemygenie.com</a>
+            <a class="navbar-brand wide" href="#">bemygenie.com</a>
             </div>
-            <div id="navbar" class="navbar-collapse collapse">
-              <ul class="nav navbar-nav">
-              </ul>
-              <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" id="eventHeader">Planning event</a></li>
-                <li><a id="CartId">Cart</a></li>
-              </ul>
-            </div><!--/.nav-collapse -->
-          </div>
+        </div>
+        <div class="col-sm-8 event-heading-right" style="text-align:center">
+            <ul style="list-style: none;margin-top:10px"><li id="eventHeader">Planning event</li></ul>
+        </div>
+        <div class="col-sm-2 nav navbar-nav navbar-right">
+            <li style="float:right;padding-right:10px"><a id="CartId">Cart</a></li>
+        </div>
+      </div>
+  </div>
     </nav> <!--Navigation bar -->
     <!-- Carousel
            ================================================== -->
         <!--div class = "container-fluid"-->
-        <div class = "container-fluid" style="padding-top:100px" id="mainContentPage"><!-- This is the carousel holder - Being added to accomodate a wider Nav Bar-->
+        <div class = "container-fluid" style="padding-top:150px" id="mainContentPage"><!-- This is the carousel holder - Being added to accomodate a wider Nav Bar-->
           <!--Quick filters-->
           <div class = "col-sm-2">
             <div class = "panel-group">

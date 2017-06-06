@@ -245,6 +245,13 @@
 
 }
 
+.event-heading-right {
+  font-size: 36px;
+  font-weight: bold;
+  padding: 20px;
+  color: #ffffff;
+}
+
 .carousel {
   height: 500px;
   margin-bottom: 60px;
