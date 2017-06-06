@@ -138,27 +138,26 @@ mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
 
 app.get('/', function(req,res) {
   res.sendFile(__dirname + "/site/index.html");
-  console.log("call made to index.html");
 });
 
 app.get('/FAQ.html',function(req,res) {
-  console.log("call made to FAQ.html")
   res.sendFile(__dirname + "/site/FAQ.html");
 })
 
+app.get('/aboutus.html',function(req,res) {
+  res.sendFile(__dirname + "/site/aboutus.html");
+})
+
 app.get('/howitworks.html',function(req,res) {
-  console.log("call made to how it works")
   res.sendFile(__dirname + "/site/howitworks.html");
 })
 
 app.get('/learnmore.html',function(req,res) {
-  console.log("call made to learn more.html")
   res.sendFile(__dirname + "/site/learnmore.html");
 })
 
 app.get('/review_product',function(req,res) {
   if (req.session.adminUser && req.session) {
-    console.log("call made to review_products.html")
     res.sendFile(__dirname + "/site/review_product.html");
   } else {
     res.send("Un-Autorized Access. Your IP will be recorded.")
@@ -168,7 +167,6 @@ app.get('/review_product',function(req,res) {
 app.get('/getProductReview',function(req,res) {
   if (req.session.adminUser && req.session) {
     var prdCollection = bmgDB.collection('Product');
-    console.log("test");
     prdCollection.find({"Reviewed" : "TBD"}).toArray(function(err,docs){
 
       if (!err){
@@ -184,7 +182,6 @@ app.get('/getProductReview',function(req,res) {
 app.get('/getProductReviewItems',function(req,res) {
   if (req.session.adminUser && req.session) {
     var prdCollection = bmgDB.collection('Product');
-    console.log("test");
     prdCollection.find({"Reviewed" : "TBD"}).toArray(function(err,docs){
       if (!err){
         if (docs.length == 0) {res.send()}
@@ -198,7 +195,6 @@ app.get('/getProductReviewItems',function(req,res) {
 })
 
 app.get('/forgotPassword',function(req,res) {
-  console.log("call made to forgot email.html")
   res.sendFile(__dirname + "/site/forgotPassword.html");
 })
 
@@ -211,7 +207,6 @@ app.get('/admin',function(req,res) {
     console.log("call made to admin_home.html with valid session " + req.session.adminUser);
   } else {
     // Logging in if there is no valid session.
-    console.log("call made to FAQ.html")
     res.sendFile(__dirname + "/site/admin.html");
   }
 

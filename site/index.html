@@ -42,15 +42,6 @@ $(document).ready(function () {
     //alert("I am caputring my event here.");
   });
 
-  //Replace footer links here
-  const baseURL = "http://dev.bemygenie.com:8080";
-  $("#FAQpage").replaceWith('<a id="FAQpage" href="'+baseURL+'/FAQ.html" target="_blank"> FAQs </a>');
-  $("#HowItWrks").replaceWith('<a id="HowItWrks" href="'+baseURL+'/howitworks.html" target="_blank"> How it works </a>');
-  $("#LearnMore").replaceWith('<a id="LearnMore" href="'+baseURL+'/learnmore.html" target="_blank"> Learn more </a>');
-
-
-
-
 });
 
 function checkEvents() {
@@ -99,9 +90,9 @@ function checkEvents() {
                 </li>-->
               </ul>
               <ul class="nav navbar-nav navbar-right">
-                <li><a href="/login" onclick="clearFields()" data-toggle="modal" data-target="#login">Login</a></li>
-                <li><a href="#contact" data-toggle="modal" data-toggle="modal" data-target="#wishListURLModal">Find a registry</a></li>
-                <li><a href="#contact">Track your order</a></li>
+                <li style="padding-right:15px"><a href="/login" onclick="clearFields()" data-toggle="modal" data-target="#login">Login</a></li>
+                <!--<li><a href="#contact" data-toggle="modal" data-toggle="modal" data-target="#wishListURLModal">Find a registry</a></li>
+                <li class="invisible"><a href="#contact">Track your order</a></li>-->
               </ul>
             </div><!--/.nav-collapse -->
           </div>
@@ -283,7 +274,7 @@ function checkEvents() {
                  <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
                      <h3> bemygenie.com </h3>
                      <ul>
-                         <li> <a href="#"> About Us </a> </li>
+                       <li> <a href="/aboutus" target="_blank"> About Us </a> </li>
                          <!--<li> <a href="#"> Careers </a> </li>
                          <li> <a href="#"> Advertise with us </a> </li>-->
 
@@ -300,8 +291,8 @@ function checkEvents() {
                  <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 ">
                    <h3> Help </h3>
                    <ul>
-                         <li> <a id="FAQpage" href="#" target="_blank"> FAQs + T&C </a> </li>
-                         <li> <a id="HowItWrks" href="#" target="_blank"> How it works </a> </li>
+                         <li> <a href="/FAQ.html" target="_blank"> FAQs + T&C </a> </li>
+                         <li> <a href="/howitworks.html" target="_blank"> How it works </a> </li>
                          <!--<li> <a href="#"> Privacy Policy </a> </li>-->
                      </ul>
                  </div>
@@ -328,7 +319,7 @@ function checkEvents() {
                      </ul>-->
                      <h3> Learn More </h3>
                      <p> Have you ever received a duplicate gift?<br>Have you ever received an undesirable gift?<br>Have you ever wondered what to give as gift to someone?
-                       <br>Bemygenie is here to help!!! Click <a href="#" id="LearnMore" target="_blank">here to learn more</a>
+                       <br>Bemygenie is here to help!!! Click <a href="/learnmore.html" target="_blank">here to learn more</a>
                      </p>
                  </div>
 
@@ -344,7 +335,7 @@ function checkEvents() {
      <div class="footer-bottom">
          <div class="container">
              <p class="pull-left"> Copyright © bemygenie.com 2016 </p>
-             <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:trznt.technologies@gmail.com" style="color:#ffffff">trznt</a></a>.</p>
+             <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:admin@bemygenie.com" style="color:#ffffff">Planet Joy</a></a>.</p>
          </div>
      </div>
      <!--/.footer-bottom-->
