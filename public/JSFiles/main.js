@@ -186,7 +186,7 @@
             $.ajax({
               type: 'POST',
               url: '/plogin',
-              data: {attempt: newhash,gensalt: newsalt,user: uid_hash},
+              data: {attempt: newhash,gensalt: newsalt,user: uid_hash,email: $('#login_username').val()},
               success: function (data) {
                //alert("Performing Login: Result is " + data);
                if (data == "Login Success") {

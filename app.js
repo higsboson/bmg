@@ -382,7 +382,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                       "HostName":req.session.name,
                       // Event status 1 means open wishlist, 0 means closed wishlist
                       "EventStatus":1,
-                      "uid":req.session.user,
+                      "uid":sha256(req.session.user),
                       "wid":sha256(rand(160,36) + req.session.user) ,
                       "Products":docs};
         }
@@ -501,7 +501,7 @@ app.post('/home',urlencodedParser, function (req,res) {
     //rendering Home page with user ID
     // On load of the ejs file, it will use the user ID reference
     // To pick information about the user.
-    res.render(__dirname + "/site/home.ejs",{userID : req.session.user,username: req.session.name});
+    res.render(__dirname + "/site/home.ejs",{userID : sha256(req.session.user),username: req.session.name});
     console.log("call made to home.html with valid session " + req.session.user);
   } else {
     // If this is not a valid session then the user gets a message that the
@@ -520,7 +520,7 @@ app.get('/home', function (req,res) {
     //rendering Home page with user ID
     // On load of the ejs file, it will use the user ID reference
     // To pick information about the user.
-    res.render(__dirname + "/site/home.ejs",{userID : req.session.user,username: req.session.name});
+    res.render(__dirname + "/site/home.ejs",{userID : sha256(req.session.user),username: req.session.name});
     console.log("call made to home.html with valid session " + req.session.user + req.session.name);
   } else {
     // If this is not a valid session then the user gets a message that the
@@ -878,7 +878,7 @@ app.post('/plogin',urlencodedParser,function(req,res){
           var trypass = sha256(req.body.gensalt + docs[0].KEY);
           console.log("Try Pass is " + trypass);
           if (req.body.attempt == trypass) {
-            req.session.user = req.body.user;
+            req.session.user = req.body.email;
             req.session.name = docs[0].HostName;
             res.end("Login Success");
           } else {
