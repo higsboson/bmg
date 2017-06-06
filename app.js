@@ -319,7 +319,7 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
       if (docs.length != 0) {res.send("Already present in DB")}
       else {
-        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat});
+        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat,"genderCat":prdToBeAdded.genderCat});
         if (!err) {res.send("Success")}
         else {res.send("Error")}
       }
@@ -367,6 +367,8 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                       "KEY":wishlistToBeAdded.Password,"UPPU":wishlistToBeAdded.Uppu,"Primary":1, // Primary 1 means primary record.
                       // Event status 1 means open wishlist, 0 means closed wishlist
                       "EventStatus":1,
+                      "uid":sha256(wishlistToBeAdded.HostEmail) ,
+                      "wid":sha256(rand(160,36) + wishlistToBeAdded.HostEmail) ,
                       "Products":docs};
           // Creating a session variable named 'user' which will hold the email.
           // The variable 'user' will be used to validate if the session exists.
@@ -380,19 +382,24 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                       "HostName":req.session.name,
                       // Event status 1 means open wishlist, 0 means closed wishlist
                       "EventStatus":1,
+                      "uid":req.session.user,
+                      "wid":sha256(rand(160,36) + req.session.user) ,
                       "Products":docs};
         }
 
         wishlistCollection.insert(wishList, function(err,insertedObj) {
           if (!err) {
             //we need to send back the link
-            var wishListId = insertedObj["ops"][0]["_id"];
+            var wishListId = insertedObj["ops"][0]["wid"];
             var hostName = insertedObj["ops"][0]["HostName"];
             var hostEmail = insertedObj["ops"][0]["HostEmail"];
+            var wid = insertedObj["ops"][0]["wid"];
+            var uid = insertedObj["ops"][0]["uid"];
+
             //console.log("Wishlist is inserted in database");
             //25/4/2017 - Made a change to have URL domain automatically populated
-            var wishListModalTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\" readonly/><br>We have also sent you the link via e-mail.";
-            var wishListEmailTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><a href=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\">http://"+ urlHost +"/showWishList?eventID=" + wishListId+"</a>";
+            var wishListModalTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wid + "\&u=" + uid  + " \" readonly/><br>We have also sent you the link via e-mail.";
+            var wishListEmailTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><a href=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\">http://"+ urlHost +"/showWishList?eventID=" + wid + "\&u=" + uid  + "</a>";
             var emailTxt = '<p style="font-family:"Merriweather", serif;font-size:16px">Dear '+hostName+',<br><br>Thank you for choosing Bemygenie.</p>';
             emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+wishListEmailTxt+'<br><br><br>Team Bemygenie</p>';
 
@@ -531,7 +538,7 @@ app.get('/getWishListItems', function (req,res) {
     //console.log("call made to /getWishListItems with valid session " + req.session.user + req.session.name);
     try {
       var wishList = bmgDB.collection('WishList');
-      wishList.find({"_id":new ObjectId(req.query.id),"HostEmail":req.session.user},{_id:0,Products:1}).toArray(function(err,docs) {
+      wishList.find({"wid":req.query.wid,"uid":req.query.uid},{_id:0,Products:1,wid:1,uid:1}).toArray(function(err,docs) {
         if (!err){
           res.send(docs[0]);
         }
@@ -547,9 +554,9 @@ app.get('/getWishListItems', function (req,res) {
 
 app.get('/getUserWishLists', function (req,res) {
   var wishlistCollection = bmgDB.collection('WishList');
-  console.log("getting wishlist for " + req.query.userid + req.query.mode);
+  //console.log("getting wishlist for " + sha256(req.query.userid) + req.query.mode);
   //We only return pertinent information such as the event names, types and open/closed registries
-  wishlistCollection.find({$and: [{"HostEmail": req.query.userid},{"EventStatus": parseInt(req.query.mode)}]},{"_id":1,"EventName":1,"EventType":1,"EventStatus":1,"EventDate":1}).toArray(function(err,docs){
+  wishlistCollection.find({$and: [{"uid": req.query.userid},{"EventStatus": parseInt(req.query.mode)}]},{"wid":1,"uid":1,"EventName":1,"EventType":1,"EventStatus":1,"EventDate":1}).toArray(function(err,docs){
     if (!err) {
       if (docs.length) {
         res.format({'application/json': function(){res.send(docs)}})
@@ -566,7 +573,7 @@ app.post('/saveProfileChanges',urlencodedParser, function (req,res) {
   console.log("Name is " + req.body.hostname);
   if (req.session && req.session.user) {
     var wishlistCollection = bmgDB.collection('WishList');
-    wishlistCollection.update({"_id" : new ObjectId(req.body._id)},{$set:{"HostName":req.body.hostname,"HostPhone":req.body.hostphone}}, function(err) {
+    wishlistCollection.update({"uid" : req.body.uid},{$set:{"HostName":req.body.hostname,"HostPhone":req.body.hostphone}}, function(err) {
       if (!err) {res.redirect('/home');}
       else {res.send("Error in updating product status")}
     })
@@ -576,7 +583,7 @@ app.post('/saveProfileChanges',urlencodedParser, function (req,res) {
 
 app.get('/getUserProfileDetails', function (req,res) {
   var profileDetails = bmgDB.collection('WishList');
-  profileDetails.find({$and: [{"HostEmail": req.query.userid},{"Primary" : 1}]},{"_id":1,"HostName":1,"HostPhone":1,"HostEmail":1}).toArray(function(err,docs){
+  profileDetails.find({$and: [{"uid": req.query.userid},{"Primary" : 1}]},{"uid":1,"HostName":1,"HostPhone":1,"HostEmail":1}).toArray(function(err,docs){
     if (!err) {
       if (docs.length) {
         res.format({'application/json': function(){res.send(docs)}})
@@ -725,7 +732,8 @@ app.get('/New-Cart.html',function(req,res){
 
 app.get('/showWishList',function(req,res) {
   var qryStr = req.query.eventID;
-  res.render(__dirname+"/site/showWishList.ejs",{eventID : qryStr});
+  var uid = req.query.u;
+  res.render(__dirname+"/site/showWishList.ejs",{eventID : qryStr, uid_val : uid});
 });
 
 app.post('/filterWishListByCatg',function(req,res){
@@ -760,8 +768,9 @@ app.post('/filterWishListByCatg',function(req,res){
 app.get('/showListProducts',function(req,res){
   var wishList = bmgDB.collection('WishList');
   var qryStr = req.query.eventID;
+  var u = req.query.u;
   try {
-    wishList.find({"_id" : new ObjectId(qryStr)},{_id:0,Products:1}).toArray(function(err,docs) {
+    wishList.find({"wid":qryStr,"uid":u},{_id:0,Products:1}).toArray(function(err,docs) {
       if (!err){
       if (docs.length == 0) {res.send("Unable to find the desired wishlist")}
       else {res.format({'application/json': function(){res.send(docs[0].Products)}})}
@@ -775,8 +784,10 @@ app.get('/showListProducts',function(req,res){
 app.get('/getEventInfo',function(req,res){
   var wishList = bmgDB.collection('WishList');
   var qryStr = req.query.eventID;
+  var uid = req.query.u;
+  console.log(qryStr + ' and ' + uid)
   try {
-    wishList.find({"_id" : new ObjectId(qryStr)},{_id:0,EventName:1,HostName:1,wishlistMsg:1}).toArray(function(err,docs) {
+    wishList.find({"wid" : qryStr,"uid" : uid},{_id:0,EventName:1,HostName:1,wishlistMsg:1}).toArray(function(err,docs) {
       if (!err){
       if (docs.length == 0) {res.send("Unable to find the desired wishlist")}
       else {res.format({'application/json': function(){res.send(docs[0])}})}
@@ -811,8 +822,9 @@ app.post('/saveNewPassword', urlencodedParser, function (req, res){
   //console.log("changedPassData is" + req.body.changedPassData)
   var passData = JSON.parse(req.body.changedPassData);
   //console.log("User for which password gonna be changed is is" + passData.user + req.session.user)
-  if (req.session.user == passData.user) {
-    wishlistCollection.update({$and:[{"HostEmail" : passData.user},{"Primary":1}]},{$set:{"KEY":passData.Password,"UPPU":passData.Uppu}}, function(err) {
+  var hashed = sha256(req.session.user);
+  if (hashed == passData.user) {
+    wishlistCollection.update({$and:[{"uid" : hashed},{"Primary":1}]},{$set:{"KEY":passData.Password,"UPPU":passData.Uppu}}, function(err) {
       if (!err) {
         //console.log("Password changed to :" + passData.Password);
         //console.log("uppu changed to :" + passData.Uppu);
@@ -826,17 +838,18 @@ app.post('/saveNewPassword', urlencodedParser, function (req, res){
 app.post('/changePassword',urlencodedParser, function (req, res){
   //console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
   var wishList = bmgDB.collection('WishList');
-  //console.log("In change Password user is " + req.body.user)
+  console.log("Session Id" + sha256(req.body.email));
   try {
-    wishList.find({"HostName" : req.session.name},{_id:0,KEY:1,HostName:1}).toArray(function(err,docs) {
+    wishList.find({"uid" : sha256(req.body.email), "Primary" : 1},{_id:0,KEY:1,HostName:1}).toArray(function(err,docs) {
       if (!err){
+        console.log('into the log')
         if (docs.length == 0) {res.end("")}
         else {
           //console.log("Key from DB is " + docs[0].KEY);
           var trypass = sha256(req.body.gensalt + docs[0].KEY);
           //console.log("Try Pass is " + trypass);
           if (req.body.attempt == trypass) {
-            req.session.user = req.body.user;
+            req.session.user = req.body.email;
             req.session.name = docs[0].HostName;
             //console.log("session user is " + req.session.user);
             res.end("Login Success");
@@ -857,7 +870,7 @@ app.post('/plogin',urlencodedParser,function(req,res){
   var wishList = bmgDB.collection('WishList');
   var qryStr = req.query.eventID;
   try {
-    wishList.find({"HostEmail" : req.body.user},{_id:0,KEY:1,HostName:1}).toArray(function(err,docs) {
+    wishList.find({"uid" : req.body.user},{_id:0,KEY:1,HostName:1}).toArray(function(err,docs) {
       if (!err){
         if (docs.length == 0) {res.end("")}
         else {
@@ -911,7 +924,7 @@ app.post('/getSaltForUser',urlencodedParser,function(req,res) {
   var wishList = bmgDB.collection('WishList');
   var qryStr = req.query.eventID;
   try {
-    wishList.find({"HostEmail" : req.body.user},{_id:0,HostEmail:1,UPPU:1}).toArray(function(err,docs) {
+    wishList.find({"uid" : req.body.user},{_id:0,HostEmail:1,UPPU:1}).toArray(function(err,docs) {
       if (!err){
       if (docs.length == 0) {res.end("")}
       else {res.end(docs[0].UPPU)}
@@ -1135,7 +1148,7 @@ app.post('/verifyRecaptcha',urlencodedParser,function(req,res){
 app.post('/saveMessage', urlencodedParser, function (req,res){
   var wishList = bmgDB.collection('WishList');
   console.log(req.body.id  + req.body.message)
-  wishList.update({"_id" : new ObjectId(req.body.id)},{$set:{"wishlistMsg":req.body.message}}, function(err) {
+  wishList.update({"wid" : req.body.id},{$set:{"wishlistMsg":req.body.message}}, function(err) {
     if (!err) {res.send("Success")}
     else {res.send("Error in updating wishlist message")}
   })

@@ -49,8 +49,9 @@ function changeGiftStatus(strStatus) {
 
 function showProducts() {
   eventID = $("#evntID").val();
+  var uid_val = $("#uid_val").val();
   //alert("Value of event ID is "+eventID);
-  $.get("/showListProducts",{eventID:eventID}, function (data,status) {
+  $.get("/showListProducts",{eventID:eventID, u: uid_val}, function (data,status) {
     if (status == 'success'){
       var htmlStr = "";
       var endStr = "";
@@ -88,10 +89,11 @@ function showProducts() {
 
 function showEventDetails() {
   var eventID = $("#evntID").val();
+  var uid_val = $("#uid_val").val();
   $.ajax({
     url: '/getEventInfo',
     method: 'GET',
-    data: {eventID : eventID},
+    data: {eventID : eventID, u : uid_val},
     success: function (res) {
       alert('event ID read' + JSON.stringify(res));
       $('#pageTitle').text("Bemygenie Register: " + res.EventName)

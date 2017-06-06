@@ -107,7 +107,7 @@
             $.ajax({
               type: 'POST',
               url: '/changePassword',
-              data: {attempt: newhash,gensalt: newsalt,user: $('#user').val()},
+              data: {attempt: newhash,gensalt: newsalt,user: $('#user').val(),email: $('#email').val()},
               success: function (data) {
                //alert("Performing Login: Result is " + data);
                if (data == "Login Success") {
@@ -160,10 +160,14 @@
   function doLogin(action) {
     try {
       //alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
+      var t_sha256 = new jsSHA('SHA-256', 'TEXT');
+      t_sha256.update($('#login_username').val());
+      var uid_hash = t_sha256.getHash("HEX");
+      alert(uid_hash);
       $.ajax({
         type: 'POST',
         url: '/getSaltForUser',
-        data: {user: $('#login_username').val()},
+        data: {user: uid_hash},
         success: function (salt) {
          //alert(salt);
          var sha256 = new jsSHA('SHA-256', 'TEXT');
@@ -182,7 +186,7 @@
             $.ajax({
               type: 'POST',
               url: '/plogin',
-              data: {attempt: newhash,gensalt: newsalt,user: $('#login_username').val()},
+              data: {attempt: newhash,gensalt: newsalt,user: uid_hash},
               success: function (data) {
                //alert("Performing Login: Result is " + data);
                if (data == "Login Success") {
@@ -439,7 +443,7 @@ function validFields() {
 
 //4/22/2017 - trznt
 //Getting Data of WishList item
-function getListData(id,name,mode) {
+function getListData(wid,uid,name,mode) {
   $('#summaryDescription').html("");
   if (mode) {
     $('#wishlistname').text(name);
@@ -453,7 +457,7 @@ function getListData(id,name,mode) {
   $.ajax({
       type : 'GET',
       url :"/getWishListItems",
-      data : {"id":id},
+      data : {"wid":wid,"uid":uid},
       success : function(res) {
         //The following alert will need to be replaced by a modal dialog
             var data = '';
@@ -504,7 +508,7 @@ function getListData(id,name,mode) {
               $('#wishlistoldsummary').html(data);
             }
             if (mode) {
-              $('#wishListLink').html('<table><tr><td><p class="summary" style="padding-top:8px">Link to this wishlist: </p></td><td><div class="help-tip">	<p>To share this wishlist with your friends and family, pass along this link.</p> </div></td></tr></table> <input class="form-control" value="http://'+ window.location.hostname + ':8080/showWishList?eventID=' + id + '" id="wishListLinkUrl" readonly>');
+              $('#wishListLink').html('<table><tr><td><p class="summary" style="padding-top:8px">Link to this wishlist: </p></td><td><div class="help-tip">	<p>To share this wishlist with your friends and family, pass along this link.</p> </div></td></tr></table> <input class="form-control" value="http://'+ window.location.hostname + ':8080/showWishList?eventID=' + res.wid + '\&u=' + res.uid + '" id="wishListLinkUrl" readonly>');
               $("#wishListLinkUrl").focus(function() { $(this).select(); } );
             }
             //$('#' + div).text("You have " + res[0].EventName);
@@ -531,7 +535,7 @@ function getUserProfileDetails(user,div) {
         data += '<div class="row"><div class="col-sm-4" style="text-align:right"><div class="form-group"><label for="phone">Mobile:</label></div></div>';
         data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="text" class="form-control" value="' + res[0].HostPhone + '" name="hostphone"></div></div></div>';
         data += '<div class="row"><div class="col-sm-4" style="text-align:right"><div class="form-group"><label for="email">Email:</label></div></div>';
-        data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="text" class="form-control" value="' + res[0].HostEmail + '" name="email" readonly><input type="hidden" name="_id" value="' + res[0]._id + '"></div></div></div>';
+        data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="text" class="form-control" value="' + res[0].HostEmail + '" name="email" id="email" readonly><input type="hidden" name="uid" id="uid" value="' + res[0].uid + '"></div></div></div>';
         data += '<div class="row"><div class="col-sm-4" style="text-align:right"><div class="form-group"><label for="password">Password:</label></div></div>';
         data += '<div class="col-sm-6" style="text-align:center"><div class="form-group"><input type="password" class="form-control" value="******" id="password" readonly><a href="#" data-target="#changePassword" data-toggle="modal" style="font-size:10px;float:right">Change Password</a></div></div></div>';
         data += '<div class="row"></br></div><div class="row"><div class="col-sm-6" style="text-align:right">' + '<button class="btn btn-primary" name="Save" type="submit" style="background-color:#454282">Save Changes</button></div>';
@@ -553,6 +557,7 @@ function getUserProfileDetails(user,div) {
  function getUserWishLists(user,divactive,mode) {
    //alert("getting wishlist data:" + user +divactive + mode);
    $('#' + divactive).html("");
+   //alert(user);
    $.ajax({
        type : 'GET',
        url :"/getUserWishLists",
@@ -566,9 +571,9 @@ function getUserProfileDetails(user,div) {
                  var d = new Date(res[i].EventDate);
                  var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear();
                  if (mode)
-                  table_text += '<tr data-toggle="modal" data-target="#viewWishListModal" onclick="getListData(\'' + res[i]._id + '\',\'' + res[i].EventName +  '\',1)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
+                  table_text += '<tr data-toggle="modal" data-target="#viewWishListModal" onclick="getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',1)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
                  else
-                  table_text += '<tr data-toggle="modal" data-target="#viewOldWishListModal" onclick="getListData(\'' + res[i]._id + '\',\'' + res[i].EventName +  '\',0)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
+                  table_text += '<tr data-toggle="modal" data-target="#viewOldWishListModal" onclick="getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',0)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
                }
               table_text += '</tbody></table>';
               if (mode)
@@ -686,6 +691,11 @@ function getUserProfileDetails(user,div) {
          case "Musical Instruments" : PrdGrp="MusicalInstruments";break;
        }
        var catg = getCatg(MRP,PrdGrp);
+       var gender = getCookie("gender");
+       if (gender == "Male")
+         genderVal = "m";
+       else
+         genderVal = "f";
        var age = getCookie("age_group");
        var ageCat = [];
         if (age == '0 - 5')
@@ -721,7 +731,7 @@ function getUserProfileDetails(user,div) {
            n++;
          }
        }
-       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","Reviewed":"TBD","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +']}';
+       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","Reviewed":"TBD","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +'], "genderCat":["' + genderVal + '"]}';
        //Throwing error if the name has quotes in it
        $.ajax({
          type : 'POST',
@@ -742,7 +752,7 @@ function getUserProfileDetails(user,div) {
      cartLngth++;
      setCookie("ProdID",cartProds,2);
 
-     document.getElementById("CartId").innerHTML="Cart ("+cartLngth+")";
+     document.getElementById("CartId").innerHTML="Cart <span class=\"glyphicon glyphicon-gift\" aria-hidden=\"true\"></span> ("+cartLngth+")";
    }
    catch (e) {alert(e)}
  };
