@@ -11,12 +11,23 @@
     $('#login_password').val("");
   }
 
+  function gotoHome() {
+    window.location.href = "/";
+  }
+
 
   function validateAndReset() {
     if ($('#password').val().length < 6) {
-      alert ('Password needs to be 6 characters or more');
-    }
-    else if ($('#password').val() == $('#repassword').val()) {
+      $('#warning_modal-title-id').text('Warning');
+      $('#warning_modal-p-id').text('Password needs to be more than 6 characters.');
+      $('#warning_modal').modal('show');
+      return false;
+    } else if ($('#password').val() != $('#repassword').val()) {
+      $('#warning_modal-title-id').text('Warning');
+      $('#warning_modal-p-id').text('Password do not match.');
+      $('#warning_modal').modal('show');
+      return false;
+    } else if ($('#password').val() == $('#repassword').val()) {
       $.ajax({
         type: 'POST',
         url: '/getsalt',
@@ -32,8 +43,11 @@
              data : {"c": $('#c').val() , "h" : hash, "s": salt},
              success : function(res) {
                if (res == "success") {
-                 alert('Password Changed');
-                window.location.href = "/";
+                 password_changed
+                 $('#password_changed-title-id').text('Success');
+                 $('#password_changed-p-id').text('Password changed sucessfully.');
+                 $('#password_changed').modal('show');
+                 $('#changePassword').html('<p>Password Changed</p>');
               }
              },
              error : function(res) {alert("Error in setting password")}
@@ -50,11 +64,14 @@
 
 
     if ($('#username').val() == '') {
-      alert("Please provide your registered email address.");
+      $('#warning_modal-title-id').text('Warning');
+      $('#warning_modal-p-id').text('Please provide an email address.');
+      $('#warning_modal').modal('show');
       return false;
     }
 
-    alert('posting');
+    //alert('posting');
+    $('#passwordChangeButton').html('<i class="fa fa-circle-o-notch fa-spin" style="font-size:24px;"></i><br><p>Processing...</p>')
     $.ajax({
        type  : 'POST',
        url   : '/verifyRecaptcha',
@@ -67,7 +84,10 @@
               data : {"username": $('#username').val()},
               success : function (res) {
                 if (res == 'mailsent')
-                  window.location.href = "/"
+                $('#passwordChangeButton').html('<p>Done</p>');
+                  $('#mail_sent-title-id').text('Success');
+                  $('#mail_sent-p-id').text('We have sent a link to your registered email address using which you can change your password.');
+                  $('#mail_sent').modal('show');
               },
               error : function (err) {
                 alert ("Error: " + err);
@@ -116,7 +136,7 @@
                    type: 'POST',
                    url: '/getPasswordChangeSalt',
                    success: function (salt_for_new_pass) {
-                    alert("Got Salt for new Password" + salt);
+                    //alert("Got Salt for new Password" + salt);
                     var sha256 = new jsSHA('SHA-256', 'TEXT');
                     sha256.update($("#login_password").val() + salt_for_new_pass);
                     var hash = sha256.getHash("HEX");
@@ -127,7 +147,9 @@
                         url :"/saveNewPassword",
                         data : {"changedPassData":changedPassData},
                         success : function(res) {
-                          alert("Password Change is " + res);
+                          $('#information_modal-title-id').text('Success');
+                          $('#information_modal-p-id').text('Your password has been changed.');
+                          $('#information_modal').modal('show');
                         },
                         error : function(res) {alert("Error Changing Password!")}
                       })
@@ -136,6 +158,10 @@
                      alert("Unable to save wishlist")
                    }
                  })
+               } else {
+                 $('#error_modal-title-id').text("Error");
+                 $('#error_modal-p-id').text('Current password is incorrect.');
+                 $('#error_modal').modal('show');
                }
              },
              error: function (err) {
@@ -163,7 +189,7 @@
       var t_sha256 = new jsSHA('SHA-256', 'TEXT');
       t_sha256.update($('#login_username').val());
       var uid_hash = t_sha256.getHash("HEX");
-      alert(uid_hash);
+      //alert(uid_hash);
       $.ajax({
         type: 'POST',
         url: '/getSaltForUser',

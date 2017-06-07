@@ -435,7 +435,7 @@ app.post('/resetPassword',urlencodedParser,function(req,res) {//change the statu
     var aux_passwordReset = bmgDB.collection('AUX_PASSRESET');
 
 
-    profileDetails.find({$and: [{"HostEmail": req.body.username},{"Primary" : 1}]},{"_id":1,"HostName":1,"HostPhone":1,"HostEmail":1}).toArray(function(err,docs){
+    profileDetails.find({$and: [{"uid": sha256(req.body.username)},{"Primary" : 1}]},{"_id":1,"HostName":1,"HostPhone":1,"HostEmail":1}).toArray(function(err,docs){
       if (!err) {
         if (docs.length) {
           console.log('email found');
@@ -443,7 +443,7 @@ app.post('/resetPassword',urlencodedParser,function(req,res) {//change the statu
           aux_passwordReset.insert({"email":req.body.username,"FP":setval}, function(err,result) {
             if (!err) {
               console.log('inserted fp');
-              bmgaux.mailer(emailPassword,'support',req.body.username,'Password Reset','<b>This is your password reset link:</b><br>http://www.bemygenie.com/rpf?c=' + setval,function(message,response) {
+              bmgaux.mailer(emailPassword,'support',req.body.username,'Password Reset','<b>Click the link below to change your password:</b><br><br><a href="https://www.bemygenie.com/rpf?c=' + setval + '" >Change Password</a> <br><br> - Team Bemygenie.com',function(message,response) {
                 res.end('mailsent');
               });
             }
