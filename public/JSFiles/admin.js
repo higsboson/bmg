@@ -243,7 +243,7 @@ function getProductItems() {
 
           }
           txt += "</ul></td>";
-          txt += "<td><input type='hidden' name='prod" + i + "' id='prod" + i + "' value='"+ res[i].ProdID  + "' /></td>"
+          txt += "<td><input type='hidden' name='prod" + i + "' id='prod" + i + "' value='"+ res[i]._id  + "' /></td>"
 
           txt += '</tr>';
         }

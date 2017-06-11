@@ -78,7 +78,9 @@ app.use(usersession({
   activeDuration: 5 * 60 * 1000,
 }));
 
-mongoclient.connect("mongodb://localhost:27017/bmgdb", function(err,db) {
+console.log(process.argv[2]);
+
+mongoclient.connect("mongodb://worker:" + process.argv[2] + "@localhost:27017/bmgdb", function(err,db) {
   if (!err){
     console.log("We are connected");
     bmgDB = db;
@@ -316,10 +318,11 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
     var prdToBeAdded = JSON.parse(req.body.Product);
 
     console.log("ProdID : "+prdToBeAdded.ProdID);
+    prdToBeAdded.AddDate = new Date();
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
       if (docs.length != 0) {res.send("Already present in DB")}
       else {
-        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat,"genderCat":prdToBeAdded.genderCat});
+        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat,"AddDate":prdToBeAdded.AddDate,"genderCat":prdToBeAdded.genderCat,"created_by":prdToBeAdded.created_by,"MfrID":1});
         if (!err) {res.send("Success")}
         else {res.send("Error")}
       }
@@ -331,7 +334,7 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
 app.post('/saveReviewedProducts',urlencodedParser,function(req,res){
   var prodCollection = bmgDB.collection('Product');
   WaterfallOver(req.body.array,function (val,report){
-      prodCollection.update({"ProdID" : val.Prod},{$unset:{"Reviewed":"TBD"},$set :{"eventType":val.events}}, function(err) {
+      prodCollection.update({"_id" : new ObjectId(val.Prod)},{$unset:{"Reviewed":"TBD"},$set :{"eventType":val.events}}, function(err) {
         if (!err) {report();}
         else {console.log("Error in updating product status")}
       });
@@ -404,7 +407,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
             emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+wishListEmailTxt+'<br><br><br>Team Bemygenie</p>';
 
             bmgaux.mailer(emailPassword,'support',hostEmail,'New Wishlist Created',emailTxt,function(message,response) {});
-            res.send(wishListModalTxt + '<input type="hidden" name="wishlistIdReference" id="wishlistIdReference" value="' + wishListId + '" >');
+            res.send(wishListModalTxt + '<input type="hidden" name="wishlistIdReference" id="wishlistIdReference" value="' + wishListId + '" ><input type="hidden" name="UIDReference" id="UIDReference" value="' + uid + '" >');
 
           }
           else {res.send("Error in saving wishlist. Please try again later")}
@@ -743,9 +746,9 @@ app.post('/filterWishListByCatg',function(req,res){
     var eventID = qryStr.eventID;
     var cnt = qryStr.catgCount;
     var catg = qryStr.Catg;
-
+    console.log('checking uid' + qryStr.uid)
     var prodArr = [];
-    wishList.find({"_id":new ObjectId(eventID)},{_id:0,Products:1}).toArray(function(err,docs) {
+    wishList.find({"uid":qryStr.uid,"wid":qryStr.eventID},{_id:0,Products:1}).toArray(function(err,docs) {
       if (!err){
         if (docs.length == 0) {res.send({})}
         else {res.format({'application/json': function(){
@@ -1147,10 +1150,10 @@ app.post('/verifyRecaptcha',urlencodedParser,function(req,res){
 
 app.post('/saveMessage', urlencodedParser, function (req,res){
   var wishList = bmgDB.collection('WishList');
-  console.log(req.body.id  + req.body.message)
-  wishList.update({"wid" : req.body.id},{$set:{"wishlistMsg":req.body.message}}, function(err) {
-    if (!err) {res.send("Success")}
-    else {res.send("Error in updating wishlist message")}
+  console.log(req.body.id  + req.body.message + req.body.uid)
+  wishList.update({"wid" : req.body.id,"uid":req.body.uid},{$set:{"wishlistMsg":req.body.message}}, function(err) {
+    if (!err) {res.send("Success");console.log('success');}
+    else {res.send("Error in updating wishlist message");console.log('Error ' + err)}
   })
 });
 

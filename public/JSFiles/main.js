@@ -233,6 +233,7 @@
                          signuporlogin = "login";
                          //alert('Wish list ref ID is ' + $('#wishlistIdReference').val())
                          setCookie("wishlistIdReference",$('#wishlistIdReference').val(),2);
+                         setCookie("UIDReference",$('#UIDReference').val(),2);
                          $("#signUpOrNot").modal('hide');
                          $("#wishListURLModal").modal('show');
 
@@ -450,6 +451,7 @@ function validFields() {
                 document.getElementById("wishListLink").innerHTML = res;
                 signuporlogin = "signup";
                 setCookie("wishlistIdReference",$('#wishlistIdReference').val(),2);
+                setCookie("UIDReference",$('#UIDReference').val(),2);
                 $("#login").modal('hide');
                 $("#signUpOrNot").modal('hide');
                 $("#wishListURLModal").modal('show');
@@ -757,7 +759,7 @@ function getUserProfileDetails(user,div) {
            n++;
          }
        }
-       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","Reviewed":"TBD","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +'], "genderCat":["' + genderVal + '"]}';
+       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","Reviewed":"TBD","MfrID":1,"created_by":"customer","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +'], "genderCat":["' + genderVal + '"]}';
        //Throwing error if the name has quotes in it
        $.ajax({
          type : 'POST',
@@ -877,7 +879,7 @@ function redirectToHome() {
      if (regex.test(srchprod)) {
        $('#carousel-wrapper').replaceWith('<div class = "carousel-wrapper" id="carousel-wrapper"><div class="row"><div class="col-sm-12" style="text-align:center;padding-top:100px"><i class="fa fa-circle-o-notch fa-spin" style="font-size:96px;"></i></div></div></div>');
        $('#pageNavigation').html('');
-       alert('Page num is ' + pageNum);
+       //alert('Page num is ' + pageNum);
        $.get( "/srchInAmazon",{PageNumber:pageNum,ProdNm:srchprod,ProdGrp:prdGrpSel,min:min,max:max}, function( data, status ) {
          if (status == 'success'){
            //alert(data);
@@ -900,8 +902,8 @@ function redirectToHome() {
                  htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
                  htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
                  htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-                 htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
-                 htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
+                 htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></div></a>';
+                 htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-warning" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
                  //htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\',\''+prdName1+'\')">Add to wishlist</button></p>';
                  htmlStr = htmlStr + '</div></div>'
                  cnt++;
@@ -1110,7 +1112,7 @@ function doAdminLogin(action) {
           var sha2562 = new jsSHA('SHA-256', 'TEXT');
           sha2562.update(newsalt + hash);
           var newhash = sha2562.getHash("HEX");
-          alert("New calculated Salt" + newhash);
+          //alert("New calculated Salt" + newhash);
           $.ajax({
             type: 'POST',
             url: '/pAdminLogin',
@@ -1199,12 +1201,12 @@ function getAmazonSearchCode(val) {
 }
 
 
-function saveMessage(id) {
+function saveMessage(id,uid) {
   //alert('Saving Message for ' + id);
   $.ajax({
     url: '/saveMessage',
     method: 'POST',
-    data: {message: $('#message').val(),id :id},
+    data: {message: $('#message').val(),id :id,uid: uid},
     success :  function (res) {
       //alert("Message Saved " + res);
     },
@@ -1215,14 +1217,15 @@ function saveMessage(id) {
   deleteCookie("NewRegistryCreated");
   deleteCookie('event_name');
   deleteCookie('wishlistIdReference');
+  deleteCookie('UIDReference');
 }
 
-function saveMessageDefault(id) {
+function saveMessageDefault(id,uid) {
   var text = "Hello, \n\n Thanks very much for taking the time to go through my gift registry. \n\n See you Soon :)"
   $.ajax({
     url: '/saveMessage',
     method: 'POST',
-    data: {message: text,id :id},
+    data: {message: text,id :id,uid :uid},
     success :  function (res) {
       //alert("Message Saved " + res);
     },
@@ -1233,4 +1236,5 @@ function saveMessageDefault(id) {
   deleteCookie("NewRegistryCreated");
   deleteCookie('event_name');
   deleteCookie('wishlistIdReference');
+  deleteCookie('UIDReference');
 }

@@ -48,7 +48,8 @@
            for (i=0;i<genreAll.length;i++) {for (j=0;j<priceStr.length;j++) {gpStr[cnt]='"'+genreAll[i]+priceStr[j]+'"';cnt++;}}
          }
           if (cnt > 0) {
-            srchStr = '{"Catg":['+gpStr+'],"eventID":"'+eventID+'","catgCount":'+cnt+'}';
+            srchStr = '{"Catg":['+gpStr+'],"uid":"' + $('#uid_val').val() + '","eventID":"'+eventID+'","catgCount":'+cnt+'}';
+            alert(srchStr);
             $.ajax({
               type : 'POST',
               url :"/filterWishListByCatg",
@@ -87,22 +88,24 @@
                   $('#carousel-wrapper').replaceWith(htmlStr);
                 }
                 else {
-                  htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-                  htmlStr = htmlStr + '<p style = "padding-top:20px"><h5>No products found with your matching criteria</h5></p>';
+                  htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row" style="text-align:center">';
+                  htmlStr = htmlStr + '<p style = "padding-top:20px:"><h2>The wishlist has no gifts matching this criteria.</h2></p>';
                   htmlStr = htmlStr + "</div></div>";
                   $('#carousel-wrapper').replaceWith(htmlStr);
                 }
               },
              error: function(res) {
-               htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-               htmlStr = htmlStr + '<p style = "padding-top:20px"><h5>No products found with your matching criteria</h5></p>';
+               htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row" style="text-align:center">';
+               htmlStr = htmlStr + '<p style = "padding-top:20px"><h2>The wishlist has no gifts matching this criteria.</h2></p>';
                htmlStr = htmlStr + "</div></div>";
                $('#carousel-wrapper').replaceWith(htmlStr);
              }
            });
          }
          else {
-           srchStr = '{"eventID":"'+eventID+'","catgCount":'+0+'}';
+
+           srchStr = '{"uid":"' + $('#uid_val').val() + '","eventID":"'+eventID+'","catgCount":'+0+'}';
+           alert(srchStr);
            $.ajax({
              type : 'POST',
              url :"/filterWishListByCatg",
@@ -141,15 +144,15 @@
                  $('#carousel-wrapper').replaceWith(htmlStr);
                }
                else {
-                 htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-                 htmlStr = htmlStr + '<p style = "padding-top:20px"><h4>No products found with your matching criteria</h4></p>';
+                 htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row" style="text-align:center">';
+                 htmlStr = htmlStr + '<p style = "padding-top:20px"><h2>The wishlist has no gifts matching this criteria.</h2></p>';
                  htmlStr = htmlStr + "</div></div>";
                  $('#carousel-wrapper').replaceWith(htmlStr);
                }
              },
             error: function(res) {
-              htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-              htmlStr = htmlStr + '<p style = "padding-top:20px"><h4>No products found with your matching criteria</h4></p>';
+              htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row" style="text-align:center">';
+              htmlStr = htmlStr + '<p style = "padding-top:20px"><h2>The wishlist has no gifts matching this criteria.</h2></p>';
               htmlStr = htmlStr + "</div></div>";
               $('#carousel-wrapper').replaceWith(htmlStr);
             }

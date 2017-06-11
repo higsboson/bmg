@@ -82,8 +82,8 @@
                    htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href="'+doc.ProdDsc+'" target="_blank">';
                    htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
                    htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-                   htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
-                   htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-block btn-link" id="deleteFrmCart_'+cnt+'" onclick="deletefrmcart(\''+doc.ProdID+'\')">Delete</button></p>';
+                   htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></div></a>';
+                   htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-error" id="deleteFrmCart_'+cnt+'" onclick="deletefrmcart(\''+doc.ProdID+'\')">Remove</button></p>';
                    htmlStr = htmlStr + '</div></div>';
                    cnt++;
                    if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
@@ -310,8 +310,8 @@
                      htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
                      htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
                      htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-                     htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
-                     htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\')">Add to wishlist</button></p>';
+                     htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></div></a>';
+                     htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-warning" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\')">Add to wishlist</button></p>';
                      htmlStr = htmlStr + '</div></div>'
                      loop++;
                      if (loop%4 == 0){htmlStr = htmlStr + "</div>"};
