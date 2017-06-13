@@ -196,7 +196,8 @@ function load_to_db() {
   function run(){
     //alert ("page is " + $('#amazon_search_page').val());
     var searchIndex = '';
-    var priRange = '';
+    var minRange = '';
+    var maxRange = '';
     if ($('#search_product').val() == "") {
       showWarningModal('Missing Inforamtion','Please enter the name of the product that you would like to search for.');
       return;
@@ -208,29 +209,34 @@ function load_to_db() {
         //alert("Please select a category.");
         showWarningModal('Missing Inforamtion','Please select a category from the list.')
         $('#amazon_search_cat').val("")
-        $('#amazon_price_range').val("");
+        $('#amazon_price_range_min').val("0");
+        $('#amazon_price_range_max').val("10000");
         return;
       }
 
-      $.each($("input[name='price_range']:checked"),function(){priRange = $(this).val()});
-      $('#amazon_price_range').val(priRange);
-      if (priRange == "") {
+      minRange = $('#price_min').val();
+      maxRange = $('#price_max').val();
+      $('#amazon_price_range_min').val(minRange);
+      $('#amazon_price_range_max').val(maxRange);
+      if (parseInt(maxRange) < parseInt(minRange)) {
         //alert("Please select a price range.");
-        showWarningModal('Missing Inforamtion','Please select a price range.')
+        showWarningModal('Missing Inforamtion','Maximum Price must be higher than Minimum Price.')
         $('#amazon_search_cat').val("")
-        $('#amazon_price_range').val("");
+        $('#amazon_price_range_min').val("0");
+        $('#amazon_price_range_max').val("10000");
         return;
       }
       $('#amazon_product_category').text("");
     }
     else {
       searchIndex = $('#amazon_search_cat').val();
-      priRange = $('#amazon_price_range').val();
+      minRange = $('#amazon_price_range_min').val();
+      maxRange = $('#amazon_price_range_max').val();
     }
     window.scrollTo(0, 0);
     $('#preview').html('<i class="fa fa-circle-o-notch fa-spin" style="font-size:48px;"></i>');
     $.get(
-      "/get_amazon",{pageNumber: $('#amazon_search_page').val(),searchString: $('#search_product').val(), searchCat: searchIndex, priceRange: priRange},
+      "/get_amazon",{pageNumber: $('#amazon_search_page').val(),searchString: $('#search_product').val(), searchCat: searchIndex, min: minRange, max: maxRange},
       function(data) {
           if (data === "error") {
             $('#preview').html('');
@@ -554,11 +560,8 @@ function load_to_db() {
                     <label for="amazon_product_category" >Price Range:</label>
                       <div class = "radio" >
                           <div class="col-sm-3">
-                            <label style="font-size:16px"><input type="radio" name = "price_range" value="0">less than 500</label><br>
-                            <label style="font-size:16px"><input type="radio" name = "price_range" value="5">500 - 1000</label><br>
-                            <label style="font-size:16px"><input type="radio" name = "price_range" value="1">1000 - 2000</label><br>
-                            <label style="font-size:16px"><input type="radio" name = "price_range" value="2">2000 - 3000</label><br>
-                            <label style="font-size:16px"><input type="radio" name = "price_range" value="3">greater than 3000</label><br>
+                            <label style="font-size:16px">Min: </label><br><input style="color:#000000;text-align:center" type="number" name="price_min" id="price_min" value="0" /><br>
+                            <label style="font-size:16px">Max: </label><br><input style="color:#000000;text-align:center" type="number" name="price_max" id="price_max" value="10000" />
                           </div>
                       </div>
 
@@ -587,7 +590,8 @@ function load_to_db() {
                 <button type="Search in Amazon" id="amazon_search"  class="btn btn-default">Amazon Search</button>
                 <input type="hidden" name="amazon_search_page" id="amazon_search_page"  value="1"/>
                 <input type="hidden" name="amazon_search_cat" id="amazon_search_cat"  value=""/>
-                <input type="hidden" name="amazon_price_range" id="amazon_price_range"  value=""/>
+                <input type="hidden" name="amazon_price_range_min" id="amazon_price_range_min"  value=""/>
+                <input type="hidden" name="amazon_price_range_max" id="amazon_price_range_max"  value=""/>
               </form>
             </div>
           </div>

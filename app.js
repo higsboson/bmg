@@ -402,9 +402,9 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
             //console.log("Wishlist is inserted in database");
             //25/4/2017 - Made a change to have URL domain automatically populated
             var wishListModalTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wid + "\&u=" + uid  + " \" readonly/><br>We have also sent you the link via e-mail.";
-            var wishListEmailTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><a href=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\">http://"+ urlHost +"/showWishList?eventID=" + wid + "\&u=" + uid  + "</a>";
-            var emailTxt = '<p style="font-family:"Merriweather", serif;font-size:16px">Dear '+hostName+',<br><br>Thank you for choosing Bemygenie.</p>';
-            emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+wishListEmailTxt+'<br><br><br>Team Bemygenie</p>';
+            var wishListEmailTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><a href=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\&u=" + uid  + "\">http://"+ urlHost +"/showWishList?eventID=" + wid + "\&u=" + uid  + "</a>";
+            var emailTxt = '<p style="font-family:"Merriweather", serif;font-size:16px">Dear '+ hostName +',<br><br>Thank you for choosing Bemygenie.</p>';
+            emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+ wishListEmailTxt +'<br><br><br>Team Bemygenie</p>';
 
             bmgaux.mailer(emailPassword,'support',hostEmail,'New Wishlist Created',emailTxt,function(message,response) {});
             res.send(wishListModalTxt + '<input type="hidden" name="wishlistIdReference" id="wishlistIdReference" value="' + wishListId + '" ><input type="hidden" name="UIDReference" id="UIDReference" value="' + uid + '" >');
@@ -1185,26 +1185,11 @@ app.get('/get_amazon',function (req,res) {
   console.log("String is " + req.query.searchString);
   console.log("Cat is " + req.query.searchCat);
   /// The following attribute needs to come in from the web browser based on what is selected.
-  var mxprice, mnprice;
+  var mxprice = req.query.max;
+  var mnprice = req.query.min;
   var search_index = req.query.searchCat;
   var keywords = req.query.searchString;
-  var price_range = req.query.priceRange;
-  if (price_range == "0") {
-    mxprice = 500;
-    mnprice = 0;
-  } else if (price_range == "5") {
-    mxprice = 1000;
-    mnprice = 500;
-  } else if (price_range == "1") {
-    mxprice = 2000;
-    mnprice = 1000;
-  } else if (price_range == "2") {
-    mxprice = 3000;
-    mnprice = 2000;
-  } else {
-    mxprice = 100000;
-    mnprice = 3000;
-  }
+
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1218,19 +1203,24 @@ app.get('/get_amazon',function (req,res) {
   var response_group = "Images,ItemAttributes,Offers";  //Stricly no spaces only commas.
   var service="AWSECommerceService";
   var sort="price";
-  var maxprice = mxprice * multiplier;
-  var minprice = mnprice * multiplier;
+  var maxprice = parseInt(mxprice) * multiplier;
+  var minprice = parseInt(mnprice) * multiplier;
   //////////////////////////////////////////////////////////////////////
 
 
   ////Constructing Canonical String for the query string to AMZ Aff.////
   ////PLEASE Note that this string should have query parameters in alphabetical order.
-  var canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&" +
-  "AssociateTag=" + associate_tag + "\&" + "ItemPage=" + itempage + "\&" + "Keywords=" + encodeURIComponent(keywords) + "\&" + "MaximumPrice=" + maxprice +
-  "\&" + "MinimumPrice=" + minprice + "\&" + "Operation=" + operation + "\&" + "ResponseGroup=" + encodeURIComponent(response_group) +
-  "\&" + "SearchIndex=" + search_index + "\&" + "Service=" + service + "\&" + "Sort=" + sort + "\&" +"Timestamp=" + encodeURIComponent(new Date().toISOString());
+  if (search_index != "All")
+    var canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&" +
+    "AssociateTag=" + associate_tag + "\&" + "ItemPage=" + itempage + "\&" + "Keywords=" + encodeURIComponent(keywords) + "\&" + "MaximumPrice=" + maxprice +
+    "\&" + "MinimumPrice=" + minprice + "\&" + "Operation=" + operation + "\&" + "ResponseGroup=" + encodeURIComponent(response_group) +
+    "\&" + "SearchIndex=" + search_index + "\&" + "Service=" + service + "\&" + "Sort=" + sort + "\&" +"Timestamp=" + encodeURIComponent(new Date().toISOString());
+  else
   ///////////////////////////////////////////////////////////////////////
-
+    var canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&" +
+    "AssociateTag=" + associate_tag + "\&" + "ItemPage=" + itempage + "\&" + "Keywords=" + encodeURIComponent(keywords) + "\&" + "MaximumPrice=" + maxprice +
+    "\&" + "MinimumPrice=" + minprice + "\&" + "Operation=" + operation + "\&" + "ResponseGroup=" + encodeURIComponent(response_group) +
+    "\&" + "SearchIndex=" + search_index + "\&" + "Service=" + service + "\&" +"Timestamp=" + encodeURIComponent(new Date().toISOString());
 
   /////////////Creating a string which will be signed with our amazon secret key
   var string_to_sign = "GET\n" + end_point + "\n" + uri + "\n" + canonical_query_string;
