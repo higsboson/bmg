@@ -372,6 +372,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                       "EventStatus":1,
                       "uid":sha256(wishlistToBeAdded.HostEmail) ,
                       "wid":sha256(rand(160,36) + wishlistToBeAdded.HostEmail) ,
+                      "wcd" :new Date(),
                       "Products":docs};
           // Creating a session variable named 'user' which will hold the email.
           // The variable 'user' will be used to validate if the session exists.
@@ -387,6 +388,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                       "EventStatus":1,
                       "uid":sha256(req.session.user),
                       "wid":sha256(rand(160,36) + req.session.user) ,
+                      "wcd" :new Date(),
                       "Products":docs};
         }
 
