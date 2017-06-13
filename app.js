@@ -423,14 +423,20 @@ app.post('/updProductStatus',urlencodedParser,function(req,res) {//change the st
   try {
     var wishlistCollection = bmgDB.collection('WishList');
     var data = JSON.parse(req.body.Data);
-
-    wishlistCollection.update({"_id" : new ObjectId(data.WishListID),"Products.ProdID":data.ProductID},{$set:{"Products.$.Status":data.Status}}, function(err) {
-      if (!err) {res.send("Success")}
-      else {res.send("Error in updating product status")}
-    })
+    var currDate = new Date();
+    if (data.emailaddr == "NA" ) { //email address is sent NA when confirming or cancelling purchase
+      wishlistCollection.update({"wid":data.WishListID,"uid":data.u,"Products.ProdID":data.ProductID},{$set:{"Products.$.Status":data.Status,"Products.$.statusUpddDt":currDate}}, function(err) {
+        if (!err) {res.send("Success")}
+        else {res.send("Error in updating product status")}
+      })}
+    else {
+      wishlistCollection.update({"wid":data.WishListID,"uid":data.u,"Products.ProdID":data.ProductID},{$set:{"Products.$.Status":data.Status,"Products.$.statusUpddDt":currDate}}, function(err) {
+        if (!err) {res.send("Success")}
+        else {res.send("Error in updating product status")}
+      })}
   }
   catch (e) {console.log("Error - "+e)}
-})
+}) //updProductStatus
 
 app.post('/resetPassword',urlencodedParser,function(req,res) {//change the status of the product
   try {

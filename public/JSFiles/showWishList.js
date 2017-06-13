@@ -5,13 +5,21 @@ function buyNow(prodid,prodURL) {
   //setCookie("BuyingPrdURL",prodURL);
   buyingProdID = prodid;
   buyingProdURL = prodURL;
-  $("#buyBtn").html('<a href="' + prodURL + '" target="_blank"><button type="button" class="btn btn-success" style="display:default" onclick="openAmznPage()">Proceed to Buy</button></a>')
+  if ($("#buyer_email").val().length > 0) {
+    $("#buyBtn").html('<a href="' + prodURL + '" target="_blank"><button type="button" class="btn btn-success" style="display:default" onclick="openAmznPage()">Proceed to Buy</button></a>');
+  }
+  else {
+    $("#buyBtn").html('<a href="' + prodURL + '" target="_blank"><button type="button" class="btn btn-success" style="display:default" onclick="openAmznPage()" disabled>Proceed to Buy</button></a>');
+  }
   $("#myModal").modal('show');
 }
 
 function openAmznPage() {
   try {
-    var dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"Blocked"}';
+    alert("Open Amazon Page");
+    var uid_val = $("#uid_val").val();
+    var buyer_email = $("#buyer_email").val();
+    var dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"Blocked","u":"'+uid_val+'","emailaddr":"'+buyer_email+'"}';
     $.ajax({
       type : 'POST',
       url :"/updProductStatus",
@@ -31,7 +39,8 @@ function openAmznPage() {
 
 function changeGiftStatus(strStatus) {
   try {
-    var dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"'+strStatus+'"}';
+    var uid_val = $("#uid_val").val();
+    var dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"'+strStatus+'","u":"'+uid_val+'","emailaddr":"NA"}';
     $.ajax({
       type : 'POST',
       url :"/updProductStatus",
@@ -95,7 +104,7 @@ function showEventDetails() {
     method: 'GET',
     data: {eventID : eventID, u : uid_val},
     success: function (res) {
-      alert('event ID read' + JSON.stringify(res));
+      //alert('event ID read' + JSON.stringify(res));
       $('#pageTitle').text("Bemygenie Register: " + res.EventName)
       $('#title').text(res.EventName);
       $('#hostedby').text('Hosted by ' + res.HostName);

@@ -164,6 +164,24 @@
          $("#chkEvntType").change(function() {searchCatg()});
          $("#chkPrice").change(function() {searchCatg()});
 
+         $("#buyer_email").on('keypress',function(event){
+           var regex = new RegExp("^[a-zA-Z0-9@_.]+$");
+           var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+           if (!regex.test(key)) {
+             event.preventDefault();
+             return false;
+           }
+         });
+         $("#buyer_email").focusout( function(){
+           var buyHtml = document.getElementById("buyBtn").innerHTML;
+           if (($("#buyer_email").val().length > 0) && (validateEmail($("#buyer_email").val()))) {
+             if (buyHtml.indexOf("disabled")>0) {
+             $("#buyBtn").replaceWith('<div id="buyBtn">'+ buyHtml.slice(0,buyHtml.indexOf("disabled"))+buyHtml.slice(buyHtml.indexOf("disabled")+11)+'</div>');
+           }}
+           else {
+             $("#buyBtn").replaceWith('<div id="buyBtn">'+ buyHtml.slice(0,buyHtml.indexOf("Proceed")-1)+" disabled "+buyHtml.slice(buyHtml.indexOf("Proceed")-1)+'</div>');
+           }
+         })
      }); //ready
 
      </script>
@@ -224,11 +242,13 @@
             <div class="modal-body">
               <p>Hi There!!!,</p>
               <p>Thanks for opting to purchase this product. Please click on the <button type="button" class="btn btn-success">Proceed to Buy</button> button below to continue. <br /><br />You will then be redirected to the third party website where you can buy the product and have it shipped to you.</p>
-              <p>Once you have made the purchase, we request you to come back to this page and click on the <button type="button"  class="btn btn-primary btn-sm">Purchase Completed</button>.
-                <br /><br />In case you change your mind about purchasing the product, we then request you to click on the  <button type="button"  class="btn btn-warning btn-sm" >Changed my mind</button> button.
+              <br><p>Once you have made the purchase, we request you to come back to this page and click on the <button type="button"  class="btn btn-primary btn-sm">Purchase Completed</button>.
+                <br>In case you change your mind about purchasing the product, we then request you to click on the  <button type="button"  class="btn btn-warning btn-sm" >Changed my mind</button> button.
                 comeback to this page and 'click'.</p>
               <br>
-              <p>We thank you for your kind support in helping us serve better.</p>
+              <p>We thank you for your kind support in helping us serve better.</p><br>
+              <div class="form-group"><label for="form_buyer_email">Please enter your email address to proceed:</label>
+              <input type="email" class="form-control" name="email" id="buyer_email" placeholder="Email address" required/></div>
             </div>
             <div class="modal-footer">
               <button type="button" id="closeBtn" class="btn btn-default" style="display:default;float:left" data-dismiss="modal">Close</button>
