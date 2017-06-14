@@ -154,6 +154,10 @@ app.get('/howitworks.html',function(req,res) {
   res.sendFile(__dirname + "/site/howitworks.html");
 })
 
+app.get('/aboutus',function(req,res) {
+  res.sendFile(__dirname + "/site/aboutus.html");
+})
+
 app.get('/learnmore.html',function(req,res) {
   res.sendFile(__dirname + "/site/learnmore.html");
 })
