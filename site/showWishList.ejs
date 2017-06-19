@@ -168,15 +168,25 @@
          $("#chkEvntType").change(function() {searchCatg()});
          $("#chkPrice").change(function() {searchCatg()});
 
-         $("#buyer_email").on('keypress',function(event){
+         $("#buyer_email").on('keyup',function(event){
            var regex = new RegExp("^[a-zA-Z0-9@_.]+$");
            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+           var buyHtml = document.getElementById("buyBtn").innerHTML;
+           if (($("#buyer_email").val().length > 0) && (validateEmail($("#buyer_email").val()))) {
+             if (buyHtml.indexOf("disabled")>0) {
+             $("#buyBtn").replaceWith('<div id="buyBtn">'+ buyHtml.slice(0,buyHtml.indexOf("disabled"))+buyHtml.slice(buyHtml.indexOf("disabled")+11)+'</div>');
+           }
+         }
+           else {
+             $("#buyBtn").replaceWith('<div id="buyBtn">'+ buyHtml.slice(0,buyHtml.indexOf("Proceed")-1)+" disabled "+buyHtml.slice(buyHtml.indexOf("Proceed")-1)+'</div>');
+           }
            if (!regex.test(key)) {
              event.preventDefault();
              return false;
            }
          });
-         $("#buyer_email").focusout( function(){
+         /*$("#buyer_email").change( function(){
+           //alert('evaluvating change')
            var buyHtml = document.getElementById("buyBtn").innerHTML;
            if (($("#buyer_email").val().length > 0) && (validateEmail($("#buyer_email").val()))) {
              if (buyHtml.indexOf("disabled")>0) {
@@ -185,7 +195,7 @@
            else {
              $("#buyBtn").replaceWith('<div id="buyBtn">'+ buyHtml.slice(0,buyHtml.indexOf("Proceed")-1)+" disabled "+buyHtml.slice(buyHtml.indexOf("Proceed")-1)+'</div>');
            }
-         })
+         })*/
      }); //ready
 
      </script>
@@ -280,28 +290,28 @@
                 <div id="collapseGenre" class="panel-collapse">
                   <form>
                     <div class = "checkbox" id = "chkGenre">
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id="genreApparel" value="A">Apparel</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="C">Automobile</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="Y">Baby Items</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="U">Beauty Products</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreBooks" value="B">Books</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="D">DVD</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="E">Electronics</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="X">Experiences</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="V">Gift Cards</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="H">Health & Personal Care</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="G">Home & Garden</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="L">Luggage</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="M">Music</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="N">Musical Instruments</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="O">Office Products</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="P">PC Hardware</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="S">Shoes</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="F">Software</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreSports" value="R">Sports Goods</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" id = "genreToys" value="T">Toys</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="I">Video Games</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValGen" value="W">Watches</label>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" id="genreApparel" value="A">Apparel</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="C">Automobile</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="Y">Baby Items</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="U">Beauty Products</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" id = "genreBooks" value="B">Books</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="D">DVD</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="E">Electronics</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="X">Experiences</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="V">Gift Cards</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="H">Health & Personal Care</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="G">Home & Garden</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="L">Luggage</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="M">Music</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="N">Musical Instruments</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="O">Office Products</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="P">PC Hardware</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="S">Shoes</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="F">Software</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" id = "genreSports" value="R">Sports Goods</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" id = "genreToys" value="T">Toys</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="I">Video Games</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValGen" value="W">Watches</label>
                     </div>
                   </form>
                 </div><!--Panel items-->
@@ -315,11 +325,11 @@
                 <div id="collapsePrice" class="panel-collapse collapse">
                   <form>
                     <div class = "checkbox" id="chkPrice">
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="0">0 - 500</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="5">500 - 1000</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="1">1000 - 2000</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="2">2000 - 3000</label><br>
-                      <label style="color:#7A7B7C;font-size:16px"><input type="checkbox" name = "chkValPrc" value="3"> 3000 - More </label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="0">0 - 500</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="5">500 - 1000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="1">1000 - 2000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="2">2000 - 3000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="3"> 3000 - More </label><br>
                     </div>
                   </form>
                 </div><!--Panel items-->

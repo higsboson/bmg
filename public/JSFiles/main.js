@@ -2,6 +2,23 @@
   var _MS_PER_DAY = 1000 * 60 * 60 * 24;
   var signuporlogin = "";
 
+  function msieversion() {
+
+      var ua = window.navigator.userAgent;
+      var msie = ua.indexOf("MSIE ");
+      alert(ua + "");
+      if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))  // If Internet Explorer, return version number
+      {
+          alert(parseInt(ua.substring(msie + 5, ua.indexOf(".", msie))));
+      }
+      else  // If another browser, return 0
+      {
+          alert('otherbrowser');
+      }
+
+      return false;
+  }
+
   function showLoginModal() {
     $('#login').modal('show');
   }
@@ -16,7 +33,8 @@
   }
 
   function validateEmail(email) {
-      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      /*//var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;*/
+      var re = /^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
       return re.test(email);
   }
 
@@ -609,9 +627,9 @@ function getUserProfileDetails(user,div) {
                }
               table_text += '</tbody></table>';
               if (mode)
-                $('#' + divactive).append("<h2>Here are the wishlists for your upcoming events. </h2><br><br>" + table_text);
+                $('#' + divactive).append("<h2>Here are the registries for your upcoming events. Click on an event to see what gifts have been purchased so far.</h2><br><br>" + table_text);
               else
-                $('#' + divactive).append("<h2>These are wishlists for completed events. </h2><br><br>" + table_text);
+                $('#' + divactive).append("<h2>These are registries for completed events. </h2><br><br>" + table_text);
 
              }
              else {
@@ -769,7 +787,7 @@ function getUserProfileDetails(user,div) {
          type : 'POST',
          url :"/addToDBByUser",
          data : {"Product":prd},
-         success : function(res) {},
+         success : function(res) {$('#addToCartComplete').modal('show');},
          error : function(res) {alert("Error in adding product to cart!")}
        })
      } //Amazon product -- write to DB
@@ -784,7 +802,7 @@ function getUserProfileDetails(user,div) {
      cartLngth++;
      setCookie("ProdID",cartProds,2);
 
-     document.getElementById("CartId").innerHTML="Cart <span class=\"glyphicon glyphicon-gift\" aria-hidden=\"true\"></span> ("+cartLngth+")";
+     document.getElementById("CartId").innerHTML="Registry <span class=\"glyphicon glyphicon-gift\" aria-hidden=\"true\"></span> ("+cartLngth+")";
    }
    catch (e) {alert(e)}
  };
@@ -811,7 +829,7 @@ function getUserProfileDetails(user,div) {
    if (cartProds != "") {cartProds = cartProds.substring(0,cartProds.length-1)}
    setCookie("ProdID",cartProds,2);
 
-   document.getElementById("CartId").innerHTML="Cart ("+newCartLngth+")";
+   document.getElementById("CartId").innerHTML="Registry ("+newCartLngth+")";
    $("#CartId").click();
  };
 
@@ -907,7 +925,7 @@ function redirectToHome() {
                  htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
                  htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
                  htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></div></a>';
-                 htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-warning" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
+                 htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-warning" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to registry</button></p>';
                  //htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\',\''+prdName1+'\')">Add to wishlist</button></p>';
                  htmlStr = htmlStr + '</div></div>'
                  cnt++;
@@ -940,6 +958,9 @@ function redirectToHome() {
              $('#carousel-wrapper').replaceWith(htmlStr);
            }
 
+         }
+         else {
+           alert('There as been an error');
          }
        })
      }

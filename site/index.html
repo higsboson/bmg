@@ -35,10 +35,31 @@
         font-family: 'Rochester', cursive;
       }
     </style>
+
+
+<SCRIPT>
+function msieversion() {
+
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+    //alert(ua + "");
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))  // If Internet Explorer, return version number
+    {
+        //alert('This is IE');
+        $('#browser_alerts').modal('show');
+    }
+
+
+    return false;
+}
+</SCRIPT>
+
+
 <script>
 
 $(document).ready(function () {
-
+  $('#jswarning').hide();
+  msieversion();
   //alert("I am Raedy");
  $("#bdayProducts").hide();
  $("#homeProducts").hide();
@@ -109,7 +130,10 @@ function checkEvents() {
           </div>
         </nav>
 
-
+<div id="jswarning" style="height:100px;color:#FF0000;text-align:center"><br><br><br><br><br><br><b>Warning: If you are seeing this message then your browser settings are not compatible with Bemygenie.com! </b><br>
+  <b>Please ensure that java script is enabled. Alternatively you could try using Google chrome, firefox or safari. If this does not fix your problem then email us at support@bemygenie.com. <br>
+  Thanks!</b>
+    </div>
 
         <!-- 3/31/2017 - trznt - This is a Login modal. -->
         <!-- Modal Starts here-->
@@ -168,11 +192,31 @@ function checkEvents() {
         <!-- Modal Ends here-->
 
 
+        <div class="modal fade" id="browser_alerts" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Warning!</h4>
+              </div>
+              <div class="modal-body">
+                <p>
+                   We recommend that you open Bemygenie.com on either Chrome, Firefox or Safari.
+                </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+            </div>
+
+          </div>
+        </div>
+        </div>
+
         <!-- Carousel
            ================================================== -->
            <div style="padding-top:80px"> <!-- This is the carousel holder - Being added to accomodate a wider Nav Bar-->
 
-           <div id="myCarousel" class="carousel slide" data-ride="carousel">
+           <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="9000">
              <!-- Indicators -->
              <ol class="carousel-indicators">
                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -185,8 +229,8 @@ function checkEvents() {
                  <div class="container">
                    <div class="carousel-caption">
                      <p style="color:#FFFFFF;font-size:72px">It's definitely time to celebrate.</p>
-                     <h1 style="color:#FFFFFF;font-size:36px">Welcome to Bengaluru's first ever gift registry!</h1>
-                     <p><a class="btn btn-lg btn-primary myCarousel-buttons" href="#" role="button" onclick="checkEvents();">Start Creating You're Gift Registry!</a></p>
+                     <h1 style="color:#FFFFFF;font-size:36px">Welcome to India's coolest gift registry!</h1>
+                     <p><a class="btn btn-lg btn-primary myCarousel-buttons" href="#" role="button" onclick="checkEvents();">Start Creating Your Gift Registry!</a></p>
                    </div>
                  </div>
                </div>
@@ -278,7 +322,32 @@ function checkEvents() {
 
              </div>
            </div>
-           <footer>
+
+             <div class="container marketing">
+
+                 <!-- Three columns of text below the carousel -->
+                 <div class="row" id="marketing-row2" style="text-align:center">
+                   <div class="col-lg-2">
+                   </div>
+                   <div class="col-lg-4" id="bday-marketing">
+                     <img class="img-circle" src="images/wedding.jpg" alt="Generic placeholder image" width="140" height="140">
+                     <h2 class="marketing-headlines"><b>Weddings!</b></h2>
+                     <p>The biggest party of your life! The beginning of a great new adventure with the one you love! Let's make sure you are all set to begin this journey. Have a look at our amazing wedding gift collection.  </p>
+                     <p><a class="btn btn-default" id="bday-a-link" role="button" onclick="showBdayProducts();">View gifts &raquo;</a></p>
+                   </div><!-- /.col-lg-4 -->
+
+                     <div class="col-lg-4" id="bday-marketing">
+                       <img class="img-circle" src="images/special_events.jpeg" alt="Generic placeholder image" width="140" height="140">
+                       <h2 class="marketing-headlines"><b>Special Events!</b></h2>
+                       <p>Celebrating a bridal shower, a graduation or for the holiday season, create a gift registry with us to let people know what to get you for the occasion. Take a peek to see our cool selection of gifts. </p>
+                       <p><a class="btn btn-default" id="bday-a-link" role="button" onclick="showBdayProducts();">View gifts &raquo;</a></p>
+                     </div>
+                     <div class="col-lg-2">
+                     </div>
+
+                 </div>
+               </div>
+                 <footer>
      <div class="footer" id="footer">
          <div class="container">
              <div class="row">
