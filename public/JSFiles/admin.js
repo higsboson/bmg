@@ -129,7 +129,7 @@ function getAllProductsForCat(cat,div) {
         $('#' + div).on('change', 'input[type="checkbox"]', function() {
           //alert('changing' + JSON.stringify($(this)));
             if(this.checked) {
-              alert ("adding " + this.value);
+              //alert ("adding " + this.value);
               var added_prods_array = [];
               if ($('#added_prods').val().length != 0) {
                 added_prods_array = $('#added_prods').val().split("|");
