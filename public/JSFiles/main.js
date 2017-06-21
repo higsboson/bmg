@@ -1160,7 +1160,7 @@ function showSpclProducts() {
   $("#spclProducts").addClass("featured-container");
   if($("#spclProducts").css('display') == 'none') {
     $('#marketing-row').css("display","none");
-    getFeaturedProducts("Special Products","spclProductsInfo");
+    getFeaturedProducts("Special Category","spclProductsInfo");
     $("#spclProducts").slideDown();
   //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
   //  $("#house-marketing").css("transform","translateX(-200px)");

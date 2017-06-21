@@ -178,10 +178,11 @@ function getAllProductsForCat(cat,div) {
 
 function saveFeaturedList() {
   //alert('Saving Featured Prods');
+  var cat = $('#catselect').val();
   $.ajax({
     url: '/saveFeaturedList',
     method: 'POST',
-    data: {"remove":$('#removed_prods').val(),"add":$('#added_prods').val()},
+    data: {"remove":$('#removed_prods').val(),"add":$('#added_prods').val(),"eventType":cat},
     success: function (res) {
       //alert ("Saved Successfully ServerCode:" + res);
       showInformationModal('Saved!','The featured products list has been saved.');
