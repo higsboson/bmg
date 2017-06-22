@@ -225,14 +225,14 @@ app.post('/showReports',function(req,res) {
     }
     else if (reportName == "Number of purchased products for each event") {
       vCollection = bmgDB.collection('WishList');
-      vCollection.aggregate([{$group:{_id:"$EventName",count:{$sum:1}}},{$match:{"$Products.Status":"Already Bought"}}],function(err,docs) {
+      vCollection.aggregate([{$match:{"$Products.Status":"Already Bought"}},{$group:{_id:"$EventName",count:{$sum:1}}}],function(err,docs) {
         if (err) {res.send(err)}
         else {console.log(docs);res.send(docs)}
       })
     }
     else if (reportName == "Number of active wishlists by event type") {
       vCollection = bmgDB.collection('WishList');
-      vCollection.aggregate([{$group:{_id:"$EventType",count:{$sum:1}}},{$match:{"$EventDate":{$gte:new Date()}}}],function(err,docs) {
+      vCollection.aggregate([{$match:{"EventDate":{$gte:new Date()}}},{$group:{_id:"$EventType",count:{$sum:1}}}],function(err,docs) {
         if (err) {res.send(err)}
         else {console.log(docs);res.send(docs)}
       })
