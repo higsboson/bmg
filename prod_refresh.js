@@ -43,6 +43,24 @@ function WaterfallOver(list, iterator, callback) {
     callback();
 }
 
+function WaterfallOverRetry(list, iterator, callback) {
+  var nextItemIndex = 0;
+  function report() {
+    nextItemIndex++;
+    if (nextItemIndex === list.length)
+      callback();
+    else
+      iterator(list[nextItemIndex],report,retry);
+  }
+  function retry() {
+    iterator(list[nextItemIndex],report,retry);
+  }
+  if (list.length != 0)
+    iterator(list[0], report, retry);
+  else
+    callback();
+}
+
 
 function processData(xml,batch) {
   //console.log(JSON.stringify(batch));
@@ -155,7 +173,7 @@ mongoclient.connect("mongodb://worker:" + process.argv[2] + "@localhost:27017/bm
             requestArray.push(packet);
           }
           console.log(JSON.stringify(requestArray));
-          WaterfallOver(requestArray, function(request,report){
+          WaterfallOverRetry(requestArray, function(request,report,retry){
             //console.log('Request for ' + request.asin);
             var canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&" +
             "AssociateTag=" + associate_tag + "\&" + "IdType=ASIN" + "\&" + "ItemId=" + encodeURIComponent(request.asin) + "\&" + "Operation=" + operation + "\&" + "ResponseGroup=" + encodeURIComponent(response_group) +
