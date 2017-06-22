@@ -357,7 +357,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
     var prdIdArr = wishlistToBeAdded.ProductIDs.split(",");
     var wishList = {};
 
-    prdCollection.find({ProdID:{$in:prdIdArr}}).toArray(function(err,docs){
+    prdCollection.find({ProdID:{$in:prdIdArr}},{"_id":1,"ProdId":1}).toArray(function(err,docs){
       for (var i = 0;i < docs.length;i++) {
         docs[i]["Status"] = "Available";
       }
@@ -554,13 +554,18 @@ app.get('/getWishListItems', function (req,res) {
     try {
       var wishList = bmgDB.collection('WishList');
       wishList.find({"wid":req.query.wid,"uid":req.query.uid},{_id:0,Products:1,wid:1,uid:1}).toArray(function(err,docs) {
-        if (!err){
-          res.send(docs[0]);
-        }
-        else {res.send({"Products": []})}
+        var product = bmgDB.collection('Product');
+        WaterfallOver(docs[0].Products,function (prod, report) {
+            product.find({"_id" : new ObjectId(prod._id)}).toArray(function (err,pdocs) {
+              prod["ProdData"] = pdocs;
+              report();
+            });
+          }, function (){
+            res.send(docs[0]);
+        });
       });
     }
-    catch (e) {console.log("Error - " +e)}
+    catch (e) {console.log("Error - " +e);res.send({"Products": []});}
   } else {
     res.end("Invalid request");
   }
