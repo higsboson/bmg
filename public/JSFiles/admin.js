@@ -129,7 +129,7 @@ function getAllProductsForCat(cat,div) {
         $('#' + div).on('change', 'input[type="checkbox"]', function() {
           //alert('changing' + JSON.stringify($(this)));
             if(this.checked) {
-              alert ("adding " + this.value);
+              //alert ("adding " + this.value);
               var added_prods_array = [];
               if ($('#added_prods').val().length != 0) {
                 added_prods_array = $('#added_prods').val().split("|");
@@ -178,10 +178,11 @@ function getAllProductsForCat(cat,div) {
 
 function saveFeaturedList() {
   //alert('Saving Featured Prods');
+  var cat = $('#catselect').val();
   $.ajax({
     url: '/saveFeaturedList',
     method: 'POST',
-    data: {"remove":$('#removed_prods').val(),"add":$('#added_prods').val()},
+    data: {"remove":$('#removed_prods').val(),"add":$('#added_prods').val(),"eventType":cat},
     success: function (res) {
       //alert ("Saved Successfully ServerCode:" + res);
       showInformationModal('Saved!','The featured products list has been saved.');

@@ -1035,6 +1035,7 @@ function showBdayProducts() {
     }, 400);
   $("#bdayProducts").addClass("featured-container");
   if($("#bdayProducts").css('display') == 'none') {
+    $('#marketing-row2').css("display","none");
     getFeaturedProducts("Birthday","bdayProductsInfo");
     $("#bdayProducts").slideDown();
     $("#house-marketing").slideUp();
@@ -1047,6 +1048,7 @@ function showBdayProducts() {
       $('#bday-a-link').text("Back");
   }
   else if($("#bdayProducts").css('display') == 'block') {
+      $('#marketing-row2').css("display","block");
       $("#bdayProducts").slideUp();
       $("#house-marketing").slideDown();
       $("#baby-marketing").slideDown();
@@ -1061,6 +1063,7 @@ function showHomeProducts() {
     }, 400);
   $("#homeProducts").addClass("featured-container");
   if($("#homeProducts").css('display') == 'none') {
+    $('#marketing-row2').css("display","none");
     getFeaturedProducts("House Warming","homeProductsInfo");
     $("#homeProducts").slideDown();
     $("#baby-marketing").slideUp();
@@ -1075,6 +1078,7 @@ function showHomeProducts() {
       $('#house-a-link').text("Back");
   }
   else if($("#homeProducts").css('display') == 'block') {
+    $('#marketing-row2').css("display","block");
       $("#homeProducts").slideUp();
       $("#bday-marketing").slideDown();
       $("#baby-marketing").slideDown();
@@ -1089,6 +1093,7 @@ function showBabyProducts() {
     }, 400);
   $("#babyProducts").addClass("featured-container");
   if($("#babyProducts").css('display') == 'none') {
+    $('#marketing-row2').css("display","none");
     getFeaturedProducts("Baby Shower","babyProductsInfo");
     $("#babyProducts").slideDown();
     $("#bday-marketing").slideUp();
@@ -1106,12 +1111,77 @@ function showBabyProducts() {
       $('#baby-a-link').text("Back");
   }
   else if($("#babyProducts").css('display') == 'block') {
+    $('#marketing-row2').css("display","block");
       $("#marketing-row").html($('#backup').val());
       $("#babyProducts").slideUp();
       $("#bday-marketing").slideDown();
       $("#house-marketing").slideDown();
       $("#baby-side-bar").css("display","none");
       $('#baby-a-link').text("View Gifts " + $('#raqval').text());
+    }
+}
+
+function showWeddingProducts() {
+  $('html, body').animate({
+        scrollTop: $("#marketing-row2").offset().top - 100
+    }, 400);
+  $("#wedProducts").addClass("featured-container");
+  if($("#wedProducts").css('display') == 'none') {
+    $('#marketing-row').css("display","none");
+    getFeaturedProducts("Wedding","wedProductsInfo");
+    $("#wedProducts").slideDown();
+  //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
+  //  $("#house-marketing").css("transform","translateX(-200px)");
+    $('#backup').val($("#marketing-row2").html());
+    $("#spcl-marketing").slideUp('fast', function() {
+      if ($("#wed-side-bar").length == 0) {
+        $("#marketing-row2").html('<div class="col-lg-4" id="wed-marketing"> <img class="img-circle" src="images/wedding.jpg" alt="Generic placeholder image" width="140" height="140"> <h2 class="marketing-headlines">Weddings!</h2>  <p>The biggest party of your life! The beginning of a great new adventure with the one you love! Let\'s make sure you are all set to begin this journey. Have a look at our amazing wedding gift collection.  </p> <p><a class="btn btn-default" id="wed-a-link"  role="button" onclick="showWeddingProducts();">Back</a></p>    </div><div class="col-lg-8 marketing-headlines" id="wed-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> Happily Everafter. </b></p></div>')
+        //$("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
+      }
+      else
+        $("#wed-side-bar").css("display","block");
+      })
+      $('#wed-a-link').text("Back");
+  }
+  else if($("#wedProducts").css('display') == 'block') {
+    $('#marketing-row').css("display","block");
+      $("#marketing-row2").html($('#backup').val());
+      $("#wedProducts").slideUp();
+      $("#spcl-marketing").slideDown();
+      $("#wed-side-bar").css("display","none");
+      $('#wed-a-link').text("View Gifts " + $('#raqval').text());
+    }
+}
+
+function showSpclProducts() {
+  $('html, body').animate({
+        scrollTop: $("#marketing-row2").offset().top - 100
+    }, 400);
+  $("#spclProducts").addClass("featured-container");
+  if($("#spclProducts").css('display') == 'none') {
+    $('#marketing-row').css("display","none");
+    getFeaturedProducts("Special Category","spclProductsInfo");
+    $("#spclProducts").slideDown();
+  //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
+  //  $("#house-marketing").css("transform","translateX(-200px)");
+    $('#backup').val($("#marketing-row2").html());
+    $("#wed-marketing").slideUp('fast', function() {
+      if ($("#spcl-side-bar").length == 0) {
+        $("#marketing-row2").html('<div class="col-lg-8 marketing-headlines" id="spcl-side-bar"><p style="text-align:left;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For every<br> Special Occasion. </b></p></div><div class="col-lg-4" id="spcl-marketing"> <img class="img-circle" src="images/special_events.jpeg" alt="Generic placeholder image" width="140" height="140"> <h2 class="marketing-headlines">Special Events!</h2>  <p>Celebrating a bridal shower, a graduation or for the holiday season, create a gift registry with us to let people know what to get you for the occasion. Take a peek to see our cool selection of gifts. </p> <p><a class="btn btn-default" id="spcl-a-link"  role="button" onclick="showSpclProducts();">Back</a></p>    </div>')
+        //$("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
+      }
+      else
+        $("#spcl-side-bar").css("display","block");
+      })
+      $('#spcl-a-link').text("Back");
+  }
+  else if($("#spclProducts").css('display') == 'block') {
+    $('#marketing-row').css("display","block");
+      $("#marketing-row2").html($('#backup').val());
+      $("#spclProducts").slideUp();
+      $("#wed-marketing").slideDown();
+      $("#spcl-side-bar").css("display","none");
+      $('#spcl-a-link').text("View Gifts " + $('#raqval').text());
     }
 }
 

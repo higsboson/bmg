@@ -18,10 +18,15 @@
     <title id="pageTitle">Be My Genie</title>
     <!--<script src='https://www.google.com/recaptcha/api.js'></script>-->
 
-
+    <style>
+        nav {
+          font-family: 'Rochester', cursive;
+        }
+    </style>
     <script>
 
      $(document).ready(function () {
+       $('#jswarning').hide();
        showEventDetails();
        var buyingProdID = "";
        var buyingProdURL = "";
@@ -53,7 +58,7 @@
          }
           if (cnt > 0) {
             srchStr = '{"Catg":['+gpStr+'],"uid":"' + $('#uid_val').val() + '","eventID":"'+eventID+'","catgCount":'+cnt+'}';
-            alert(srchStr);
+            //alert(srchStr);
             $.ajax({
               type : 'POST',
               url :"/filterWishListByCatg",
@@ -109,7 +114,7 @@
          else {
 
            srchStr = '{"uid":"' + $('#uid_val').val() + '","eventID":"'+eventID+'","catgCount":'+0+'}';
-           alert(srchStr);
+           //alert(srchStr);
            $.ajax({
              type : 'POST',
              url :"/filterWishListByCatg",
@@ -221,6 +226,23 @@
 
         </div>
       </div>
+
+      <div class="modal fade" id="help" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header"><h1 class="modal-title" style="font-family: 'Parisienne', cursive;"><b>Hi There!</b></h1></div>
+            <div class="modal-body">
+              <p>Thanks for visiting bemygenie.com. <br /> <br />From this page you will be able to pick a gift of your choosing for your host. Clicking on the 'Grant Wish' will open up a web page where you will be able to review and purchase the product. If you choose not to buy it, you can come back to this page and choose another product. <br /> <br />
+                 After completing the purchase we request you to kindly return back to this page and click on the 'Purchase Completed' button to indicate that you have purchased the product. This will ensure that no one else also ends up purchasing the same gift. <br /><br />The gift will be delivered to an address your choosing.
+                We recommend that is sent to your address. That way you will be able to gift wrap the item and take it for the event. <br /> <br />If case you have any queries, don't hesitate to contact us at <a href="mailto:support@bemygenie.com">support@bemygenie.com</a> </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
     <!-- Modal Ends here-->
 
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -240,11 +262,19 @@
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="#" class="invisible">Planning event</a></li>   <!--change this-->
                 <li><a href="#show-cart" class="invisible">Cart</a></li>
+
+                <li style="padding-right:15px"><a href="/login" data-toggle="modal" data-target="#help">Help</a></li>
+                <!--<li><a href="#contact" data-toggle="modal" data-toggle="modal" data-target="#wishListURLModal">Find a registry</a></li>
+                <li class="invisible"><a href="#contact">Track your order</a></li>-->
+
               </ul>
             </div><!--/.nav-collapse -->
           </div>
     </nav> <!--Navigation bar -->
-
+    <div id="jswarning" style="height:100px;color:#FF0000;text-align:center"><br><br><br><br><br><br><b>Warning: If you are seeing this message then your browser settings are not compatible with Bemygenie.com! </b><br>
+      <b>Please ensure that java script is enabled. Alternatively you could try using Google chrome, firefox or safari. If this does not fix your problem then email us at support@bemygenie.com. <br>
+      Thanks!</b>
+        </div>
     <!-- Carousel
            ================================================== -->
     <div class = "container-fluid" style="padding-top:120px"> <!-- This is the carousel holder - Being added to accomodate a wider Nav Bar-->
@@ -255,7 +285,7 @@
             <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close">×</button></div>
             <div class="modal-body">
               <p>Hi There!!!,</p>
-              <p>Thanks for opting to purchase this product. Please click on the <button type="button" class="btn btn-success">Proceed to Buy</button> button below to continue. <br /><br />You will then be redirected to the third party website where you can buy the product and have it shipped to you.</p>
+              <p>Thanks for opting to purchase this gift. Please click on the <button type="button" class="btn btn-success">Proceed to Buy</button> button below to continue. <br /><br />You will then be redirected to the third party website where you can buy the product.</p>
               <br><p>Once you have made the purchase, we request you to come back to this page and click on the <button type="button"  class="btn btn-primary btn-sm">Purchase Completed</button>.
                 <br>In case you change your mind about purchasing the product, we then request you to click on the  <button type="button"  class="btn btn-warning btn-sm" >Changed my mind</button> button.
                 comeback to this page and 'click'.</p>
@@ -285,7 +315,7 @@
               <div class = "panel panel-default">
                 <div class = "panel-heading">
                   <h4 class="panel-title">
-                    <a data-toggle="collapse" href="#collapseGenre">Genre</a></h4>
+                    <a data-toggle="collapse" href="#collapseGenre">Category</a></h4>
                 </div> <!--Panel heading-->
                 <div id="collapseGenre" class="panel-collapse">
                   <form>
@@ -322,14 +352,14 @@
                   <h4 class="panel-title">
                     <a data-toggle="collapse" href="#collapsePrice">Price</a></h4>
                 </div> <!--Panel heading-->
-                <div id="collapsePrice" class="panel-collapse collapse">
+                <div id="collapsePrice" class="panel-collapse">
                   <form>
                     <div class = "checkbox" id="chkPrice">
-                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="0">0 - 500</label><br>
-                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="5">500 - 1000</label><br>
-                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="1">1000 - 2000</label><br>
-                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="2">2000 - 3000</label><br>
-                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="3"> 3000 - More </label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="0">&#8377;0 - &#8377;500</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="5">&#8377;500 - &#8377;1000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="1">&#8377;1000 - &#8377;2000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="2">&#8377;2000 - &#8377;3000</label><br>
+                      <label style="color:#7A7B7C;font-size:16px;padding-left: 40px"><input type="checkbox" name = "chkValPrc" value="3">  > &#8377;3000 </label><br>
                     </div>
                   </form>
                 </div><!--Panel items-->
@@ -355,6 +385,9 @@
                 <input type="hidden" class="form-control" id="uid_val" value= <%=uid_val%> disabled>
               </div>
               <hr>
+              <div style="text-align:center">
+                <h4> Choose the gift that you would like to get for the event. Use the options on the left to filter as you wish. Check out the 'help' section for further assistance.</h4>
+              </div>
               <div class = "carousel-wrapper" id="carousel-wrapper">
                 <!--<form class="form form-inline">
                   <div class="row"><div class="col-xs-3">

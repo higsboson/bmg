@@ -64,6 +64,8 @@ $(document).ready(function () {
  $("#bdayProducts").hide();
  $("#homeProducts").hide();
  $("#babyProducts").hide();
+ $("#wedProducts").hide();
+ $("#spclProducts").hide();
   $("#myiframe").click(function(){
     //alert("I am caputring my event here.");
   });
@@ -291,6 +293,31 @@ function checkEvents() {
                </div><!-- /.col-lg-4 -->
              </div><!-- /.row -->
            </div>
+
+           <div class="container marketing">
+
+               <!-- Three columns of text below the carousel -->
+               <div class="row" id="marketing-row2" style="text-align:center">
+                 <div class="col-lg-2">
+                 </div>
+                 <div class="col-lg-4" id="wed-marketing">
+                   <img class="img-circle" src="images/wedding.jpg" alt="Generic placeholder image" width="140" height="140">
+                   <h2 class="marketing-headlines"><b>Weddings!</b></h2>
+                   <p>The biggest party of your life! The beginning of a great new adventure with the one you love! Let's make sure you are all set to begin this journey. Have a look at our amazing wedding gift collection.  </p>
+                   <p><a class="btn btn-default" id="wed-a-link" role="button" onclick="showWeddingProducts();">View gifts &raquo;</a></p>
+                 </div><!-- /.col-lg-4 -->
+
+                   <div class="col-lg-4" id="spcl-marketing">
+                     <img class="img-circle" src="images/special_events.jpeg" alt="Generic placeholder image" width="140" height="140">
+                     <h2 class="marketing-headlines"><b>Special Events!</b></h2>
+                     <p>Celebrating a bridal shower, a graduation or for the holiday season, create a gift registry with us to let people know what to get you for the occasion. Take a peek to see our cool selection of gifts. </p>
+                     <p><a class="btn btn-default" id="spcl-a-link" role="button" onclick="showSpclProducts();">View gifts &raquo;</a></p>
+                   </div>
+                   <div class="col-lg-2">
+                   </div>
+
+               </div>
+             </div>
           <div style="display:none" id="backup">
 
           </div>
@@ -322,31 +349,26 @@ function checkEvents() {
 
              </div>
            </div>
-
-             <div class="container marketing">
-
-                 <!-- Three columns of text below the carousel -->
-                 <div class="row" id="marketing-row2" style="text-align:center">
-                   <div class="col-lg-2">
-                   </div>
-                   <div class="col-lg-4" id="bday-marketing">
-                     <img class="img-circle" src="images/wedding.jpg" alt="Generic placeholder image" width="140" height="140">
-                     <h2 class="marketing-headlines"><b>Weddings!</b></h2>
-                     <p>The biggest party of your life! The beginning of a great new adventure with the one you love! Let's make sure you are all set to begin this journey. Have a look at our amazing wedding gift collection.  </p>
-                     <p><a class="btn btn-default" id="bday-a-link" role="button" onclick="showBdayProducts();">View gifts &raquo;</a></p>
-                   </div><!-- /.col-lg-4 -->
-
-                     <div class="col-lg-4" id="bday-marketing">
-                       <img class="img-circle" src="images/special_events.jpeg" alt="Generic placeholder image" width="140" height="140">
-                       <h2 class="marketing-headlines"><b>Special Events!</b></h2>
-                       <p>Celebrating a bridal shower, a graduation or for the holiday season, create a gift registry with us to let people know what to get you for the occasion. Take a peek to see our cool selection of gifts. </p>
-                       <p><a class="btn btn-default" id="bday-a-link" role="button" onclick="showBdayProducts();">View gifts &raquo;</a></p>
-                     </div>
-                     <div class="col-lg-2">
-                     </div>
-
-                 </div>
+           <div class="container-fluid" id="wedProducts">
+             <div class="row" >
+               <div class="col-sm-12" style="padding:20px;text-align:center" id="wedProductsInfo">
+                  <!--<img src="images/productback.jpg" style="width:100%;"/>-->
+                  <i class="fa fa-circle-o-notch fa-spin" style="font-size:100px;"></i>
                </div>
+
+             </div>
+           </div>
+           <div class="container-fluid" id="spclProducts">
+             <div class="row" >
+               <div class="col-sm-12" style="padding:20px;text-align:center" id="spclProductsInfo">
+                  <!--<img src="images/productback.jpg" style="width:100%;"/>-->
+                  <i class="fa fa-circle-o-notch fa-spin" style="font-size:100px;"></i>
+               </div>
+
+             </div>
+           </div>
+
+
                  <footer>
      <div class="footer" id="footer">
          <div class="container">

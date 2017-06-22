@@ -230,30 +230,54 @@ app.post('/getProdByCatg',function(req,res){
     //console.log("Count : "+qryStr.catgCount);
     //console.log("Category Array : "+qryStr.category);
     console.log("pNameFlag is " + qryStr.pNameFlag);
-    if (qryStr.pNameFlag == "0") {
-      console.log("no item names searched")
-      if (parseInt(qryStr.ageCat) == -1) {
-        if (count == 0) {
-          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
-            if (!err){
-              if (docs.length == 0) {res.send()}
-              else {res.format({'application/json': function(){res.send(docs)}})}
-            }
-            else {console.log(err);res.send("Error in fetching documents")}
-          })
-        }
-        else {
-          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
-            if (!err){
-              if (docs.length == 0) {res.send()}
-              else {res.format({'application/json': function(){res.send(docs)}})}
-            }
-            else {console.log(err);res.send("Error in fetching documents")}
-          })
+    if (qryStr.eventType != 'A Special Event') {
+      if (qryStr.pNameFlag == "0") {
+        console.log("no item names searched")
+        if (parseInt(qryStr.ageCat) == -1) {
+          if (count == 0) {
+            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+              if (!err){
+                if (docs.length == 0) {res.send()}
+                else {res.format({'application/json': function(){res.send(docs)}})}
+              }
+              else {console.log(err);res.send("Error in fetching documents")}
+            })
+          }
+          else {
+            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+              if (!err){
+                if (docs.length == 0) {res.send()}
+                else {res.format({'application/json': function(){res.send(docs)}})}
+              }
+              else {console.log(err);res.send("Error in fetching documents")}
+            })
+          }
+        } else {
+          if (count == 0) {
+            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+              if (!err){
+                if (docs.length == 0) {res.send()}
+                else {res.format({'application/json': function(){res.send(docs)}})}
+              }
+              else {console.log(err);res.send("Error in fetching documents")}
+            })
+          }
+          else {
+            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+              if (!err){
+                if (docs.length == 0) {res.send()}
+                else {res.format({'application/json': function(){res.send(docs)}})}
+              }
+              else {console.log(err);res.send("Error in fetching documents")}
+            })
+          }
         }
       } else {
+
+        var searchKeyWords = qryStr.productNameKeywords;
+        console.log(searchKeyWords);
         if (count == 0) {
-          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
               if (docs.length == 0) {res.send()}
               else {res.format({'application/json': function(){res.send(docs)}})}
@@ -262,7 +286,7 @@ app.post('/getProdByCatg',function(req,res){
           })
         }
         else {
-          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
               if (docs.length == 0) {res.send()}
               else {res.format({'application/json': function(){res.send(docs)}})}
@@ -272,26 +296,69 @@ app.post('/getProdByCatg',function(req,res){
         }
       }
     } else {
+      if (qryStr.pNameFlag == "0") {
+        console.log("no item names searched")
+        if (parseInt(qryStr.ageCat) == -1) {
+          if (count == 0) {
+            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+              if (!err){
+                if (docs.length == 0) {res.send()}
+                else {res.format({'application/json': function(){res.send(docs)}})}
+              }
+              else {console.log(err);res.send("Error in fetching documents")}
+            })
+          }
+          else {
+            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+              if (!err){
+                if (docs.length == 0) {res.send()}
+                else {res.format({'application/json': function(){res.send(docs)}})}
+              }
+              else {console.log(err);res.send("Error in fetching documents")}
+            })
+          }
+        } else {
+          if (count == 0) {
+            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+              if (!err){
+                if (docs.length == 0) {res.send()}
+                else {res.format({'application/json': function(){res.send(docs)}})}
+              }
+              else {console.log(err);res.send("Error in fetching documents")}
+            })
+          }
+          else {
+            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+              if (!err){
+                if (docs.length == 0) {res.send()}
+                else {res.format({'application/json': function(){res.send(docs)}})}
+              }
+              else {console.log(err);res.send("Error in fetching documents")}
+            })
+          }
+        }
+      } else {
 
-      var searchKeyWords = qryStr.productNameKeywords;
-      console.log(searchKeyWords);
-      if (count == 0) {
-        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
-          if (!err){
-            if (docs.length == 0) {res.send()}
-            else {res.format({'application/json': function(){res.send(docs)}})}
-          }
-          else {console.log(err);res.send("Error in fetching documents")}
-        })
-      }
-      else {
-        prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
-          if (!err){
-            if (docs.length == 0) {res.send()}
-            else {res.format({'application/json': function(){res.send(docs)}})}
-          }
-          else {console.log(err);res.send("Error in fetching documents")}
-        })
+        var searchKeyWords = qryStr.productNameKeywords;
+        console.log(searchKeyWords);
+        if (count == 0) {
+          prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"prodNameKeyWords":{$all:searchKeyWords}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            if (!err){
+              if (docs.length == 0) {res.send()}
+              else {res.format({'application/json': function(){res.send(docs)}})}
+            }
+            else {console.log(err);res.send("Error in fetching documents")}
+          })
+        }
+        else {
+          prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            if (!err){
+              if (docs.length == 0) {res.send()}
+              else {res.format({'application/json': function(){res.send(docs)}})}
+            }
+            else {console.log(err);res.send("Error in fetching documents")}
+          })
+        }
       }
     }
   }
@@ -1027,13 +1094,13 @@ app.post('/saveFeaturedList',urlencodedParser, function (req,res){
   var prodCollection = bmgDB.collection('Product');
 
   WaterfallOver(add_array,function (val,report){
-      prodCollection.update({"_id" : new ObjectId(val)},{$set:{"featured":1}}, function(err) {
+      prodCollection.update({"_id" : new ObjectId(val)},{$set:{"featured":req.body.eventType}}, function(err) {
         if (!err) {report();}
         else {console.log("Error in updating product status")}
       });
     },function() {
       WaterfallOver(rem_array,function (val,report){
-          prodCollection.update({"_id" : new ObjectId(val)},{$unset:{"featured":1}}, function(err) {
+          prodCollection.update({"_id" : new ObjectId(val)},{$unset:{"featured":req.body.eventType}}, function(err) {
             if (!err) {report();}
             else {console.log("Error in updating product status")}
           });
@@ -1110,13 +1177,23 @@ app.get('/getFeaturedProducts', function (req,res){
   //console.log("Category Array : "+qryStr.category);
   console.log(req.query.event);
 
-    prdCollection.find({$and: [{"eventType":{$elemMatch:{$eq:req.query.event}}},{"featured":1}]}).sort({ AddDate : -1 }).toArray(function(err,docs) {
+  if (req.query.event != 'Special Category') {
+    prdCollection.find({$and: [{"eventType":{$elemMatch:{$eq:req.query.event}}},{"featured":req.query.event}]}).sort({ AddDate : -1 }).toArray(function(err,docs) {
       if (!err){
         if (docs.length == 0) {res.send()}
         else {res.format({'application/json': function(){res.send(docs)}})}
       }
       else {console.log(err);res.send("Error in fetching documents")}
     })
+  } else {
+    prdCollection.find({$and: [{"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}}},{"featured":req.query.event}]}).sort({ AddDate : -1 }).toArray(function(err,docs) {
+      if (!err){
+        if (docs.length == 0) {res.send()}
+        else {res.format({'application/json': function(){res.send(docs)}})}
+      }
+      else {console.log(err);res.send("Error in fetching documents")}
+    })
+  }
 
 
 });
@@ -1133,13 +1210,23 @@ app.get('/getAllProdsForCatPaged', function (req,res){
   //console.log("Category Array : "+qryStr.category);
   console.log(req.query.event);
 
-    prdCollection.find({"eventType":{$elemMatch:{$eq:req.query.event}}}).sort({ AddDate : -1 }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.prod_per_page)).toArray(function(err,docs) {
+  if (req.query.event != 'Special Category') {
+    prdCollection.find({$and:[{"eventType":{$elemMatch:{$eq:req.query.event}}},{featured:{$exists: false }}]}).sort({ AddDate : -1 }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.prod_per_page)).toArray(function(err,docs) {
       if (!err){
         if (docs.length == 0) {res.send()}
         else {res.format({'application/json': function(){res.send(docs)}})}
       }
       else {console.log(err);res.send("Error in fetching documents")}
     })
+  } else {
+    prdCollection.find({$and:[{"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}}},{featured:{$exists: false }}]}).sort({ AddDate : -1 }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.prod_per_page)).toArray(function(err,docs) {
+      if (!err){
+        if (docs.length == 0) {res.send()}
+        else {res.format({'application/json': function(){res.send(docs)}})}
+      }
+      else {console.log(err);res.send("Error in fetching documents")}
+    })
+  }
 
 
 });
