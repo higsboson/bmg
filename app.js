@@ -170,6 +170,77 @@ app.get('/review_product',function(req,res) {
   }
 })
 
+app.get('/dashboard.html',function(req,res) {
+  res.sendFile(__dirname + "/site/dashboard.html");
+})
+
+app.post('/showReports',function(req,res) {
+  try {
+    var data = JSON.parse(req.body.Data);
+    var reportName = data.ReportName;
+    var vCollection;
+    var vRportsObject;
+    console.log("Report Name : "+reportName);
+    if (reportName == "Number of active wishlists") {
+      vCollection = bmgDB.collection('WishList');
+      vCollection.find({"EventDate":{$gte:new Date()}}).count(function(err,count) {
+        if (err) {res.send(err)}
+        else {console.log("Count : "+count);res.send({"count":count})}
+      })
+    }
+    else if (reportName == "Number of products") {
+      vCollection = bmgDB.collection('Product');
+      vCollection.find().count(function(err,count) {
+        if (err) {res.send(err)}
+        else {console.log("Count : "+count);res.send({"count":count})}
+      })
+    }
+    else if (reportName == "Number of products by product group") {
+      vCollection = bmgDB.collection('Product');
+      vCollection.aggregate([{$group:{_id:"$ProdGrp",count:{$sum:1}}}],function(err,docs) {
+        if (err) {res.send(err)}
+        else {console.log(docs);res.send(docs)}
+      })
+    }
+    else if (reportName == "Number of products by event type") {
+      vCollection = bmgDB.collection('Product');
+      vCollection.aggregate([{$group:{_id:"$eventType",count:{$sum:1}}}],function(err,docs) {
+        if (err) {res.send(err)}
+        else {console.log(docs);res.send(docs)}
+      })
+    }
+    else if (reportName == "Number of products by creator") {
+      vCollection = bmgDB.collection('Product');
+      vCollection.aggregate([{$group:{_id:"$created_by",count:{$sum:1}}}],function(err,docs) {
+        if (err) {res.send(err)}
+        else {console.log(docs);res.send(docs)}
+      })
+    }
+    else if (reportName == "Number of products by review status") {
+      vCollection = bmgDB.collection('Product');
+      vCollection.aggregate([{$group:{_id:"$Reviewed",count:{$sum:1}}}],function(err,docs) {
+        if (err) {res.send(err)}
+        else {console.log(docs);res.send(docs)}
+      })
+    }
+    else if (reportName == "Number of purchased products for each event") {
+      vCollection = bmgDB.collection('WishList');
+      vCollection.aggregate([{$group:{_id:"$EventName",count:{$sum:1}}},{$match:{"$Products.Status":"Already Bought"}}],function(err,docs) {
+        if (err) {res.send(err)}
+        else {console.log(docs);res.send(docs)}
+      })
+    }
+    else if (reportName == "Number of active wishlists by event type") {
+      vCollection = bmgDB.collection('WishList');
+      vCollection.aggregate([{$group:{_id:"$EventType",count:{$sum:1}}},{$match:{"$EventDate":{$gte:new Date()}}}],function(err,docs) {
+        if (err) {res.send(err)}
+        else {console.log(docs);res.send(docs)}
+      })
+    };
+  } //try
+  catch (e) {console.log("Error in show reports : "+e)}
+})
+
 app.get('/getProductReview',function(req,res) {
   if (req.session.adminUser && req.session) {
     var prdCollection = bmgDB.collection('Product');
