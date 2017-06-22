@@ -497,16 +497,16 @@ app.post('/updProductStatus',urlencodedParser,function(req,res) {//change the st
     var wishlistCollection = bmgDB.collection('WishList');
     var data = JSON.parse(req.body.Data);
     var currDate = new Date();
-    if (data.emailaddr == "NA" ) { //email address is sent NA when confirming or cancelling purchase
-      wishlistCollection.update({"wid":data.WishListID,"uid":data.u,"Products.ProdID":data.ProductID},{$set:{"Products.$.Status":data.Status,"Products.$.statusUpddDt":currDate}}, function(err) {
+    //if (data.emailaddr == "NA" ) { //email address is sent NA when confirming or cancelling purchase
+      wishlistCollection.update({"wid":data.WishListID,"uid":data.u,"Products._id":new ObjectId(data.ProductID)},{$set:{"Products.$.Status":data.Status,"Products.$.statusUpddDt":currDate,"Products.$.email":data.emailaddr}}, function(err) {
         if (!err) {res.send("Success")}
         else {res.send("Error in updating product status")}
-      })}
-    else {
-      wishlistCollection.update({"wid":data.WishListID,"uid":data.u,"Products.ProdID":data.ProductID},{$set:{"Products.$.Status":data.Status,"Products.$.statusUpddDt":currDate}}, function(err) {
+      })
+  /*  else {
+      wishlistCollection.update({"wid":data.WishListID,"uid":data.u,"Products._id":new ObjectId(data.ProductID)},{$set:{"Products.$.Status":data.Status,"Products.$.statusUpddDt":currDate}}, function(err) {
         if (!err) {res.send("Success")}
         else {res.send("Error in updating product status")}
-      })}
+      })}*/
   }
   catch (e) {console.log("Error - "+e)}
 }) //updProductStatus
@@ -628,6 +628,7 @@ app.get('/getWishListItems', function (req,res) {
               report();
             });
           }, function (){
+            console.log(JSON.stringify(docs[0]));
             res.send(docs[0]);
         });
       });
@@ -857,12 +858,20 @@ app.get('/showListProducts',function(req,res){
   var qryStr = req.query.eventID;
   var u = req.query.u;
   try {
-    wishList.find({"wid":qryStr,"uid":u},{_id:0,Products:1}).toArray(function(err,docs) {
+    wishList.find({"wid":qryStr,"uid":u},{_id:0,Products:1,wid:1,uid:1}).toArray(function(err,docs) {
       if (!err){
-      if (docs.length == 0) {res.send("Unable to find the desired wishlist")}
-      else {res.format({'application/json': function(){res.send(docs[0].Products)}})}
+        var product = bmgDB.collection('Product');
+        WaterfallOver(docs[0].Products,function (prod, report) {
+            product.find({"_id" : new ObjectId(prod._id)}).toArray(function (err,pdocs) {
+              prod["ProdData"] = pdocs;
+              report();
+            });
+          }, function (){
+            console.log(JSON.stringify(docs[0]));
+            res.format({'application/json': function(){res.send(docs[0].Products)}})
+        });
       }
-      else {res.send("Error in fetching documents")}
+        else {res.send("Unable to find desired wishlist.")}
     });
   }
   catch (e) {res.send(e)}

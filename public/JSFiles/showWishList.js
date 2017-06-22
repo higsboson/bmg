@@ -71,16 +71,15 @@ function showProducts() {
         if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
         htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
         htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
-        htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
-        htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+doc.ProdNm+'</p></div></div>';
-        htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div>';
+        htmlStr = htmlStr + '<img id = "imgURL_'+doc._id+'" src="'+doc.ProdData[0].ImageURL+'">';
+        htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc._id+'" align="middle">'+doc.ProdData[0].ProdNm+'</p></div></div>';
+        htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.ProdData[0].MRP+'</p></div>';
         if (doc.Status == "Blocked")
-         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Blocked</button></p>'}
+         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc._id+'">Blocked</button></p>'}
         else if (doc.Status == "Bought")
-         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc.ProdID+'">Already Bought</button></p>'}
+         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc._id+'">Already Bought</button></p>'}
         else
-         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc.ProdID+'","'+doc.ProdDsc+'") id="btn_'+doc.ProdID+'">Grant Wish</button></p>'}
-
+         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc._id+'","'+doc.ProdData[0].ProdDsc+'") id="btn_'+doc._id+'">Grant Wish</button></p>'}
         htmlStr = htmlStr + '</div></div>';
         cnt++;
         if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};

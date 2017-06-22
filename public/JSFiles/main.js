@@ -517,18 +517,18 @@ function getListData(wid,uid,name,mode) {
             data += '<table>';
             for (i = 0;i < res.Products.length; i++) {
                 data += '<tr>';
-                data += '<td><a href="' + res.Products[i].ProdData.ProdDsc + '" target="_blank"><img src="' + res.Products[i].ProdData.ImageURL + '"></a></td>';
+                data += '<td><a href="' + res.Products[i].ProdData[0].ProdDsc + '" target="_blank"><img src="' + res.Products[i].ProdData[0].ImageURL + '"></a></td>';
                 data += '<td style="padding:10px">';
-                data += '<a href="' + res.Products[i].ProdData.ProdDsc + '" target="_blank"><font color="#2B547E" size="3">' +  res.Products[i].ProdData.ProdNm + '</font></a><br>';
-                data += 'Price:  &#8377;' +  res.Products[i].ProdData.MRP + '<br>';
-                if (res.Products[i].ProdData.Status == "Available")
+                data += '<a href="' + res.Products[i].ProdData[0].ProdDsc + '" target="_blank"><font color="#2B547E" size="3">' +  res.Products[i].ProdData[0].ProdNm + '</font></a><br>';
+                data += 'Price:  &#8377;' +  res.Products[i].ProdData[0].MRP + '<br>';
+                if (res.Products[i].Status == "Available")
                   data += 'Gift Status: <b><font color="#FFA62F">Pending Purchase</font></b>';
                 else
                    data += 'Gift Status: <b><font color="#348781">Purchased</font></b>';
                 data += '</td>';
                 data += '</tr>';
                 data += '<tr><td><hr></td><td><hr></td></tr>';
-                if (res.Products[i].ProdData.Status == "Bought")
+                if (res.Products[i].Status == "Bought")
                   boughtCount++;
             }
             data += '</table>';
