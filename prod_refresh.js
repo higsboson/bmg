@@ -186,7 +186,10 @@ mongoclient.connect("mongodb://worker:" + process.argv[2] + "@localhost:27017/bm
               }
               if (error) {
                 console.log(error.message + 'full error ' + error + ' Retrying');
-                retry();
+                setTimeout(function () {
+                    console.log('Re-trying');
+                    retry();
+                }, 1000);
                 // consume response data to free up memory
                 response.resume();
                 return;
