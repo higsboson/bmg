@@ -30,6 +30,7 @@
     "request": "^2.81.0",
     "sha256": "^0.2.0",
     "url": "^0.11.0",
+    "xml-parser": "^1.2.1",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {}
