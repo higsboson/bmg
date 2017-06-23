@@ -461,6 +461,7 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
 
     console.log("ProdID : "+prdToBeAdded.ProdID);
     prdToBeAdded.AddDate = new Date();
+    prdToBeAdded.UpdDate = prdToBeAdded.AddDate;
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
       if (docs.length != 0) {res.send("Already present in DB")}
       else {
@@ -1203,6 +1204,7 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
       collection.find({"ProdID":val.ProdID}).toArray(function (err,data) {
           if(data.length == 0) {
             val.AddDate = new Date();
+            val.UpdDate = val.AddDate;
             val['created_by'] = req.session.adminUser;
             collection.insert(val, function (err,result) {
               console.log("inserted" + result);

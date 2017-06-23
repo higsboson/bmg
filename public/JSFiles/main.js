@@ -988,6 +988,16 @@ function logout() {
   })
 }
 
+
+
+function getDateFromUTC(date) {
+
+  var utcdate = new Date(date);
+  var ist = utcdate + (3600000 * 5.5)
+  return ist;
+
+}
+
 function getFeaturedProducts(event_type,div) {
   $.ajax({
     type: 'GET',
@@ -1019,7 +1029,9 @@ function getFeaturedProducts(event_type,div) {
         }
         //res[i].ImageURL = res[i].ImageURL.replace(/\//g, "\\/");
         htmlContent += "<br/><div class='featured-image' style=\"background:url(\'" + res[i].ImageURL + "\') no-repeat center center\"></div>";
-        htmlContent += "<br/><div class=\"featured-price\"> &#8377;" + res[i].MRP + "</div></div>"
+        htmlContent += "<br/><div class=\"featured-price\"> &#8377;" + res[i].MRP + "</div>"
+        htmlContent += "<br/><div class=\"amz-note\">(as of " + getDateFromUTC(res[i].UpdDate) + ")</div></div>"
+
       }
       $('#' + div).html(htmlContent);
     },
