@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/main.css" >
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
+    <script src="JSFiles/moment-with-locales.min.js"></script>
     <script src="JSFiles/main.js"></script>
     <script src="JSFiles/sha256.js"></script>
     <!-- Include the plugin's CSS and JS: -->
@@ -82,7 +83,7 @@
                    htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href="'+doc.ProdDsc+'" target="_blank">';
                    htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
                    htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-                   htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></div></a>';
+                   htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></a><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
                    htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-error" id="deleteFrmCart_'+cnt+'" onclick="deletefrmcart(\''+doc.ProdID+'\')">Remove</button></p>';
                    htmlStr = htmlStr + '</div></div>';
                    cnt++;
@@ -268,7 +269,7 @@
                   srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0","ageCat":-1}';
               else
                   srchStr = '{"eventType":"'+evntStr+'","catgCount":'+cnt+',"category":['+gpStr+'],"pNameFlag":"0","ageCat":' + ageCat + ',"genderCat":\"' + genderVal + '\"}';
-             //alert('no item');
+             alert(srchStr);
            }
             else {
               var keywords = $('#searchitem').val().split(' ');
@@ -299,7 +300,7 @@
                  htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
                  var data = res;
                  //alert("Length : "+data.length);
-                 //alert("Data : "+data);
+                 alert("Data : "+data);
 
                  $.each(data, function(key,doc){
                    try {
@@ -310,7 +311,8 @@
                      htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
                      htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'">';
                      htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-                     htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></div></a>';
+                     htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></a><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+                     htmlStr += "<br/>"
                      htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-warning" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\')">Add to registry</button></p>';
                      htmlStr = htmlStr + '</div></div>'
                      loop++;
@@ -563,6 +565,26 @@
 
     </div>
   </div>
+
+  <div class="modal fade" id="amzDisclaimer" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Disclaimer</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+             Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on Amazon.in at the time of purchase will apply to the purchase of this product.
+          </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
 <!-- Modal Ends here-->
 
 <!-- 3/31/2017 - trznt - This is a Login modal. -->
@@ -945,9 +967,24 @@ Modal Ends here-->
 
      <div class="footer-bottom">
          <div class="container">
-             <p class="pull-left"> Copyright © bemygenie.com 2016 </p>
-             <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:admin@bemygenie.com" style="color:#ffffff">Planet Joy</a></a>.</p>
-         </div>
+           <div class="row">
+             <div class="col-sm-2">
+               <a href="https://www.instantssl.com/ssl-certificate-products/multi-domain-ssl-certificate.html">
+                 <img src="https://ssl.comodo.com/images/comodo_secure_seal_113x59_transp.png" alt="Multi Domain SSL" width="113" height="59" style="border: 0px;"><br> <span style="color:#FFFFFF;font-weight:bold; font-size:7pt">Multi Domain SSL</span></a><br>
+             </div>
+             <div class="col-sm-8" style="padding-top:20px">
+               <p class="pull-left"> Copyright © bemygenie.com 2016 </p>
+               <br />
+               <p class="pull-left" style="font-size:8px">
+                  CERTAIN CONTENT THAT APPEARS ON THIS SITE COMES FROM AMAZON.IN PRIVATE LTD. THIS CONTENT IS PROVIDED 'AS IS' AND IS SUBJECT TO CHANGE OR REMOVAL AT ANY TIME.
+               </p>
+               </div>
+               <div class="col-sm-2" style="padding-top:20px">
+                 <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:admin@bemygenie.com" style="color:#ffffff">Planet Joy</a></a>.</p>
+                </div>
+
+           </div>
+          </div>
      </div>
      <!--/.footer-bottom-->
  </footer>

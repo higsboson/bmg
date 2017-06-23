@@ -73,7 +73,7 @@ function showProducts() {
         htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
         htmlStr = htmlStr + '<img id = "imgURL_'+doc._id+'" src="'+doc.ProdData[0].ImageURL+'">';
         htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc._id+'" align="middle">'+doc.ProdData[0].ProdNm+'</p></div></div>';
-        htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.ProdData[0].MRP+'</p></div>';
+        htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.ProdData[0].MRP+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.ProdData[0].UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
         if (doc.Status == "Blocked")
          {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc._id+'">Blocked</button></p>'}
         else if (doc.Status == "Bought")

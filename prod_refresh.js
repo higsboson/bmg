@@ -76,10 +76,10 @@ function processData(xml,batch) {
             } else {
               price = parseInt(x.OfferSummary[0].LowestNewPrice[0].Amount)/100;
             }
-            name = x.ItemAttributes[0].Title;
-            desc = x.DetailPageURL;
+            name = x.ItemAttributes[0].Title[0];
+            desc = x.DetailPageURL[0];
             if (typeof x.MediumImage[0] !== 'undefined' || x.MediumImage[0] === null) {
-                image_url = x.MediumImage[0].URL;
+                image_url = x.MediumImage[0].URL[0];
             } else {
               image_url = '/images/no_image_available.png';
             }
