@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <link href="https://fonts.googleapis.com/css?family=Droid+Serif|Merriweather|Rochester|Sue+Ellen+Francisco" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
+  <script src="JSFiles/moment-with-locales.min.js"></script>
   <script src="JSFiles/main.js"></script>
   <script src="JSFiles/sha256.js"></script>
   <style>
@@ -193,6 +194,25 @@ function checkEvents() {
         </div>
         <!-- Modal Ends here-->
 
+        <div class="modal fade" id="amzDisclaimer" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Disclaimer</h4>
+              </div>
+              <div class="modal-body">
+                <p>
+                   Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on Amazon.in at the time of purchase will apply to the purchase of this product.
+                </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
 
         <div class="modal fade" id="browser_alerts" role="dialog">
           <div class="modal-dialog">
@@ -323,7 +343,7 @@ function checkEvents() {
           </div>
            <div class="container-fluid" id="bdayProducts">
              <div class="row" >
-               <div class="col-sm-12" style="padding:20px;text-align:center;overflow-y: hidden;" id="bdayProductsInfo">
+               <div class="col-sm-12" style="padding:20px;text-align:center;" id="bdayProductsInfo">
                   <!--<img src="images/productback.jpg" style="width:100%;"/>-->
                   <i class="fa fa-circle-o-notch fa-spin" style="font-size:100px;"></i>
 
@@ -443,6 +463,10 @@ function checkEvents() {
              </div>
              <div class="col-sm-8" style="padding-top:20px">
                <p class="pull-left"> Copyright © bemygenie.com 2016 </p>
+               <br />
+               <p class="pull-left" style="font-size:8px">
+                  CERTAIN CONTENT THAT APPEARS ON THIS SITE COMES FROM AMAZON.IN PRIVATE LTD. THIS CONTENT IS PROVIDED 'AS IS' AND IS SUBJECT TO CHANGE OR REMOVAL AT ANY TIME.
+               </p>
                </div>
                <div class="col-sm-2" style="padding-top:20px">
                  <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:admin@bemygenie.com" style="color:#ffffff">Planet Joy</a></a>.</p>

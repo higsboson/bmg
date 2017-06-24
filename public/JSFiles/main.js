@@ -490,6 +490,9 @@ function validFields() {
    catch (e) {alert("Error --!!!\n"+e)}
  }
 
+function showDisclaimer() {
+  alert('');
+}
 
 //4/22/2017 - trznt
 //Getting Data of WishList item
@@ -520,7 +523,7 @@ function getListData(wid,uid,name,mode) {
                 data += '<td><a href="' + res.Products[i].ProdData[0].ProdDsc + '" target="_blank"><img src="' + res.Products[i].ProdData[0].ImageURL + '"></a></td>';
                 data += '<td style="padding:10px">';
                 data += '<a href="' + res.Products[i].ProdData[0].ProdDsc + '" target="_blank"><font color="#2B547E" size="3">' +  res.Products[i].ProdData[0].ProdNm + '</font></a><br>';
-                data += 'Price:  &#8377;' +  res.Products[i].ProdData[0].MRP + '<br>';
+                data += '<table><tr><td>Price:  &#8377;' +  res.Products[i].ProdData[0].MRP + '<td><td style="font-size:8px;padding-left:10px"> (as of ' + getDateFromUTC(res.Products[i].ProdData[0].UpdDate) + ' IST - </td><td class="help-tip-details" style="font-size:8px;padding-left:10px">	<p>Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on Amazon.in at the time of purchase will apply to the purchase of this product.</p></td><td style="font-size:8px">)</td></tr></table><br>';
                 if (res.Products[i].Status == "Available")
                   data += 'Gift Status: <b><font color="#FFA62F">Pending Purchase</font></b>';
                 else
@@ -988,6 +991,16 @@ function logout() {
   })
 }
 
+
+
+function getDateFromUTC(date) {
+
+  var utcdate = new Date(date);
+  var ist = utcdate + (3600000 * 5.5)
+  return moment(ist).format("DD-MMM-YYYY h:mm");
+
+}
+
 function getFeaturedProducts(event_type,div) {
   $.ajax({
     type: 'GET',
@@ -999,6 +1012,7 @@ function getFeaturedProducts(event_type,div) {
       for (var i = 0;i < res.length;i++) {
         htmlContent += "<div class='featured featured-products'>";
         if (res[i].ProdNm.length > 30) {
+          alert('size greater than 30');
           var dislaydata = res[i].ProdNm.substring(0,27);
           dislaydata += "...";
           var condensed_array = res[i].ProdNm.split(' ').join('_ ').split(' ');
@@ -1019,7 +1033,9 @@ function getFeaturedProducts(event_type,div) {
         }
         //res[i].ImageURL = res[i].ImageURL.replace(/\//g, "\\/");
         htmlContent += "<br/><div class='featured-image' style=\"background:url(\'" + res[i].ImageURL + "\') no-repeat center center\"></div>";
-        htmlContent += "<br/><div class=\"featured-price\"> &#8377;" + res[i].MRP + "</div></div>"
+        htmlContent += "<br/><div class=\"featured-price\"> &#8377;" + res[i].MRP + "</div>"
+        htmlContent += "<br/><div class=\"amz-note\">(as of " + getDateFromUTC(res[i].UpdDate) + " IST - <a data-toggle='modal' href='#amzDisclaimer'>Details</a>)</div></div>"
+
       }
       $('#' + div).html(htmlContent);
     },

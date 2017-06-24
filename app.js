@@ -304,7 +304,9 @@ app.post('/getProdByCatg',function(req,res){
     if (qryStr.eventType != 'A Special Event') {
       if (qryStr.pNameFlag == "0") {
         console.log("no item names searched")
+
         if (parseInt(qryStr.ageCat) == -1) {
+          console.log("Age Cat" + qryStr.ageCat);
           if (count == 0) {
             prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
@@ -324,6 +326,7 @@ app.post('/getProdByCatg',function(req,res){
             })
           }
         } else {
+          console.log("Age Cat" + qryStr.ageCat);
           if (count == 0) {
             prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
@@ -334,6 +337,7 @@ app.post('/getProdByCatg',function(req,res){
             })
           }
           else {
+            console.log("Count greater than 0" + evenTypeStr + genderVal + qryStr.ageCat + qryStr.category + 'skip is ' + req.body.skip + 'limit is ' +req.body.limit);
             prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
@@ -461,6 +465,7 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
 
     console.log("ProdID : "+prdToBeAdded.ProdID);
     prdToBeAdded.AddDate = new Date();
+    prdToBeAdded.UpdDate = new Date(prdToBeAdded.AddDate);
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
       if (docs.length != 0) {res.send("Already present in DB")}
       else {
@@ -906,19 +911,46 @@ app.post('/filterWishListByCatg',function(req,res){
     var prodArr = [];
     wishList.find({"uid":qryStr.uid,"wid":qryStr.eventID},{_id:0,Products:1}).toArray(function(err,docs) {
       if (!err){
-        if (docs.length == 0) {res.send({})}
-        else {res.format({'application/json': function(){
-          if (cnt == 0) {prodArr = docs[0].Products}
-          else {
-            for (var i=0;i<docs[0].Products.length;i++) {
-              if (catg.indexOf(docs[0].Products[i].Catg) != -1) {prodArr.push(docs[0].Products[i])}
+        if (docs.length == 0) {
+          res.send({});
+        }
+        else {
+          res.format({'application/json': function(){
+            if (cnt == 0) {
+              var product = bmgDB.collection('Product');
+              WaterfallOver(docs[0].Products,function (prod, report) {
+                  product.find({"_id" : new ObjectId(prod._id)}).toArray(function (err,pdocs) {
+                  prodArr.push(pdocs[0])
+                    report();
+                  });
+                }, function (){
+                  if (prodArr.length == 0) {
+                    res.send("No matching products found")}
+                  else {
+                    res.send(prodArr)
+              }})
+            } else {
+              var product = bmgDB.collection('Product');
+              WaterfallOver(docs[0].Products,function (prod, report) {
+                  product.find({"_id" : new ObjectId(prod._id)}).toArray(function (err,pdocs) {
+                    if (catg.indexOf(pdocs[0].Catg) != -1) {
+                      prodArr.push(pdocs[0])
+                    }
+                    report();
+                  });
+                }, function (){
+                  if (prodArr.length == 0) {
+                    res.send("No matching products found")}
+                  else {
+                    res.send(prodArr)
+              }});
             }
+
+
           }
-          if (prodArr.length == 0) {res.send("No matching products found")}
-          else {res.send(prodArr)}
-        }})}
+        })
       }
-      else {res.send("Error in fetching documents")}
+    }
     });
   }
   catch (e) {console.log("Error - "+e)}
@@ -1203,6 +1235,7 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
       collection.find({"ProdID":val.ProdID}).toArray(function (err,data) {
           if(data.length == 0) {
             val.AddDate = new Date();
+            val.UpdDate = new Date(val.AddDate);
             val['created_by'] = req.session.adminUser;
             collection.insert(val, function (err,result) {
               console.log("inserted" + result);

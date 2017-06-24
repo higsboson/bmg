@@ -69,33 +69,52 @@ function processData(xml,batch) {
       xitems = resJSON.ItemLookupResponse.Items[0].Item;
       WaterfallOver(xitems, function (x,subreport) {
         var name,desc,imageURL,price,asin;
-        if (typeof x.ItemAttributes[0].ListPrice[0].Amount !== 'undefined' ||
-          x.ItemAttributes[0].ListPrice[0].Amount  === null) {
-            price = parseInt(x.ItemAttributes[0].ListPrice[0].Amount)/100;
-        } else {
-          price = parseInt(x.OfferSummary[0].LowestNewPrice[0].Amount)/100;
-        }
-        name = x.ItemAttributes[0].Title;
-        desc = x.DetailPageURL;
-        if (typeof x.MediumImage[0] !== 'undefined' || x.MediumImage[0] === null) {
-            image_url = x.MediumImage[0].URL;
-        } else {
-          image_url = '/images/no_image_available.png';
-        }
+        try {
+          if (typeof x.ItemAttributes[0].ListPrice !== 'undefined') {
+            if (typeof x.ItemAttributes[0].ListPrice[0] !== 'undefined' || x.ItemAttributes[0].ListPrice[0] === null) {
+                price = parseInt(x.ItemAttributes[0].ListPrice[0].Amount)/100;
+            } else {
+              price = parseInt(x.OfferSummary[0].LowestNewPrice[0].Amount)/100;
+            }
+            name = x.ItemAttributes[0].Title[0];
+            desc = x.DetailPageURL[0];
+            if (typeof x.MediumImage[0] !== 'undefined' || x.MediumImage[0] === null) {
+                image_url = x.MediumImage[0].URL[0];
+            } else {
+              image_url = '/images/no_image_available.png';
+            }
 
-        asin = x.ASIN;
-        //console.log(desc + name + image_url + price + asin);
-        var prdCollection = bmgDB.collection('Product');
+            asin = x.ASIN;
+            //console.log(desc + name + image_url + price + asin);
+            var prdCollection = bmgDB.collection('Product');
 
-        prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"ProdNm":name,"ProdDsc":desc,"ImageURL":image_url,"MRP":price,"UpdDate":new Date()}}, function(err) {
-          if (err) {
-            console.log("Error in updating product status")
-          }
-           else {
-             console.log('updated ' + batch['BMG' + asin]);
-             subreport();
+            prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"ProdNm":name,"ProdDsc":desc,"ImageURL":image_url,"MRP":price,"UpdDate":new Date()}}, function(err) {
+              if (err) {
+                console.log("Error in updating product status")
+              }
+               else {
+                 console.log('updated ' + batch['BMG' + asin]);
+                 subreport();
+               }
+             });
+           } else {
+             console.log('to be deleted');
+             var asin = x.ASIN;
+             var prdCollection = bmgDB.collection('Product');
+             prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"UpdDate":"to be deleted"}}, function(err) {
+               if (err) {
+                 console.log("Error in updating product status")
+               }
+                else {
+                  console.log('updated ' + batch['BMG' + asin]);
+                  subreport();
+                }
+              });
            }
-        });
+         }
+         catch (e) {
+           console.log("error " + JSON.stringify(x));
+         }
 
       }, function () {
         console.log('All updated');
