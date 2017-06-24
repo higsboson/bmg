@@ -38,6 +38,17 @@ $(document).ready(function () {
       return false;
     }
   });
+
+  $("#event_name").on('keypress',function(event){
+    var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+      event.preventDefault();
+      return false;
+    }
+    if (event.keyCode == 13) {$("#event_category_sel").focus()}
+  });
+
 });
 
 function submitForm() {

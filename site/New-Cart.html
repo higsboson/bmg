@@ -123,61 +123,6 @@
          if (srchprod!="" && regex.test(srchprod)) {
            $('#searchingFor').text('Searching for "' + srchprod + '"');
            searchCatg();
-             /*$("#page-number").val(1);
-             $.get( "/srchProductByName",{PageNumber:$("#page-number").val(),ProdNm:srchprod,ProdGrp:prdGrpSel}, function( data, status ) {
-               if (status == 'success'){
-                 var htmlStr = "";
-                 var endStr = "";
-                 var prdName ="";
-                 var prdName1="";
-                 var prdId = "";
-                 var cnt =0;
-                 htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
-                 $.each(data, function(key,doc){
-                   try {
-                     prdName1 = doc.ProdNm;
-                     prdId = doc.ProdID;
-                     if (prdName1.length>60) {prdName=prdName1.slice(0,20)+'...'+prdName1.slice(-20)}
-                     else {prdName=prdName1};
-                     //alert(doc.ProdGrp);
-                     if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
-                     htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
-                     htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
-                     htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
-                     htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
-                     htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-                     htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
-                     if (prdId.slice(0,3) == "BMG")
-                      htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
-                     else
-                      htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to wishlist</button></p>';
-                     htmlStr = htmlStr + '</div></div>'
-                     //alert('<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick=AddToCart("'+doc.ProdID+'","'+doc.MRP+'","'+doc.ProdGrp+'")>Add to wishlist</button></p>');
-                     cnt++;
-                     if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
-                  }
-                  catch (e) {}
-                 }) //for each
-                 if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
-                 if (prdId.slice(0,3) == "BMG") {
-                   htmlStr = htmlStr + '<hr><div class="row"><div class="col-sm-6"></div><div class="col-sm-6"><p align="right">Unable to find your desired product? ';
-                   htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+prdGrpSel+'\')">Search Here</button></p></div><hr></div>';
-                 }
-                 else {
-                   htmlStr = htmlStr + '<div class="row"><div class="col-xs-11"></div><div class="col-xs-1"><button class="btn-default" id="nextbutton" onclick="srchInAmazon(2,\''+prdGrpSel+'\')">Next</button></div></div><div class="row"><hr></div>'
-                 }
-                 htmlStr = htmlStr + '</div>';
-                 $('#carousel-wrapper').replaceWith(htmlStr);
-              }
-              else {
-               alert("Error in fetching data from server");
-              }
-            });
-          }
-          else if (srchprod==""){
-            //show modal
-            //$("#prdGrpSelect").select(['All']);
-            //$("#prdGrpSelect").multiselect('refresh');*/
           }
           else {$("#invalidSearchKeyModal").modal('show')}
        });//searchbutton
@@ -410,51 +355,6 @@
                }
              })
          }
-         /*else {
-           srchStr = '{"eventType":"'+evntStr+'","catgCount":'+0+',"pNameFlag":"0"}';
-
-           $.ajax({
-             type : 'POST',
-             url :"/getProdByCatg",
-             data : {"Catg":srchStr, skip: skip, limit: limit},
-             success : function(res) {
-               var htmlStr = "";
-               var endStr = "";
-               var prdName = "";
-               var loop = 0;
-               htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
-               var data = res;
-               $.each(data, function(key,doc){
-                 try {
-                   prdName = doc.ProdNm;
-                   if (loop%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
-                   htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
-                   htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
-                   htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
-                   htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src="'+doc.ImageURL+'>"';
-                   htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-                   htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p></div></a>';
-                   htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\')">Add to wishlist</button></p>';
-                   htmlStr = htmlStr + '</div></div>'
-                   loop++;
-                   if (loop%4 == 0){htmlStr = htmlStr + "</div>"};
-                }
-                catch (e) {}
-                //$("#searchitem").val("");
-               }) //for each
-               if (loop%4 != 0) {htmlStr = htmlStr + "</div>"};
-               htmlStr = htmlStr + endStr + "</div>";
-               //alert(htmlStr);
-               $('#carousel-wrapper').replaceWith(htmlStr);
-             },
-             error : function (res){
-               htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper"> <div class = "row">';
-               htmlStr = htmlStr+'<p style = "padding-top:100px">No products found with your matching criteria</p>';
-               htmlStr = htmlStr+"</div></div>";
-               $('#carousel-wrapper').replaceWith(htmlStr);
-             }
-           })
-         }*/
        }//end search category
        $("#searchitem").on('keypress',function(event){
          var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
@@ -465,6 +365,24 @@
          }
          if (event.keyCode == 13) {$("#searchbutton").click()}
        });
+
+       $("#searchmore").on('keypress',function(event){
+         var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
+         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+         if (!regex.test(key)) {
+           event.preventDefault();
+           return false;
+         }
+         if (event.keyCode == 13) {$("#searchmbutton").click()}
+       });
+
+       $("#login_username").on('keypress',function(event){
+         if (event.keyCode == 13) {$("#login_password").focus()}
+       });
+       $("#login_password").on('keypress',function(event){
+         if (event.keyCode == 13) {doLogin('')}
+       });
+
      }); //ready
 
 
@@ -535,10 +453,8 @@
           max = -1;
          }
          if (genreStr.length != 1) {
-           //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\'All\')">Click Here</button></p></div></div><hr></div>';
            srchInAmazon(min,max,1,'All');
          } else {
-          //htmlStr = htmlStr + '<button type="button" class="btn btn-primary active" id="srchinamzn" onclick="srchInAmazon(1,\''+getAmazonSearchCode(genreStr[0])+'\')">Search Here</button></p></div></div><hr></div>';
           srchInAmazon(min,max,1,getAmazonSearchCode(genreStr[0]));
         }
        }
@@ -642,21 +558,6 @@
     </div>
   </div>
 <!-- Modal Ends here-->
-<!--
-<div id="wishListURLModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="wishListURLModalLabel">
-  <div class="modal-dialog">
-    <div class = "modal-content">
-      <div class="modal-header"><h4 class="modal-title">WishList URL</h4></div>
-      <div class="modal-body">
-          <p id="wishListLink">URL</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" style="display:default" onclick="redirectToHome()">Ok</button>
-        </div>
-      </div>
-    </div>
-  </div>
-Modal Ends here-->
 
 <!-- Modal Starts here-->
   <div class="modal fade" id="invalid_password" role="dialog">
