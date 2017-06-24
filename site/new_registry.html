@@ -24,7 +24,7 @@
 function dateOk() {submitForm()};
 
 $(document).ready(function () {
-  $('#datepicker').datepicker({format: 'dd/mm/yyyy'});
+  $('#datepicker').datepicker({dateFormat: 'dd/mm/yy'});
 
   $("#myiframe").click(function(){
     //alert("I am caputring my event here.");
@@ -59,7 +59,7 @@ function submitForm() {
    success: function(res) {
      if (res.success) {
        //alert('setting cookie' + res);
-        var origDate = new Date($('#datepicker').val());
+        var origDate = new Date($('#datepicker').datepicker("getDate"));
         var dISO = origDate.toISOString();
         setCookie("age_group",$('#age_group_sel').val(),2);
         setCookie("gender",$('#gender_sel').val(),2);

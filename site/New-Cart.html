@@ -363,7 +363,7 @@
            event.preventDefault();
            return false;
          }
-         if (event.keyCode == 13) {$("#searchbutton").click()}
+         if (event.keyCode == 13) {$("#searchbutton").click();return false;}
        });
 
        $("#searchmore").on('keypress',function(event){
@@ -378,6 +378,7 @@
 
        $("#login_username").on('keypress',function(event){
          if (event.keyCode == 13) {$("#login_password").focus()}
+         return false;
        });
        $("#login_password").on('keypress',function(event){
          if (event.keyCode == 13) {doLogin('')}
@@ -459,6 +460,12 @@
         }
        }
      }
+
+  /*   function checkSubmit(e) {
+       if(e && e.keyCode == 13) {
+          alert('enter is here');
+       }
+    }*/
 
      </script>
 
