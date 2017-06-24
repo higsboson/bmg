@@ -308,7 +308,7 @@ app.post('/getProdByCatg',function(req,res){
         if (parseInt(qryStr.ageCat) == -1) {
           console.log("Age Cat" + qryStr.ageCat);
           if (count == 0) {
-            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
                 else {res.format({'application/json': function(){res.send(docs)}})}
@@ -317,7 +317,7 @@ app.post('/getProdByCatg',function(req,res){
             })
           }
           else {
-            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"Catg":{$in:qryStr.category},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
                 else {res.format({'application/json': function(){res.send(docs)}})}
@@ -328,7 +328,7 @@ app.post('/getProdByCatg',function(req,res){
         } else {
           console.log("Age Cat" + qryStr.ageCat);
           if (count == 0) {
-            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
                 else {res.format({'application/json': function(){res.send(docs)}})}
@@ -338,7 +338,7 @@ app.post('/getProdByCatg',function(req,res){
           }
           else {
             console.log("Count greater than 0" + evenTypeStr + genderVal + qryStr.ageCat + qryStr.category + 'skip is ' + req.body.skip + 'limit is ' +req.body.limit);
-            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
                 else {res.format({'application/json': function(){res.send(docs)}})}
@@ -352,7 +352,7 @@ app.post('/getProdByCatg',function(req,res){
         var searchKeyWords = qryStr.productNameKeywords;
         console.log(searchKeyWords);
         if (count == 0) {
-          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
               if (docs.length == 0) {res.send()}
               else {res.format({'application/json': function(){res.send(docs)}})}
@@ -361,7 +361,7 @@ app.post('/getProdByCatg',function(req,res){
           })
         }
         else {
-          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+          prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
               if (docs.length == 0) {res.send()}
               else {res.format({'application/json': function(){res.send(docs)}})}
@@ -375,7 +375,7 @@ app.post('/getProdByCatg',function(req,res){
         console.log("no item names searched")
         if (parseInt(qryStr.ageCat) == -1) {
           if (count == 0) {
-            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
                 else {res.format({'application/json': function(){res.send(docs)}})}
@@ -384,7 +384,7 @@ app.post('/getProdByCatg',function(req,res){
             })
           }
           else {
-            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"Catg":{$in:qryStr.category},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
                 else {res.format({'application/json': function(){res.send(docs)}})}
@@ -394,7 +394,7 @@ app.post('/getProdByCatg',function(req,res){
           }
         } else {
           if (count == 0) {
-            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
                 else {res.format({'application/json': function(){res.send(docs)}})}
@@ -403,7 +403,7 @@ app.post('/getProdByCatg',function(req,res){
             })
           }
           else {
-            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+            prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
                 else {res.format({'application/json': function(){res.send(docs)}})}
@@ -417,7 +417,7 @@ app.post('/getProdByCatg',function(req,res){
         var searchKeyWords = qryStr.productNameKeywords;
         console.log(searchKeyWords);
         if (count == 0) {
-          prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"prodNameKeyWords":{$all:searchKeyWords}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+          prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"prodNameKeyWords":{$all:searchKeyWords},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
               if (docs.length == 0) {res.send()}
               else {res.format({'application/json': function(){res.send(docs)}})}
@@ -426,7 +426,7 @@ app.post('/getProdByCatg',function(req,res){
           })
         }
         else {
-          prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category}}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
+          prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"prodNameKeyWords":{$all:searchKeyWords},"Catg":{$in:qryStr.category},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
               if (docs.length == 0) {res.send()}
               else {res.format({'application/json': function(){res.send(docs)}})}
@@ -469,7 +469,7 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
       if (docs.length != 0) {res.send("Already present in DB")}
       else {
-        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat,"AddDate":prdToBeAdded.AddDate,"genderCat":prdToBeAdded.genderCat,"created_by":prdToBeAdded.created_by,"MfrID":1});
+        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat,"AddDate":prdToBeAdded.AddDate,"genderCat":prdToBeAdded.genderCat,"created_by":prdToBeAdded.created_by,"MfrID":1,"InStock":1});
         if (!err) {res.send("Success")}
         else {res.send("Error")}
       }
@@ -766,7 +766,7 @@ app.get('/srchProductByName',function(req,res){
     var prdCollection = bmgDB.collection('Product');
     var srchStr = req.query.ProdNm;
 
-    prdCollection.find({"ProdNm" : {$regex : new RegExp(srchStr,"i")}}).toArray(function(err,docs){
+    prdCollection.find({"ProdNm" : {$regex : new RegExp(srchStr,"i")},"InStock":1}).toArray(function(err,docs){
         if (!err){
         if (docs.length == 0) {
           console.log("no products found, calling amazon");
@@ -919,7 +919,7 @@ app.post('/filterWishListByCatg',function(req,res){
             if (cnt == 0) {
               var product = bmgDB.collection('Product');
               WaterfallOver(docs[0].Products,function (prod, report) {
-                  product.find({"_id" : new ObjectId(prod._id)}).toArray(function (err,pdocs) {
+                  product.find({"_id" : new ObjectId(prod._id),"InStock" : 1}).toArray(function (err,pdocs) {
                   prodArr.push(pdocs[0])
                     report();
                   });
@@ -932,7 +932,7 @@ app.post('/filterWishListByCatg',function(req,res){
             } else {
               var product = bmgDB.collection('Product');
               WaterfallOver(docs[0].Products,function (prod, report) {
-                  product.find({"_id" : new ObjectId(prod._id)}).toArray(function (err,pdocs) {
+                  product.find({"_id" : new ObjectId(prod._id),"InStock" : 1}).toArray(function (err,pdocs) {
                     if (catg.indexOf(pdocs[0].Catg) != -1) {
                       prodArr.push(pdocs[0])
                     }
@@ -965,7 +965,7 @@ app.get('/showListProducts',function(req,res){
       if (!err){
         var product = bmgDB.collection('Product');
         WaterfallOver(docs[0].Products,function (prod, report) {
-            product.find({"_id" : new ObjectId(prod._id)}).toArray(function (err,pdocs) {
+            product.find({"_id" : new ObjectId(prod._id),"InStock" : 1}).toArray(function (err,pdocs) {
               prod["ProdData"] = pdocs;
               report();
             });
@@ -1291,7 +1291,7 @@ app.get('/getFeaturedProducts', function (req,res){
   console.log(req.query.event);
 
   if (req.query.event != 'Special Category') {
-    prdCollection.find({$and: [{"eventType":{$elemMatch:{$eq:req.query.event}}},{"featured":req.query.event}]}).sort({ AddDate : -1 }).toArray(function(err,docs) {
+    prdCollection.find({$and: [{"eventType":{$elemMatch:{$eq:req.query.event}}},{"featured":req.query.event},{"InStock" : 1}]}).sort({ AddDate : -1 }).toArray(function(err,docs) {
       if (!err){
         if (docs.length == 0) {res.send()}
         else {res.format({'application/json': function(){res.send(docs)}})}
@@ -1299,7 +1299,7 @@ app.get('/getFeaturedProducts', function (req,res){
       else {console.log(err);res.send("Error in fetching documents")}
     })
   } else {
-    prdCollection.find({$and: [{"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}}},{"featured":req.query.event}]}).sort({ AddDate : -1 }).toArray(function(err,docs) {
+    prdCollection.find({$and: [{"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}}},{"featured":req.query.event},{"InStock" : 1}]}).sort({ AddDate : -1 }).toArray(function(err,docs) {
       if (!err){
         if (docs.length == 0) {res.send()}
         else {res.format({'application/json': function(){res.send(docs)}})}
@@ -1324,7 +1324,7 @@ app.get('/getAllProdsForCatPaged', function (req,res){
   console.log(req.query.event);
 
   if (req.query.event != 'Special Category') {
-    prdCollection.find({$and:[{"eventType":{$elemMatch:{$eq:req.query.event}}},{featured:{$exists: false }}]}).sort({ AddDate : -1 }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.prod_per_page)).toArray(function(err,docs) {
+    prdCollection.find({$and:[{"eventType":{$elemMatch:{$eq:req.query.event}}},{featured:{$exists: false }},{"InStock":1}]}).sort({ AddDate : -1 }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.prod_per_page)).toArray(function(err,docs) {
       if (!err){
         if (docs.length == 0) {res.send()}
         else {res.format({'application/json': function(){res.send(docs)}})}
@@ -1332,7 +1332,7 @@ app.get('/getAllProdsForCatPaged', function (req,res){
       else {console.log(err);res.send("Error in fetching documents")}
     })
   } else {
-    prdCollection.find({$and:[{"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}}},{featured:{$exists: false }}]}).sort({ AddDate : -1 }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.prod_per_page)).toArray(function(err,docs) {
+    prdCollection.find({$and:[{"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}}},{featured:{$exists: false }},{"InStock":1}]}).sort({ AddDate : -1 }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.prod_per_page)).toArray(function(err,docs) {
       if (!err){
         if (docs.length == 0) {res.send()}
         else {res.format({'application/json': function(){res.send(docs)}})}

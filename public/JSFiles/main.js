@@ -523,7 +523,11 @@ function getListData(wid,uid,name,mode) {
                 data += '<td><a href="' + res.Products[i].ProdData[0].ProdDsc + '" target="_blank"><img src="' + res.Products[i].ProdData[0].ImageURL + '"></a></td>';
                 data += '<td style="padding:10px">';
                 data += '<a href="' + res.Products[i].ProdData[0].ProdDsc + '" target="_blank"><font color="#2B547E" size="3">' +  res.Products[i].ProdData[0].ProdNm + '</font></a><br>';
-                data += '<table><tr><td>Price:  &#8377;' +  res.Products[i].ProdData[0].MRP + '<td><td style="font-size:8px;padding-left:10px"> (as of ' + getDateFromUTC(res.Products[i].ProdData[0].UpdDate) + ' IST - </td><td class="help-tip-details" style="font-size:8px;padding-left:10px">	<p>Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on Amazon.in at the time of purchase will apply to the purchase of this product.</p></td><td style="font-size:8px">)</td></tr></table><br>';
+                if (res.Products[i].ProdData[0].InStock == 1 ) {
+                  data += '<table><tr><td>Price:  &#8377;' +  res.Products[i].ProdData[0].MRP + '<td><td style="font-size:8px;padding-left:10px"> (as of ' + getDateFromUTC(res.Products[i].ProdData[0].UpdDate) + ' IST - </td><td class="help-tip-details" style="font-size:8px;padding-left:10px">	<p>Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on Amazon.in at the time of purchase will apply to the purchase of this product.</p></td><td style="font-size:8px">)</td></tr></table><br>';
+                } else {
+                  data += '<table><tr><td>Not Available<td><td style="font-size:8px;padding-left:10px"> (as of ' + getDateFromUTC(res.Products[i].ProdData[0].UpdDate) + ' IST - </td><td class="help-tip-details" style="font-size:8px;padding-left:10px">	<p>This product is presently not avaialble. You may choose to remove it from your wishlist. If you retain it, however, when the product becomes available, it will be available for purchase on your registry.</p></td><td style="font-size:8px">)</td></tr></table><br>';
+                }
                 if (res.Products[i].Status == "Available")
                   data += 'Gift Status: <b><font color="#FFA62F">Pending Purchase</font></b>';
                 else
@@ -784,7 +788,7 @@ function getUserProfileDetails(user,div) {
            n++;
          }
        }
-       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","Reviewed":"TBD","MfrID":1,"created_by":"customer","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +'], "genderCat":["' + genderVal + '"]}';
+       var prd = '{"ProdID":"'+bmgId+'","ProdDsc":"'+proddsc+'","ImageURL":"'+imageURL+'","ProdNm":"'+prodnm+'","Catg":"'+catg+'","MRP":"'+MRP+'","Reviewed":"TBD","MfrID":1,"InStock" : 1,"created_by":"customer","ProdGrp":"'+PrdGrp+'","eventType":["'+evntType+'"],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +'], "genderCat":["' + genderVal + '"]}';
        //Throwing error if the name has quotes in it
        $.ajax({
          type : 'POST',
@@ -1012,7 +1016,7 @@ function getFeaturedProducts(event_type,div) {
       for (var i = 0;i < res.length;i++) {
         htmlContent += "<div class='featured featured-products'>";
         if (res[i].ProdNm.length > 30) {
-          alert('size greater than 30');
+          //alert('size greater than 30');
           var dislaydata = res[i].ProdNm.substring(0,27);
           dislaydata += "...";
           var condensed_array = res[i].ProdNm.split(' ').join('_ ').split(' ');

@@ -88,7 +88,7 @@ function processData(xml,batch) {
             //console.log(desc + name + image_url + price + asin);
             var prdCollection = bmgDB.collection('Product');
 
-            prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"ProdNm":name,"ProdDsc":desc,"ImageURL":image_url,"MRP":price,"UpdDate":new Date()}}, function(err) {
+            prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"ProdNm":name,"ProdDsc":desc,"ImageURL":image_url,"MRP":price,"InStock":1,"UpdDate":new Date()}}, function(err) {
               if (err) {
                 console.log("Error in updating product status")
               }
@@ -101,7 +101,7 @@ function processData(xml,batch) {
              console.log('to be deleted');
              var asin = x.ASIN;
              var prdCollection = bmgDB.collection('Product');
-             prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"UpdDate":"to be deleted"}}, function(err) {
+             prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"InStock":0}}, function(err) {
                if (err) {
                  console.log("Error in updating product status")
                }

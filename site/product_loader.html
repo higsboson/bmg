@@ -145,7 +145,7 @@ function load_to_db() {
               }
             }
             productArray[j] = '{ "ProdID":\"BMG' + $('#product_id' + i).val() + '\","ProdNm":\"' + $('#product_name' + i).val() + '\","Catg":"'+ cat +'","MRP":\"' + parseInt($('#product_price' + i).val())/100 +
-            '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"eventType":['+ catAddData +'],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +'], "genderCat":[' + genderArrData + ']}';
+            '\","ProdDsc":\"' + $('#product_desc' + i).val() + '\","ImageURL":\"' + $('#image_url' + i).val() + '\","ProdGrp":\"' + $('#product_group' + i).val() + '\","MfrID":1,"InStock" : 1,"eventType":['+ catAddData +'],"prodNameKeyWords":[' + keywordArr  + '], "ageCat":['+ ageCat +'], "genderCat":[' + genderArrData + ']}';
             //alert(productArray[j]);
             j++;
           }
