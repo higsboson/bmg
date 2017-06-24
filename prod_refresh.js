@@ -97,8 +97,32 @@ function processData(xml,batch) {
                  subreport();
                }
              });
-           } else {
-             console.log('to be deleted');
+           } else if (typeof x.OfferSummary[0].LowestNewPrice !== 'undefined') {
+             price = parseInt(x.OfferSummary[0].LowestNewPrice[0].Amount)/100;
+             name = x.ItemAttributes[0].Title[0];
+             desc = x.DetailPageURL[0];
+             if (typeof x.MediumImage[0] !== 'undefined' || x.MediumImage[0] === null) {
+                 image_url = x.MediumImage[0].URL[0];
+             } else {
+               image_url = '/images/no_image_available.png';
+             }
+
+             asin = x.ASIN;
+             //console.log(desc + name + image_url + price + asin);
+             var prdCollection = bmgDB.collection('Product');
+
+             prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"ProdNm":name,"ProdDsc":desc,"ImageURL":image_url,"MRP":price,"InStock":1,"UpdDate":new Date()}}, function(err) {
+               if (err) {
+                 console.log("Error in updating product status")
+               }
+                else {
+                  console.log('updated ' + batch['BMG' + asin]);
+                  subreport();
+                }
+              });
+            }
+            else {
+             console.log('Out of Stock');
              var asin = x.ASIN;
              var prdCollection = bmgDB.collection('Product');
              prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"InStock":0}}, function(err) {
