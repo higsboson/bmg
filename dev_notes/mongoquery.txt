@@ -9,3 +9,11 @@ A batch SQL will be schduled via crontab to convert all wishlists with event dat
 The query that will need to be scheduled therefore is :
 
 db.WishList.update({$and : [{"EventDate" : {"$lte": new Date()}},{"EventStatus": 1} ]},{$set :{"EventStatus": 0}});
+
+
+
+Preset Products to In showStock
+--------------------------------------------------
+
+
+db.Product.update({},{$set : {InStock: 1}},{multi: true});
