@@ -916,12 +916,21 @@ app.post('/filterWishListByCatg',function(req,res){
         }
         else {
           res.format({'application/json': function(){
+            console.log('Count is ' + cnt);
             if (cnt == 0) {
+              console.log('Count is ' + cnt);
               var product = bmgDB.collection('Product');
               WaterfallOver(docs[0].Products,function (prod, report) {
+                console.log('Product is ' + JSON.stringify(prod));
                   product.find({"_id" : new ObjectId(prod._id),"InStock" : 1}).toArray(function (err,pdocs) {
-                  prodArr.push(pdocs[0])
-                    report();
+                    if (pdocs.length != 0) {
+                      prodArr.push(pdocs[0])
+                      report();
+                    }
+                    else {
+                      prod["ProdData"] = [];
+                      report();
+                    }
                   });
                 }, function (){
                   if (prodArr.length == 0) {
@@ -931,12 +940,20 @@ app.post('/filterWishListByCatg',function(req,res){
               }})
             } else {
               var product = bmgDB.collection('Product');
+              console.log('Products is ' + JSON.stringify(docs[0].Products));
               WaterfallOver(docs[0].Products,function (prod, report) {
+                console.log('Prod is ' + JSON.stringify(prod));
                   product.find({"_id" : new ObjectId(prod._id),"InStock" : 1}).toArray(function (err,pdocs) {
-                    if (catg.indexOf(pdocs[0].Catg) != -1) {
-                      prodArr.push(pdocs[0])
+                    if (pdocs.length != 0) {
+                      if (catg.indexOf(pdocs[0].Catg) != -1) {
+                        prodArr.push(pdocs[0])
+                      }
+                      report();
                     }
-                    report();
+                    else {
+                      prod["ProdData"] = [];
+                      report();
+                    }
                   });
                 }, function (){
                   if (prodArr.length == 0) {
@@ -966,8 +983,15 @@ app.get('/showListProducts',function(req,res){
         var product = bmgDB.collection('Product');
         WaterfallOver(docs[0].Products,function (prod, report) {
             product.find({"_id" : new ObjectId(prod._id),"InStock" : 1}).toArray(function (err,pdocs) {
-              prod["ProdData"] = pdocs;
-              report();
+              console.log("pdocs" + pdocs.length);
+              if (pdocs.length != 0) {
+                prod["ProdData"] = pdocs;
+                report();
+              }
+              else {
+                prod["ProdData"] = [];
+                report();
+              }
             });
           }, function (){
             console.log(JSON.stringify(docs[0]));

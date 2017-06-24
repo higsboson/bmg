@@ -16,7 +16,7 @@ function buyNow(prodid,prodURL) {
 
 function openAmznPage() {
   try {
-    alert("Open Amazon Page");
+    //alert("Open Amazon Page");
     var uid_val = $("#uid_val").val();
     var buyer_email = $("#buyer_email").val();
     var dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"Blocked","u":"'+uid_val+'","emailaddr":"'+buyer_email+'"}';
@@ -68,21 +68,24 @@ function showProducts() {
       var
       htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
       $.each(data, function(key,doc){
-        if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
-        htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
-        htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
-        htmlStr = htmlStr + '<img id = "imgURL_'+doc._id+'" src="'+doc.ProdData[0].ImageURL+'">';
-        htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc._id+'" align="middle">'+doc.ProdData[0].ProdNm+'</p></div></div>';
-        htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.ProdData[0].MRP+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.ProdData[0].UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
-        if (doc.Status == "Blocked")
-         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc._id+'">Blocked</button></p>'}
-        else if (doc.Status == "Bought")
-         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc._id+'">Already Bought</button></p>'}
-        else
-         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc._id+'","'+doc.ProdData[0].ProdDsc+'") id="btn_'+doc._id+'">Grant Wish</button></p>'}
-        htmlStr = htmlStr + '</div></div>';
-        cnt++;
-        if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+        //alert('doc is ' + JSON.stringify(doc));
+        if (doc.ProdData.length != 0) {
+          if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+          htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
+          htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
+          htmlStr = htmlStr + '<img id = "imgURL_'+doc._id+'" src="'+doc.ProdData[0].ImageURL+'">';
+          htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc._id+'" align="middle">'+doc.ProdData[0].ProdNm+'</p></div></div>';
+          htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.ProdData[0].MRP+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.ProdData[0].UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+          if (doc.Status == "Blocked")
+           {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc._id+'">Blocked</button></p>'}
+          else if (doc.Status == "Bought")
+           {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc._id+'">Already Bought</button></p>'}
+          else
+           {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info" onclick=buyNow("'+doc._id+'","'+doc.ProdData[0].ProdDsc+'") id="btn_'+doc._id+'">Grant Wish</button></p>'}
+          htmlStr = htmlStr + '</div></div>';
+          cnt++;
+          if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+        }
       }) //for each
       if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
       htmlStr = htmlStr + '<hr></div>';
