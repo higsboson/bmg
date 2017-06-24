@@ -59,7 +59,7 @@
          }
           if (cnt > 0) {
             srchStr = '{"Catg":['+gpStr+'],"uid":"' + $('#uid_val').val() + '","eventID":"'+eventID+'","catgCount":'+cnt+'}';
-            //alert(srchStr);
+            alert('count is not zero' + srchStr);
             $.ajax({
               type : 'POST',
               url :"/filterWishListByCatg",
@@ -115,12 +115,13 @@
          else {
 
            srchStr = '{"uid":"' + $('#uid_val').val() + '","eventID":"'+eventID+'","catgCount":'+0+'}';
-           //alert(srchStr);
+           alert('count is zero' + srchStr);
            $.ajax({
              type : 'POST',
              url :"/filterWishListByCatg",
              data : {"criteria":srchStr},
              success : function(data) {
+               alert('count zero' + JSON.stringify(data))
                var htmlStr = "";
                var endStr = "";
                var prdName = "";
@@ -129,6 +130,7 @@
                if (data.length > 0) {
                  $.each(data, function(key,doc){
                    try {
+                     alert('count zero' + JSON.stringify(doc))
                      prdName = doc.ProdNm;
                      if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
                      htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
