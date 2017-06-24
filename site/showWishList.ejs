@@ -59,7 +59,7 @@
          }
           if (cnt > 0) {
             srchStr = '{"Catg":['+gpStr+'],"uid":"' + $('#uid_val').val() + '","eventID":"'+eventID+'","catgCount":'+cnt+'}';
-            alert('count is not zero' + srchStr);
+            //alert('count is not zero' + srchStr);
             $.ajax({
               type : 'POST',
               url :"/filterWishListByCatg",
@@ -115,13 +115,13 @@
          else {
 
            srchStr = '{"uid":"' + $('#uid_val').val() + '","eventID":"'+eventID+'","catgCount":'+0+'}';
-           alert('count is zero' + srchStr);
+           //alert('count is zero' + srchStr);
            $.ajax({
              type : 'POST',
              url :"/filterWishListByCatg",
              data : {"criteria":srchStr},
              success : function(data) {
-               alert('count zero' + JSON.stringify(data))
+               //alert('count zero' + JSON.stringify(data))
                var htmlStr = "";
                var endStr = "";
                var prdName = "";
@@ -130,7 +130,7 @@
                if (data.length > 0) {
                  $.each(data, function(key,doc){
                    try {
-                     alert('count zero' + JSON.stringify(doc))
+                     //alert('count zero' + JSON.stringify(doc))
                      prdName = doc.ProdNm;
                      if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
                      htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
@@ -193,17 +193,6 @@
              return false;
            }
          });
-         /*$("#buyer_email").change( function(){
-           //alert('evaluvating change')
-           var buyHtml = document.getElementById("buyBtn").innerHTML;
-           if (($("#buyer_email").val().length > 0) && (validateEmail($("#buyer_email").val()))) {
-             if (buyHtml.indexOf("disabled")>0) {
-             $("#buyBtn").replaceWith('<div id="buyBtn">'+ buyHtml.slice(0,buyHtml.indexOf("disabled"))+buyHtml.slice(buyHtml.indexOf("disabled")+11)+'</div>');
-           }}
-           else {
-             $("#buyBtn").replaceWith('<div id="buyBtn">'+ buyHtml.slice(0,buyHtml.indexOf("Proceed")-1)+" disabled "+buyHtml.slice(buyHtml.indexOf("Proceed")-1)+'</div>');
-           }
-         })*/
      }); //ready
 
      </script>

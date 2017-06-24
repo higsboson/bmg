@@ -180,61 +180,60 @@ app.post('/showReports',function(req,res) {
     var reportName = data.ReportName;
     var vCollection;
     var vRportsObject;
-    console.log("Report Name : "+reportName);
     if (reportName == "Number of active wishlists") {
       vCollection = bmgDB.collection('WishList');
       vCollection.find({"EventDate":{$gte:new Date()}}).count(function(err,count) {
         if (err) {res.send(err)}
-        else {console.log("Count : "+count);res.send({"count":count})}
+        else {res.send({"count":count})}
       })
     }
     else if (reportName == "Number of products") {
       vCollection = bmgDB.collection('Product');
       vCollection.find().count(function(err,count) {
         if (err) {res.send(err)}
-        else {console.log("Count : "+count);res.send({"count":count})}
+        else {res.send({"count":count})}
       })
     }
     else if (reportName == "Number of products by product group") {
       vCollection = bmgDB.collection('Product');
       vCollection.aggregate([{$group:{_id:"$ProdGrp",count:{$sum:1}}}],function(err,docs) {
         if (err) {res.send(err)}
-        else {console.log(docs);res.send(docs)}
+        else {res.send(docs)}
       })
     }
     else if (reportName == "Number of products by event type") {
       vCollection = bmgDB.collection('Product');
       vCollection.aggregate([{$group:{_id:"$eventType",count:{$sum:1}}}],function(err,docs) {
         if (err) {res.send(err)}
-        else {console.log(docs);res.send(docs)}
+        else {res.send(docs)}
       })
     }
     else if (reportName == "Number of products by creator") {
       vCollection = bmgDB.collection('Product');
       vCollection.aggregate([{$group:{_id:"$created_by",count:{$sum:1}}}],function(err,docs) {
         if (err) {res.send(err)}
-        else {console.log(docs);res.send(docs)}
+        else {res.send(docs)}
       })
     }
     else if (reportName == "Number of products by review status") {
       vCollection = bmgDB.collection('Product');
       vCollection.aggregate([{$group:{_id:"$Reviewed",count:{$sum:1}}}],function(err,docs) {
         if (err) {res.send(err)}
-        else {console.log(docs);res.send(docs)}
+        else {res.send(docs)}
       })
     }
     else if (reportName == "Number of purchased products for each event") {
       vCollection = bmgDB.collection('WishList');
       vCollection.aggregate([{$match:{"$Products.Status":"Already Bought"}},{$group:{_id:"$EventName",count:{$sum:1}}}],function(err,docs) {
         if (err) {res.send(err)}
-        else {console.log(docs);res.send(docs)}
+        else {res.send(docs)}
       })
     }
     else if (reportName == "Number of active wishlists by event type") {
       vCollection = bmgDB.collection('WishList');
       vCollection.aggregate([{$match:{"EventDate":{$gte:new Date()}}},{$group:{_id:"$EventType",count:{$sum:1}}}],function(err,docs) {
         if (err) {res.send(err)}
-        else {console.log(docs);res.send(docs)}
+        else {res.send(docs)}
       })
     };
   } //try
@@ -281,7 +280,7 @@ app.get('/admin',function(req,res) {
     // On load of the ejs file, it will use the user ID reference
     // To pick information about the user.
     res.render(__dirname + "/site/admin_home.ejs",{username: req.session.adminUser});
-    console.log("call made to admin_home.html with valid session " + req.session.adminUser);
+    //console.log("call made to admin_home.html with valid session " + req.session.adminUser);
   } else {
     // Logging in if there is no valid session.
     res.sendFile(__dirname + "/site/admin.html");
@@ -300,13 +299,13 @@ app.post('/getProdByCatg',function(req,res){
     //console.log("Event Type : "+evenTypeStr);
     //console.log("Count : "+qryStr.catgCount);
     //console.log("Category Array : "+qryStr.category);
-    console.log("pNameFlag is " + qryStr.pNameFlag);
+    //console.log("pNameFlag is " + qryStr.pNameFlag);
     if (qryStr.eventType != 'A Special Event') {
       if (qryStr.pNameFlag == "0") {
-        console.log("no item names searched")
+        //console.log("no item names searched")
 
         if (parseInt(qryStr.ageCat) == -1) {
-          console.log("Age Cat" + qryStr.ageCat);
+          //console.log("Age Cat" + qryStr.ageCat);
           if (count == 0) {
             prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
@@ -326,7 +325,7 @@ app.post('/getProdByCatg',function(req,res){
             })
           }
         } else {
-          console.log("Age Cat" + qryStr.ageCat);
+          //console.log("Age Cat" + qryStr.ageCat);
           if (count == 0) {
             prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
@@ -337,7 +336,7 @@ app.post('/getProdByCatg',function(req,res){
             })
           }
           else {
-            console.log("Count greater than 0" + evenTypeStr + genderVal + qryStr.ageCat + qryStr.category + 'skip is ' + req.body.skip + 'limit is ' +req.body.limit);
+            //console.log("Count greater than 0" + evenTypeStr + genderVal + qryStr.ageCat + qryStr.category + 'skip is ' + req.body.skip + 'limit is ' +req.body.limit);
             prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"genderCat":{$elemMatch:{$eq:genderVal}},"ageCat":{$elemMatch:{$eq:parseInt(qryStr.ageCat)}},"Catg":{$in:qryStr.category},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
               if (!err){
                 if (docs.length == 0) {res.send()}
@@ -350,7 +349,7 @@ app.post('/getProdByCatg',function(req,res){
       } else {
 
         var searchKeyWords = qryStr.productNameKeywords;
-        console.log(searchKeyWords);
+        //console.log(searchKeyWords);
         if (count == 0) {
           prdCollection.find({"eventType":{$elemMatch:{$eq:evenTypeStr}},"prodNameKeyWords":{$all:searchKeyWords},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
@@ -372,7 +371,7 @@ app.post('/getProdByCatg',function(req,res){
       }
     } else {
       if (qryStr.pNameFlag == "0") {
-        console.log("no item names searched")
+        //console.log("no item names searched")
         if (parseInt(qryStr.ageCat) == -1) {
           if (count == 0) {
             prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
@@ -415,7 +414,7 @@ app.post('/getProdByCatg',function(req,res){
       } else {
 
         var searchKeyWords = qryStr.productNameKeywords;
-        console.log(searchKeyWords);
+        //console.log(searchKeyWords);
         if (count == 0) {
           prdCollection.find({"eventType":{$elemMatch:{$in:['Birthday','Anniversary','Wedding','House Warming','Farewell']}},"prodNameKeyWords":{$all:searchKeyWords},"InStock":1}).skip(parseInt(req.body.skip)).limit(parseInt(req.body.limit)).toArray(function(err,docs) {
             if (!err){
@@ -460,16 +459,17 @@ app.get('/fetchCartProducts',function(req,res) {
 app.post('/addToDBByUser',urlencodedParser,function(req,res){
   try {
     var prdCollection = bmgDB.collection('Product');
-    console.log("Body Product:" +req.body.Product);
+    //console.log("Body Product:" +req.body.Product);
     var prdToBeAdded = JSON.parse(req.body.Product);
 
-    console.log("ProdID : "+prdToBeAdded.ProdID);
+    //console.log("ProdID : "+prdToBeAdded.ProdID);
     prdToBeAdded.AddDate = new Date();
     prdToBeAdded.UpdDate = new Date(prdToBeAdded.AddDate);
+    //console.log("Update Date : "+prdToBeAdded.UpdDate);
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
       if (docs.length != 0) {res.send("Already present in DB")}
       else {
-        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat,"AddDate":prdToBeAdded.AddDate,"genderCat":prdToBeAdded.genderCat,"created_by":prdToBeAdded.created_by,"MfrID":1,"InStock":1});
+        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat,"AddDate":prdToBeAdded.AddDate,"genderCat":prdToBeAdded.genderCat,"created_by":prdToBeAdded.created_by,"MfrID":1,"InStock":1,"UpdDate":prdToBeAdded.UpdDate});
         if (!err) {res.send("Success")}
         else {res.send("Error")}
       }
@@ -486,7 +486,7 @@ app.post('/saveReviewedProducts',urlencodedParser,function(req,res){
         else {console.log("Error in updating product status")}
       });
     },function() {
-      console.log("Work Done");
+      //console.log("Work Done");
       res.end("Posted");
     });
 
@@ -596,11 +596,11 @@ app.post('/resetPassword',urlencodedParser,function(req,res) {//change the statu
     profileDetails.find({$and: [{"uid": sha256(req.body.username)},{"Primary" : 1}]},{"_id":1,"HostName":1,"HostPhone":1,"HostEmail":1}).toArray(function(err,docs){
       if (!err) {
         if (docs.length) {
-          console.log('email found');
+          //console.log('email found');
           var setval = sha256(rand(160,36) + docs[0].HostEmail) + sha256(rand(160,36) + docs[0]._id);
           aux_passwordReset.insert({"email":req.body.username,"FP":setval}, function(err,result) {
             if (!err) {
-              console.log('inserted fp');
+              //console.log('inserted fp');
               bmgaux.mailer(emailPassword,'support',req.body.username,'Password Reset','<b>Click the link below to change your password:</b><br><br><a href="https://www.bemygenie.com/rpf?c=' + setval + '" >Change Password</a> <br><br> - Team Bemygenie.com',function(message,response) {
                 res.end('mailsent');
               });
@@ -660,7 +660,7 @@ app.post('/home',urlencodedParser, function (req,res) {
     // On load of the ejs file, it will use the user ID reference
     // To pick information about the user.
     res.render(__dirname + "/site/home.ejs",{userID : sha256(req.session.user),username: req.session.name});
-    console.log("call made to home.html with valid session " + req.session.user);
+    //console.log("call made to home.html with valid session " + req.session.user);
   } else {
     // If this is not a valid session then the user gets a message that the
     // session is not valid
@@ -679,7 +679,7 @@ app.get('/home', function (req,res) {
     // On load of the ejs file, it will use the user ID reference
     // To pick information about the user.
     res.render(__dirname + "/site/home.ejs",{userID : sha256(req.session.user),username: req.session.name});
-    console.log("call made to home.html with valid session " + req.session.user + req.session.name);
+    //console.log("call made to home.html with valid session " + req.session.user + req.session.name);
   } else {
     // If this is not a valid session then the user gets a message that the
     // session is not valid
@@ -704,7 +704,7 @@ app.get('/getWishListItems', function (req,res) {
               report();
             });
           }, function (){
-            console.log(JSON.stringify(docs[0]));
+            //console.log(JSON.stringify(docs[0]));
             res.send(docs[0]);
         });
       });
@@ -734,7 +734,7 @@ app.get('/getUserWishLists', function (req,res) {
 });
 
 app.post('/saveProfileChanges',urlencodedParser, function (req,res) {
-  console.log("Name is " + req.body.hostname);
+  //console.log("Name is " + req.body.hostname);
   if (req.session && req.session.user) {
     var wishlistCollection = bmgDB.collection('WishList');
     wishlistCollection.update({"uid" : req.body.uid},{$set:{"HostName":req.body.hostname,"HostPhone":req.body.hostphone}}, function(err) {
@@ -773,7 +773,7 @@ app.get('/srchProductByName',function(req,res){
           getProductsFrmAmzn(req,function(err,docs) {
             if (err) {res.send("Error in fetching products")}
             else {
-              console.log("Doc.ProdNm "+docs[0].ProdNm);
+              //console.log("Doc.ProdNm "+docs[0].ProdNm);
               res.format({'application/json': function(){res.send(docs)}})
             }
           }); //Use callback function....
@@ -805,11 +805,11 @@ function getProductsFrmAmzn(req,callback) {
     var service="AWSECommerceService";
     var sort="price";
     var search_index = req.query.ProdGrp;
-    console.log("Search Index : "+search_index);
+    //console.log("Search Index : "+search_index);
     var resJSON;
     var vJSON = [];
     var itempage = parseInt(req.query.PageNumber);
-    console.log("query = "+JSON.stringify(req.query));
+    //console.log("query = "+JSON.stringify(req.query));
     var canonical_query_string;
     if (req.query.min == "-1" && req.query.max == "-1") {
     canonical_query_string = "AWSAccessKeyId=" + aws_access_key_id + "\&AssociateTag=" + associate_tag +
@@ -835,12 +835,12 @@ function getProductsFrmAmzn(req,callback) {
     }
 
     var string_to_sign = "GET\n" + end_point + "\n" + uri + "\n" + canonical_query_string;
-    console.log("string to sign - "+string_to_sign);
-    console.log("secret key - "+aws_secret_key);
+    //console.log("string to sign - "+string_to_sign);
+    //console.log("secret key - "+aws_secret_key);
     var hash = crypto.createHmac('sha256', aws_secret_key).update(string_to_sign).digest('base64');
-    console.log("hash - "+hash);
+    //console.log("hash - "+hash);
     var signed_url = amazon_end_point + uri + "\?" + canonical_query_string + "\&Signature=" + encodeURIComponent(hash);
-    console.log(signed_url);
+    //console.log(signed_url);
 
     var rawData = '';
     let error;
@@ -871,7 +871,7 @@ function getProductsFrmAmzn(req,callback) {
                                  "ProdGrp" : resJSON.ItemSearchResponse.Items[0].Item[i].ItemAttributes[0].ProductGroup,
                                  "ProdDsc" : resJSON.ItemSearchResponse.Items[0].Item[i].DetailPageURL,
                                  "ProdID" : resJSON.ItemSearchResponse.Items[0].Item[i].ASIN};
-                      console.log("\nItem"+JSON.stringify(vJSON[i]));
+                      //console.log("\nItem"+JSON.stringify(vJSON[i]));
 
                      }
                      catch (e) {} //Ignore items on offers
@@ -891,7 +891,7 @@ function getProductsFrmAmzn(req,callback) {
 
 app.get('/New-Cart.html',function(req,res){
   res.sendFile(__dirname+"/site/New-Cart.html");
-  console.log("Accessing New-Cart.html");
+  //console.log("Accessing New-Cart.html");
 });
 
 app.get('/showWishList',function(req,res) {
@@ -907,7 +907,7 @@ app.post('/filterWishListByCatg',function(req,res){
     var eventID = qryStr.eventID;
     var cnt = qryStr.catgCount;
     var catg = qryStr.Catg;
-    console.log('checking uid' + qryStr.uid)
+    //console.log('checking uid' + qryStr.uid)
     var prodArr = [];
     wishList.find({"uid":qryStr.uid,"wid":qryStr.eventID},{_id:0,Products:1}).toArray(function(err,docs) {
       if (!err){
@@ -916,12 +916,12 @@ app.post('/filterWishListByCatg',function(req,res){
         }
         else {
           res.format({'application/json': function(){
-            console.log('Count is ' + cnt);
+            //console.log('Count is ' + cnt);
             if (cnt == 0) {
-              console.log('Count is ' + cnt);
+              //console.log('Count is ' + cnt);
               var product = bmgDB.collection('Product');
               WaterfallOver(docs[0].Products,function (prod, report) {
-                console.log('Product is ' + JSON.stringify(prod));
+                //console.log('Product is ' + JSON.stringify(prod));
                   product.find({"_id" : new ObjectId(prod._id),"InStock" : 1}).toArray(function (err,pdocs) {
                     if (pdocs.length != 0) {
                       prodArr.push(pdocs[0])
@@ -940,9 +940,9 @@ app.post('/filterWishListByCatg',function(req,res){
               }})
             } else {
               var product = bmgDB.collection('Product');
-              console.log('Products is ' + JSON.stringify(docs[0].Products));
+              //console.log('Products is ' + JSON.stringify(docs[0].Products));
               WaterfallOver(docs[0].Products,function (prod, report) {
-                console.log('Prod is ' + JSON.stringify(prod));
+                //console.log('Prod is ' + JSON.stringify(prod));
                   product.find({"_id" : new ObjectId(prod._id),"InStock" : 1}).toArray(function (err,pdocs) {
                     if (pdocs.length != 0) {
                       if (catg.indexOf(pdocs[0].Catg) != -1) {
@@ -983,7 +983,7 @@ app.get('/showListProducts',function(req,res){
         var product = bmgDB.collection('Product');
         WaterfallOver(docs[0].Products,function (prod, report) {
             product.find({"_id" : new ObjectId(prod._id),"InStock" : 1}).toArray(function (err,pdocs) {
-              console.log("pdocs" + pdocs.length);
+              //console.log("pdocs" + pdocs.length);
               if (pdocs.length != 0) {
                 prod["ProdData"] = pdocs;
                 report();
@@ -994,7 +994,7 @@ app.get('/showListProducts',function(req,res){
               }
             });
           }, function (){
-            console.log(JSON.stringify(docs[0]));
+            //console.log(JSON.stringify(docs[0]));
             res.format({'application/json': function(){res.send(docs[0].Products)}})
         });
       }
@@ -1008,7 +1008,7 @@ app.get('/getEventInfo',function(req,res){
   var wishList = bmgDB.collection('WishList');
   var qryStr = req.query.eventID;
   var uid = req.query.u;
-  console.log(qryStr + ' and ' + uid)
+  //console.log(qryStr + ' and ' + uid)
   try {
     wishList.find({"wid" : qryStr,"uid" : uid},{_id:0,EventName:1,HostName:1,wishlistMsg:1}).toArray(function(err,docs) {
       if (!err){
@@ -1025,7 +1025,7 @@ app.get('/getEventInfo',function(req,res){
 
 app.get('/new_registry', function (req,res){
   res.sendFile(__dirname + "/site/new_registry.html");
-  console.log("call made to new_registry.html");
+  //console.log("call made to new_registry.html");
 });
 
 app.post('/getsalt',urlencodedParser,function(req,res) {
@@ -1061,11 +1061,11 @@ app.post('/saveNewPassword', urlencodedParser, function (req, res){
 app.post('/changePassword',urlencodedParser, function (req, res){
   //console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
   var wishList = bmgDB.collection('WishList');
-  console.log("Session Id" + sha256(req.body.email));
+  //console.log("Session Id" + sha256(req.body.email));
   try {
     wishList.find({"uid" : sha256(req.body.email), "Primary" : 1},{_id:0,KEY:1,HostName:1}).toArray(function(err,docs) {
       if (!err){
-        console.log('into the log')
+        //console.log('into the log')
         if (docs.length == 0) {res.end("")}
         else {
           //console.log("Key from DB is " + docs[0].KEY);
@@ -1088,7 +1088,7 @@ app.post('/changePassword',urlencodedParser, function (req, res){
 });
 
 app.post('/plogin',urlencodedParser,function(req,res){
-  console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
+  //console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
 
   var wishList = bmgDB.collection('WishList');
   var qryStr = req.query.eventID;
@@ -1097,9 +1097,9 @@ app.post('/plogin',urlencodedParser,function(req,res){
       if (!err){
         if (docs.length == 0) {res.end("")}
         else {
-          console.log("Key from DB is " + docs[0].KEY);
+          //console.log("Key from DB is " + docs[0].KEY);
           var trypass = sha256(req.body.gensalt + docs[0].KEY);
-          console.log("Try Pass is " + trypass);
+          //console.log("Try Pass is " + trypass);
           if (req.body.attempt == trypass) {
             req.session.user = req.body.email;
             req.session.name = docs[0].HostName;
@@ -1116,7 +1116,7 @@ app.post('/plogin',urlencodedParser,function(req,res){
 });
 
 app.post('/pAdminLogin',urlencodedParser,function(req,res){
-  console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
+  //console.log("Performing login with " +  req.body.attempt + " " + req.body.gensalt);
 
   var adminuser = bmgDB.collection('AdminUser');
   try {
@@ -1124,14 +1124,14 @@ app.post('/pAdminLogin',urlencodedParser,function(req,res){
       if (!err){
         if (docs.length == 0) {console.log("no user named" + req.body.user);res.end("No user")}
         else {
-          console.log("Key from DB is " + docs[0].hash);
+          //console.log("Key from DB is " + docs[0].hash);
           var trypass = sha256(req.body.gensalt + docs[0].hash);
-          console.log("Try Pass is " + trypass);
+          //console.log("Try Pass is " + trypass);
           if (req.body.attempt == trypass) {
             req.session.adminUser = docs[0].username;
             res.end("Login Success");
           } else {
-            console.log(req);
+            //console.log(req);
             res.end("Login Fail");
           }
         }
@@ -1143,7 +1143,7 @@ app.post('/pAdminLogin',urlencodedParser,function(req,res){
 });
 
 app.post('/getSaltForUser',urlencodedParser,function(req,res) {
-  console.log(req.body.user);
+  //console.log(req.body.user);
   var wishList = bmgDB.collection('WishList');
   var qryStr = req.query.eventID;
   try {
@@ -1159,7 +1159,7 @@ app.post('/getSaltForUser',urlencodedParser,function(req,res) {
 });
 
 app.post('/getSaltForAdminUser',urlencodedParser,function(req,res) {
-  console.log(req.body.user);
+  //console.log(req.body.user);
   var adminUser = bmgDB.collection('AdminUser');
   try {
     adminUser.find({"username" : req.body.user},{_id:0,username:1,UPPU:1}).toArray(function(err,docs) {
@@ -1177,7 +1177,7 @@ app.get('/product_loader',function(req,res){
   if ((req.session && req.session.adminUser)) {
     res.sendFile(__dirname+"/site/product_loader.html");
   } else {
-    console.log(req);
+    //console.log(req);
     res.end("Un-Autorized Access. This request will be logged.");
   }
 
@@ -1189,7 +1189,7 @@ app.get('/featured_product_configuration',function(req,res){
   if ((req.session && req.session.adminUser)) {
     res.sendFile(__dirname+"/site/featured_products.html");
   } else {
-    console.log(req);
+    //console.log(req);
     res.end("Un-Autorized Access. This request will be logged.");
   }
 
@@ -1211,7 +1211,7 @@ function WaterfallOver(list, iterator, callback) {
 }
 
 app.post('/saveFeaturedList',urlencodedParser, function (req,res){
-  console.log(req.body.remove + "and" + req.body.add);
+  //console.log(req.body.remove + "and" + req.body.add);
 
   var temp_add_array = req.body.add.split("|");
   var add_array = [];
@@ -1225,7 +1225,7 @@ app.post('/saveFeaturedList',urlencodedParser, function (req,res){
     rem_array[i] = temp_rem_array[i];
   }
 
-  console.log("rem array lengt" + rem_array.length)
+  //console.log("rem array lengt" + rem_array.length)
 
   var prodCollection = bmgDB.collection('Product');
 
@@ -1241,7 +1241,7 @@ app.post('/saveFeaturedList',urlencodedParser, function (req,res){
             else {console.log("Error in updating product status")}
           });
         },function() {
-          console.log("Work Done");
+          //console.log("Work Done");
           res.end("Posted");
         });
     });
@@ -1250,7 +1250,7 @@ app.post('/saveFeaturedList',urlencodedParser, function (req,res){
 
 app.post('/load_to_db',urlencodedParser,function(req,res){
   if ((req.session && req.session.adminUser)) {
-    console.log(req.body.array);
+    //console.log(req.body.array);
     var prods = JSON.parse(req.body.array);
     var collection = bmgDB.collection("Product");
     if (prods.values.length == 0) //nothing to add.
@@ -1262,14 +1262,14 @@ app.post('/load_to_db',urlencodedParser,function(req,res){
             val.UpdDate = new Date(val.AddDate);
             val['created_by'] = req.session.adminUser;
             collection.insert(val, function (err,result) {
-              console.log("inserted" + result);
+              //console.log("inserted" + result);
             });
           } else {
-            console.log("data not inserted");
+            //console.log("data not inserted");
           }
           report();
         })}, function() {
-          console.log("insert complete");
+          //console.log("insert complete");
           res.end("Posted");
         });
       }
@@ -1296,7 +1296,7 @@ app.get('/admin_logout',function (req,res) {
     req.session.adminUser = null;
     res.end("Log-off success");
   } else {
-    console.log(req);
+    //console.log(req);
     res.end("Un-Autorized Access. This request will be logged.");
   }
 
@@ -1312,7 +1312,7 @@ app.get('/getFeaturedProducts', function (req,res){
   //console.log("Event Type : "+evenTypeStr);
   //console.log("Count : "+qryStr.catgCount);
   //console.log("Category Array : "+qryStr.category);
-  console.log(req.query.event);
+  //console.log(req.query.event);
 
   if (req.query.event != 'Special Category') {
     prdCollection.find({$and: [{"eventType":{$elemMatch:{$eq:req.query.event}}},{"featured":req.query.event},{"InStock" : 1}]}).sort({ AddDate : -1 }).toArray(function(err,docs) {
@@ -1345,7 +1345,7 @@ app.get('/getAllProdsForCatPaged', function (req,res){
   //console.log("Event Type : "+evenTypeStr);
   //console.log("Count : "+qryStr.catgCount);
   //console.log("Category Array : "+qryStr.category);
-  console.log(req.query.event);
+  //console.log(req.query.event);
 
   if (req.query.event != 'Special Category') {
     prdCollection.find({$and:[{"eventType":{$elemMatch:{$eq:req.query.event}}},{featured:{$exists: false }},{"InStock":1}]}).sort({ AddDate : -1 }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.prod_per_page)).toArray(function(err,docs) {
@@ -1377,21 +1377,21 @@ app.get('/sendmail', function (req,res) {
 });
 
 app.post('/verifyRecaptcha',urlencodedParser,function(req,res){
-  console.log('checking captcha');
+  //console.log('checking captcha');
   var captchaRes=req.body.Response;
   request ({uri : googleSiteVerify,
     method : 'POST',
     json : true,
     form : {secret : captchaSecret,response : captchaRes}
   }, function(error,response,body) {
-    console.log('Captcha:' + error + " - " + JSON.stringify(response) + " - " + JSON.stringify(body));
+    //console.log('Captcha:' + error + " - " + JSON.stringify(response) + " - " + JSON.stringify(body));
     res.send(response.body);
   })
 })
 
 app.post('/saveMessage', urlencodedParser, function (req,res){
   var wishList = bmgDB.collection('WishList');
-  console.log(req.body.id  + req.body.message + req.body.uid)
+  //console.log(req.body.id  + req.body.message + req.body.uid)
   wishList.update({"wid" : req.body.id,"uid":req.body.uid},{$set:{"wishlistMsg":req.body.message}}, function(err) {
     if (!err) {res.send("Success");console.log('success');}
     else {res.send("Error in updating wishlist message");console.log('Error ' + err)}
@@ -1416,9 +1416,9 @@ app.get('/checkIfEmailExists',function (req,res) {
 });
 
 app.get('/get_amazon',function (req,res) {
-  console.log("Page is " + req.query.pageNumber);
-  console.log("String is " + req.query.searchString);
-  console.log("Cat is " + req.query.searchCat);
+  //console.log("Page is " + req.query.pageNumber);
+  //console.log("String is " + req.query.searchString);
+  //console.log("Cat is " + req.query.searchCat);
   /// The following attribute needs to come in from the web browser based on what is selected.
   var mxprice = req.query.max;
   var mnprice = req.query.min;
@@ -1460,12 +1460,12 @@ app.get('/get_amazon',function (req,res) {
   /////////////Creating a string which will be signed with our amazon secret key
   var string_to_sign = "GET\n" + end_point + "\n" + uri + "\n" + canonical_query_string;
   //////////////////////////////////////////////////////////////////////////////////////
-  console.log("String to sign" + string_to_sign);
+  //console.log("String to sign" + string_to_sign);
 
   ///////////// Signing the web service call string with our secret key using sha256////
   var hash = crypto.createHmac('sha256', aws_secret_key).update(string_to_sign).digest('base64');
   var signed_url = amazon_end_point + uri + "\?" + canonical_query_string + "\&Signature=" + encodeURIComponent(hash);
-  console.log(signed_url);
+  //console.log(signed_url);
   ///////////////////////////////////////////////////////////////////////////////////////
   var rawData = '';
 
