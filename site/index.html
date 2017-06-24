@@ -70,6 +70,13 @@ $(document).ready(function () {
   $("#myiframe").click(function(){
     //alert("I am caputring my event here.");
   });
+  $("#login_username").on('keypress',function(event){
+    if (event.keyCode == 13) {$("#login_password").focus()}
+  });
+  $("#login_password").on('keypress',function(event){
+    if (event.keyCode == 13) {doLogin('')}
+  });
+
 
 });
 
