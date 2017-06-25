@@ -100,7 +100,14 @@
 
 .learnMoreItem li {
   font-family: Droid Serif;
-  font-size: 14px;
+  font-size: 20px;
+  padding-bottom: 5px;
+  padding-left: 25px;
+}
+
+.learnMoreItem ul {
+  font-family: Droid Serif;
+  font-size: 24px;
   padding-bottom: 5px;
   padding-left: 25px;
 }
