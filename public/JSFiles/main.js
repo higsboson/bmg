@@ -2,6 +2,17 @@
   var _MS_PER_DAY = 1000 * 60 * 60 * 24;
   var signuporlogin = "";
 
+  function checkEvents() {
+    //alert(getCookie("event_name"));
+    if(getCookie("event_name") == "") {
+      window.location.href = "/new_registry";
+      // Just a fail safe for deleteing ProdID
+      deleteCookie('ProdID');
+    }
+    else
+      window.location.href = "/New-Cart.html";
+  }
+
   function msieversion() {
 
       var ua = window.navigator.userAgent;
@@ -905,6 +916,7 @@ function redirectToHome() {
 
    var srchprod = $("#searchitem").val();
    //var pageNum = $("#page-number").val();
+   $('#searchingFor').text('Searching for "' + $("#searchitem").val() + '"');
    try {
      var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
      if (regex.test(srchprod)) {

@@ -171,73 +171,81 @@ app.get('/review_product',function(req,res) {
 })
 
 app.get('/dashboard.html',function(req,res) {
-  res.sendFile(__dirname + "/site/dashboard.html");
+  if (req.session.adminUser && req.session) {
+    res.sendFile(__dirname + "/site/dashboard.html");
+  } else {
+    res.send("Un-Autorized Access. Your IP will be recorded.")
+  }
 })
 
 app.post('/showReports',function(req,res) {
-  try {
-    var data = JSON.parse(req.body.Data);
-    var reportName = data.ReportName;
-    var vCollection;
-    var vRportsObject;
-    if (reportName == "Number of active wishlists") {
-      vCollection = bmgDB.collection('WishList');
-      vCollection.find({"EventDate":{$gte:new Date()}}).count(function(err,count) {
-        if (err) {res.send(err)}
-        else {res.send({"count":count})}
-      })
-    }
-    else if (reportName == "Number of products") {
-      vCollection = bmgDB.collection('Product');
-      vCollection.find().count(function(err,count) {
-        if (err) {res.send(err)}
-        else {res.send({"count":count})}
-      })
-    }
-    else if (reportName == "Number of products by product group") {
-      vCollection = bmgDB.collection('Product');
-      vCollection.aggregate([{$group:{_id:"$ProdGrp",count:{$sum:1}}}],function(err,docs) {
-        if (err) {res.send(err)}
-        else {res.send(docs)}
-      })
-    }
-    else if (reportName == "Number of products by event type") {
-      vCollection = bmgDB.collection('Product');
-      vCollection.aggregate([{$group:{_id:"$eventType",count:{$sum:1}}}],function(err,docs) {
-        if (err) {res.send(err)}
-        else {res.send(docs)}
-      })
-    }
-    else if (reportName == "Number of products by creator") {
-      vCollection = bmgDB.collection('Product');
-      vCollection.aggregate([{$group:{_id:"$created_by",count:{$sum:1}}}],function(err,docs) {
-        if (err) {res.send(err)}
-        else {res.send(docs)}
-      })
-    }
-    else if (reportName == "Number of products by review status") {
-      vCollection = bmgDB.collection('Product');
-      vCollection.aggregate([{$group:{_id:"$Reviewed",count:{$sum:1}}}],function(err,docs) {
-        if (err) {res.send(err)}
-        else {res.send(docs)}
-      })
-    }
-    else if (reportName == "Number of purchased products for each event") {
-      vCollection = bmgDB.collection('WishList');
-      vCollection.aggregate([{$match:{"$Products.Status":"Already Bought"}},{$group:{_id:"$EventName",count:{$sum:1}}}],function(err,docs) {
-        if (err) {res.send(err)}
-        else {res.send(docs)}
-      })
-    }
-    else if (reportName == "Number of active wishlists by event type") {
-      vCollection = bmgDB.collection('WishList');
-      vCollection.aggregate([{$match:{"EventDate":{$gte:new Date()}}},{$group:{_id:"$EventType",count:{$sum:1}}}],function(err,docs) {
-        if (err) {res.send(err)}
-        else {res.send(docs)}
-      })
-    };
-  } //try
-  catch (e) {console.log("Error in show reports : "+e)}
+  if (req.session.adminUser && req.session) {
+    try {
+      var data = JSON.parse(req.body.Data);
+      var reportName = data.ReportName;
+      var vCollection;
+      var vRportsObject;
+      if (reportName == "Number of active wishlists") {
+        vCollection = bmgDB.collection('WishList');
+        vCollection.find({"EventDate":{$gte:new Date()}}).count(function(err,count) {
+          if (err) {res.send(err)}
+          else {res.send({"count":count})}
+        })
+      }
+      else if (reportName == "Number of products") {
+        vCollection = bmgDB.collection('Product');
+        vCollection.find().count(function(err,count) {
+          if (err) {res.send(err)}
+          else {res.send({"count":count})}
+        })
+      }
+      else if (reportName == "Number of products by product group") {
+        vCollection = bmgDB.collection('Product');
+        vCollection.aggregate([{$group:{_id:"$ProdGrp",count:{$sum:1}}}],function(err,docs) {
+          if (err) {res.send(err)}
+          else {res.send(docs)}
+        })
+      }
+      else if (reportName == "Number of products by event type") {
+        vCollection = bmgDB.collection('Product');
+        vCollection.aggregate([{$group:{_id:"$eventType",count:{$sum:1}}}],function(err,docs) {
+          if (err) {res.send(err)}
+          else {res.send(docs)}
+        })
+      }
+      else if (reportName == "Number of products by creator") {
+        vCollection = bmgDB.collection('Product');
+        vCollection.aggregate([{$group:{_id:"$created_by",count:{$sum:1}}}],function(err,docs) {
+          if (err) {res.send(err)}
+          else {res.send(docs)}
+        })
+      }
+      else if (reportName == "Number of products by review status") {
+        vCollection = bmgDB.collection('Product');
+        vCollection.aggregate([{$group:{_id:"$Reviewed",count:{$sum:1}}}],function(err,docs) {
+          if (err) {res.send(err)}
+          else {res.send(docs)}
+        })
+      }
+      else if (reportName == "Number of purchased products for each event") {
+        vCollection = bmgDB.collection('WishList');
+        vCollection.aggregate([{$match:{"$Products.Status":"Already Bought"}},{$group:{_id:"$EventName",count:{$sum:1}}}],function(err,docs) {
+          if (err) {res.send(err)}
+          else {res.send(docs)}
+        })
+      }
+      else if (reportName == "Number of active wishlists by event type") {
+        vCollection = bmgDB.collection('WishList');
+        vCollection.aggregate([{$match:{"EventDate":{$gte:new Date()}}},{$group:{_id:"$EventType",count:{$sum:1}}}],function(err,docs) {
+          if (err) {res.send(err)}
+          else {res.send(docs)}
+        })
+      };
+    } //try
+    catch (e) {console.log("Error in show reports : "+e)}
+  } else {
+    res.send("Un-Autorized Access. Your IP will be recorded.")
+  }
 })
 
 app.get('/getProductReview',function(req,res) {
@@ -469,7 +477,8 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
     prdCollection.find({ProdID:prdToBeAdded.ProdID}).toArray(function(err,docs){
       if (docs.length != 0) {res.send("Already present in DB")}
       else {
-        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat,"AddDate":prdToBeAdded.AddDate,"genderCat":prdToBeAdded.genderCat,"created_by":prdToBeAdded.created_by,"MfrID":1,"InStock":1,"UpdDate":prdToBeAdded.UpdDate});
+        prdCollection.insert({"ProdID":prdToBeAdded.ProdID,"ProdNm":prdToBeAdded.ProdNm,"ProdDsc":prdToBeAdded.ProdDsc,"ImageURL":prdToBeAdded.ImageURL,"Catg":prdToBeAdded.Catg,"MRP":prdToBeAdded.MRP,"ProdGrp":prdToBeAdded.ProdGrp,"eventType":prdToBeAdded.eventType,"prodNameKeyWords":prdToBeAdded.prodNameKeyWords,"Reviewed":prdToBeAdded.Reviewed,"ageCat":prdToBeAdded.ageCat,
+        "AddDate":prdToBeAdded.AddDate,"genderCat":prdToBeAdded.genderCat,"created_by":prdToBeAdded.created_by,"MfrID":1,"InStock":1,"UpdDate":prdToBeAdded.UpdDate});
         if (!err) {res.send("Success")}
         else {res.send("Error")}
       }
