@@ -78,7 +78,7 @@ app.use(usersession({
   activeDuration: 5 * 60 * 1000,
 }));
 
-console.log(process.argv[2]);
+//console.log(process.argv[2]);
 
 mongoclient.connect("mongodb://worker:" + process.argv[2] + "@localhost:27017/bmgdb", function(err,db) {
   if (!err){
@@ -139,26 +139,32 @@ mongoclient.connect("mongodb://worker:" + process.argv[2] + "@localhost:27017/bm
 
 
 app.get('/', function(req,res) {
+  console.log('Index|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/index.html");
 });
 
 app.get('/FAQ.html',function(req,res) {
+  console.log('FAQ|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/FAQ.html");
 })
 
 app.get('/aboutus.html',function(req,res) {
+  console.log('About|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/aboutus.html");
 })
 
 app.get('/howitworks.html',function(req,res) {
+  console.log('HowItWorks|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/howitworks.html");
 })
 
 app.get('/aboutus',function(req,res) {
+  console.log('About|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/aboutus.html");
 })
 
 app.get('/learnmore.html',function(req,res) {
+  console.log('About|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/learnmore.html");
 })
 
@@ -668,6 +674,7 @@ app.post('/home',urlencodedParser, function (req,res) {
     //rendering Home page with user ID
     // On load of the ejs file, it will use the user ID reference
     // To pick information about the user.
+    console.log('UserHome|' + req.connection.remoteAddress)
     res.render(__dirname + "/site/home.ejs",{userID : sha256(req.session.user),username: req.session.name});
     //console.log("call made to home.html with valid session " + req.session.user);
   } else {
@@ -899,6 +906,7 @@ function getProductsFrmAmzn(req,callback) {
 }
 
 app.get('/New-Cart.html',function(req,res){
+  console.log('New-Cart|' + req.connection.remoteAddress)
   res.sendFile(__dirname+"/site/New-Cart.html");
   //console.log("Accessing New-Cart.html");
 });
@@ -1033,6 +1041,7 @@ app.get('/getEventInfo',function(req,res){
 
 
 app.get('/new_registry', function (req,res){
+  console.log('NewReg|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/new_registry.html");
   //console.log("call made to new_registry.html");
 });
