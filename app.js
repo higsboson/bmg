@@ -54,7 +54,31 @@ app2.get('*',function(req,res){
 })
 
 
+function dateFormat (date, fstr, utc) {
+  utc = utc ? 'getUTC' : 'get';
+  return fstr.replace (/%[YmdHMS]/g, function (m) {
+    switch (m) {
+    case '%Y': return date[utc + 'FullYear'] (); // no leading zeros required
+    case '%m': m = 1 + date[utc + 'Month'] (); break;
+    case '%d': m = date[utc + 'Date'] (); break;
+    case '%H': m = date[utc + 'Hours'] (); break;
+    case '%M': m = date[utc + 'Minutes'] (); break;
+    case '%S': m = date[utc + 'Seconds'] (); break;
+    default: return m.slice (1); // unknown code, remove %
+    }
+    // add leading zero if required
+    return ('0' + m).slice (-2);
+  });
+}
 
+function getTimeStamp() {
+  var dateUTC = new Date();
+  var dateUTC = dateUTC.getTime();
+  var dateIST = new Date(dateUTC);
+  dateIST.setHours(dateIST.getHours() + 5);
+  dateIST.setMinutes(dateIST.getMinutes() + 30);
+  return '[' + dateFormat (dateIST, "%d-%m-%Y %H:%M:%S", true) + '] ';
+}
 
 
 var urlencodedParser = bodyParser.urlencoded({extended:true});
@@ -139,32 +163,32 @@ mongoclient.connect("mongodb://worker:" + process.argv[2] + "@localhost:27017/bm
 
 
 app.get('/', function(req,res) {
-  console.log('Index|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'Index|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/index.html");
 });
 
 app.get('/FAQ.html',function(req,res) {
-  console.log('FAQ|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'FAQ|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/FAQ.html");
 })
 
 app.get('/aboutus.html',function(req,res) {
-  console.log('About|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'About|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/aboutus.html");
 })
 
 app.get('/howitworks.html',function(req,res) {
-  console.log('HowItWorks|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'HowItWorks|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/howitworks.html");
 })
 
 app.get('/aboutus',function(req,res) {
-  console.log('About|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'About|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/aboutus.html");
 })
 
 app.get('/learnmore.html',function(req,res) {
-  console.log('About|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'About|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/learnmore.html");
 })
 
@@ -674,7 +698,7 @@ app.post('/home',urlencodedParser, function (req,res) {
     //rendering Home page with user ID
     // On load of the ejs file, it will use the user ID reference
     // To pick information about the user.
-    console.log('UserHome|' + req.connection.remoteAddress)
+    console.log(getTimeStamp() + 'UserHome|' + req.connection.remoteAddress)
     res.render(__dirname + "/site/home.ejs",{userID : sha256(req.session.user),username: req.session.name});
     //console.log("call made to home.html with valid session " + req.session.user);
   } else {
@@ -906,7 +930,7 @@ function getProductsFrmAmzn(req,callback) {
 }
 
 app.get('/New-Cart.html',function(req,res){
-  console.log('New-Cart|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'New-Cart|' + req.connection.remoteAddress)
   res.sendFile(__dirname+"/site/New-Cart.html");
   //console.log("Accessing New-Cart.html");
 });
@@ -1041,7 +1065,7 @@ app.get('/getEventInfo',function(req,res){
 
 
 app.get('/new_registry', function (req,res){
-  console.log('NewReg|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'NewReg|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/new_registry.html");
   //console.log("call made to new_registry.html");
 });

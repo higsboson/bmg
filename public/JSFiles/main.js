@@ -2,6 +2,7 @@
   var _MS_PER_DAY = 1000 * 60 * 60 * 24;
   var signuporlogin = "";
 
+
   function checkEvents() {
     //alert(getCookie("event_name"));
     if(getCookie("event_name") == "") {
@@ -1087,7 +1088,7 @@ function showBdayProducts() {
       $("#house-marketing").slideDown();
       $("#baby-marketing").slideDown();
       $("#bday-side-bar").css("display","none");
-      $('#bday-a-link').text("View Gifts " + $('#raqval').text());
+      $('#bday-a-link').text("Trending Now " + $('#raqval').text());
     }
 }
 
@@ -1117,7 +1118,7 @@ function showHomeProducts() {
       $("#bday-marketing").slideDown();
       $("#baby-marketing").slideDown();
       $("#home-side-bar").css("display","none");
-      $('#house-a-link').text("View Gifts " + $('#raqval').text());
+      $('#house-a-link').text("Trending Now " + $('#raqval').text());
     }
 }
 
@@ -1151,7 +1152,7 @@ function showBabyProducts() {
       $("#bday-marketing").slideDown();
       $("#house-marketing").slideDown();
       $("#baby-side-bar").css("display","none");
-      $('#baby-a-link').text("View Gifts " + $('#raqval').text());
+      $('#baby-a-link').text("Trending Now " + $('#raqval').text());
     }
 }
 
@@ -1183,7 +1184,7 @@ function showWeddingProducts() {
       $("#wedProducts").slideUp();
       $("#spcl-marketing").slideDown();
       $("#wed-side-bar").css("display","none");
-      $('#wed-a-link').text("View Gifts " + $('#raqval').text());
+      $('#wed-a-link').text("Trending Now " + $('#raqval').text());
     }
 }
 
@@ -1215,7 +1216,7 @@ function showSpclProducts() {
       $("#spclProducts").slideUp();
       $("#wed-marketing").slideDown();
       $("#spcl-side-bar").css("display","none");
-      $('#spcl-a-link').text("View Gifts " + $('#raqval').text());
+      $('#spcl-a-link').text("Trending Now " + $('#raqval').text());
     }
 }
 
