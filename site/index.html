@@ -88,6 +88,29 @@ $(document).ready(function () {
   });
 
 
+  window.onhashchange = function() {
+    //alert('hash change '+ location.hash)
+    var cat = $('#showTrending').val();
+      if (location.hash == '' && cat != "False") {
+
+          //location.hash.replace('#' + cat,'');
+          if (cat == "Birthday")
+            showBdayProducts();
+          if (cat == "HouseWarming")
+            showHomeProducts();
+          if (cat == "Baby")
+            showBabyProducts();
+          if (cat == "Wedding")
+            showWeddingProducts();
+          if (cat == "Special")
+            showSpclProducts();
+          $('#showTrending').val("False");
+
+      } else {
+        location.hash == '#';
+      }
+  }
+
 });
 
 
@@ -460,6 +483,7 @@ $(document).ready(function () {
      <div style="display:none" id="raqval">
        &raquo;
      </div>
+     <input type="hidden" name="showTrending" value="False" id="showTrending" />
      <div class="footer-bottom">
          <div class="container">
            <div class="row">

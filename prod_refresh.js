@@ -76,14 +76,19 @@ function processData(xml,batch) {
             } else {
               price = parseInt(x.OfferSummary[0].LowestNewPrice[0].Amount)/100;
             }
+            //console.log('price done');
             name = x.ItemAttributes[0].Title[0];
             desc = x.DetailPageURL[0];
-            if (typeof x.MediumImage[0] !== 'undefined' || x.MediumImage[0] === null) {
+            //console.log('Title and Detailed page done');
+            if (typeof x.MediumImage === 'undefined') {
+                console.log('This is severe image problem');
+                image_url = x.ImageSets[0].ImageSet[0].MediumImage[0].URL[0];
+            } else if (typeof x.MediumImage[0] !== 'undefined' || x.MediumImage[0] === null) {
                 image_url = x.MediumImage[0].URL[0];
             } else {
               image_url = '/images/no_image_available.png';
             }
-
+            //console.log('image done');
             asin = x.ASIN;
             //console.log(desc + name + image_url + price + asin);
             var prdCollection = bmgDB.collection('Product');
@@ -101,7 +106,10 @@ function processData(xml,batch) {
              price = parseInt(x.OfferSummary[0].LowestNewPrice[0].Amount)/100;
              name = x.ItemAttributes[0].Title[0];
              desc = x.DetailPageURL[0];
-             if (typeof x.MediumImage[0] !== 'undefined' || x.MediumImage[0] === null) {
+             if (typeof x.MediumImage === 'undefined') {
+                 console.log('This is severe image problem');
+                 image_url = x.ImageSets[0].ImageSet[0].MediumImage[0].URL[0];
+             } else if (typeof x.MediumImage[0] !== 'undefined' || x.MediumImage[0] === null) {
                  image_url = x.MediumImage[0].URL[0];
              } else {
                image_url = '/images/no_image_available.png';
@@ -137,7 +145,7 @@ function processData(xml,batch) {
            }
          }
          catch (e) {
-           console.log("error " + JSON.stringify(x));
+           console.log("error " + JSON.stringify(x) + e);
          }
 
       }, function () {

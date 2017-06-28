@@ -1064,7 +1064,50 @@ function getFeaturedProducts(event_type,div) {
   })
 }
 
+function toggleTrending(cat) {
+
+    //alert('loc hash ' + location.hash.length)
+    if (location.hash == '' &&  $('#showTrending').val() == "False") {
+      $('#showTrending').val(cat);
+      location.hash = cat;
+    } else if (location.hash == '#Birthday' &&  $('#showTrending').val() == "Birthday"){
+      //alert('replacing bday')
+      $('#showTrending').val("False");
+      location.hash = '';
+    } else if (location.hash == '#HouseWarming' &&  $('#showTrending').val() == "HouseWarming"){
+      //alert('replacing bday')
+      $('#showTrending').val("False");
+      location.hash = '';
+    } else if (location.hash == '#Baby' &&  $('#showTrending').val() == "Baby"){
+      //alert('replacing bday')
+      $('#showTrending').val("False");
+      location.hash = '';
+    } else if (location.hash == '#Wedding' &&  $('#showTrending').val() == "Wedding"){
+      //alert('replacing bday')
+      $('#showTrending').val("False");
+      location.hash = '';
+    } else if (location.hash == '#Special' &&  $('#showTrending').val() == "Special"){
+      //alert('replacing bday')
+      $('#showTrending').val("False");
+      location.hash = '';
+    }
+
+
+    /*if ($('#showTrending').val() == "True") {
+      alert('replacing' + location.hash);
+      location.hash.replace('#','');
+      $('#showTrending').val("False");
+    }
+    else {
+      $('#showTrending').val("True");
+      location.hash = cat;
+    }*/
+
+}
+
+
 function showBdayProducts() {
+  toggleTrending('Birthday');
   $('html, body').animate({
         scrollTop: $("#marketing-row").offset().top - 100
     }, 400);
@@ -1093,6 +1136,7 @@ function showBdayProducts() {
 }
 
 function showHomeProducts() {
+  toggleTrending('HouseWarming');
   $('html, body').animate({
         scrollTop: $("#marketing-row").offset().top - 100
     }, 400);
@@ -1123,6 +1167,7 @@ function showHomeProducts() {
 }
 
 function showBabyProducts() {
+  toggleTrending('Baby');
   $('html, body').animate({
         scrollTop: $("#marketing-row").offset().top - 100
     }, 400);
@@ -1157,6 +1202,7 @@ function showBabyProducts() {
 }
 
 function showWeddingProducts() {
+  toggleTrending('Wedding');
   $('html, body').animate({
         scrollTop: $("#marketing-row2").offset().top - 100
     }, 400);
@@ -1189,6 +1235,7 @@ function showWeddingProducts() {
 }
 
 function showSpclProducts() {
+  toggleTrending('Special');
   $('html, body').animate({
         scrollTop: $("#marketing-row2").offset().top - 100
     }, 400);
