@@ -1015,8 +1015,8 @@ function logout() {
 function getDateFromUTC(date) {
 
   var utcdate = new Date(date);
-  var ist = utcdate + (3600000 * 5.5)
-  return moment(ist).format("DD-MMM-YYYY h:mm");
+  var ist = utcdate;
+  return moment(ist).format("DD-MMM-YYYY h:mm a");
 
 }
 
