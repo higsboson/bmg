@@ -1,11 +1,14 @@
 function buyNow(prodid,prodURL) {
+  $("#buyer_email").attr('readonly', false);
+  if (getCookie("buyer_email") !== 'undefined')
+    $("#buyer_email").val(getCookie("buyer_email"));
   //alert("Buy Now");
   //setCookie("BuyingPrdName",prdname);
   //setCookie("BuyingPrdID",prodid);
   //setCookie("BuyingPrdURL",prodURL);
   buyingProdID = prodid;
   buyingProdURL = prodURL;
-  if ($("#buyer_email").val().length > 0) {
+  if (validateEmail($("#buyer_email").val())) {
     $("#buyBtn").html('<a href="' + prodURL + '" target="_blank"><button type="button" class="btn btn-success" style="display:default" onclick="openAmznPage()">Proceed to Buy</button></a>');
   }
   else {
@@ -15,10 +18,12 @@ function buyNow(prodid,prodURL) {
 }
 
 function openAmznPage() {
+  setCookie("buyer_email",$('#buyer_email').val(),2);
   try {
     //alert("Open Amazon Page");
     var uid_val = $("#uid_val").val();
     var buyer_email = $("#buyer_email").val();
+    $("#buyer_email").attr('readonly', true);
     var dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"Blocked","u":"'+uid_val+'","emailaddr":"'+buyer_email+'"}';
     $.ajax({
       type : 'POST',
@@ -38,9 +43,14 @@ function openAmznPage() {
 }
 
 function changeGiftStatus(strStatus) {
+  var dataStr;
+  var buyer_email = $("#buyer_email").val();
   try {
     var uid_val = $("#uid_val").val();
-    var dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"'+strStatus+'","u":"'+uid_val+'","emailaddr":"NA"}';
+    if (strStatus == "Bought")
+      dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"'+strStatus+'","u":"'+uid_val+'","emailaddr":"'+buyer_email+'"}';
+    else
+      dataStr = '{"WishListID":"'+eventID+'","ProductID":"'+buyingProdID+'","Status":"'+strStatus+'","u":"'+uid_val+'","emailaddr":"NA"}';
     $.ajax({
       type : 'POST',
       url :"/updProductStatus",
