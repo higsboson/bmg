@@ -474,7 +474,7 @@ app.post('/getProdByCatg',function(req,res){
       }
     }
   }
-  catch (e) {console.log("getProdByCatg -->"+e.message)}
+  catch (e) {console.log("getProdByCatg -->"+e.message);console.log("Data is: " + req.body.Catg)}
 });
 
 
@@ -518,6 +518,7 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
 })
 
 app.post('/saveReminder',urlencodedParser,function(req,res){
+  console.log(getTimeStamp() + 'SaveReminder|' + req.connection.remoteAddress);
   try {
     var remCollection = bmgDB.collection('Reminder');
     //console.log("Body Product:" +req.body.Product);
