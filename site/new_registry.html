@@ -24,6 +24,14 @@
 function dateOk() {submitForm()};
 
 $(document).ready(function () {
+
+  if (getCookie('event_category') !== 'undefined') {
+    if (getCookie('event_category') != "")
+      $('#event_category_sel').val(getCookie('event_category'));
+    else
+      $('#event_category_sel').val('Choose the event that you will be celebrating');
+  }
+
   $('#datepicker').datepicker({dateFormat: 'dd/mm/yy'});
 
   $("#myiframe").click(function(){
@@ -114,8 +122,8 @@ function getBasicInfo() {
     return false;
   }
   else {
-    var date = new Date($('#datepicker').val());
-    var origDate = new Date($('#datepicker').val());
+    var date = new Date($('#datepicker').datepicker("getDate"));
+    var origDate = new Date($('#datepicker').datepicker("getDate"));
     var today = new Date();
     if (dateDifferenceInDays(date,today) <= 0) {
       document.getElementById("modalMessage").innerHTML = "Please choose a valid future date for your event";
@@ -190,10 +198,9 @@ function getBasicInfo() {
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
               </ul>
-              <ul class="nav navbar-nav navbar-right">
-                <li><a href="/login" class="invisible">Login</a></li>
-                <li><a href="#contact" class="invisible">Find a registry</a></li>
-                <li><a href="#contact" class="invisible">Track your order</a></li>
+              <ul class="nav navbar-nav navbar-right" >
+                <li style="padding-right:15px;text-shadow:1px 1px 2px black"><a href="/howitworks.html" target="_blank">How it Works!</a></li>
+                <li style="padding-right:15px;text-shadow:1px 1px 2px black"><a href="/learnmore.html" target="_blank">Learn More</a></li>
               </ul>
             </div><!--/.nav-collapse -->
           </div>
@@ -326,66 +333,7 @@ function getBasicInfo() {
              </div>
 
            <footer>
-     <div class="footer" id="footer">
-         <div class="container">
-             <div class="row">
-               <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
-                   <h3> bemygenie.com </h3>
-                   <ul>
-                       <li> <a href="/aboutus" target="_blank"> About Us </a> </li>
-                       <!--<li> <a href="#"> Careers </a> </li>
-                       <li> <a href="#"> Advertise with us </a> </li>-->
 
-                   </ul>
-               </div>
-               <!--<div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
-                 <h3> Products & Services </h3>
-                 <ul>
-                       <li> <a href="#"> Gift Registers </a> </li>
-                       <li> <a href="#"> Sell your products on our site. </a> </li>
-                       <li> <a href="#"> Partner Login. </a> </li>
-                   </ul>
-               </div>-->
-               <div class="col-lg-2 col-md-3 col-sm-6 col-xs-12 ">
-                 <h3> Help </h3>
-                 <ul>
-                       <li> <a href="/FAQ.html" target="_blank"> FAQs + T&C </a> </li>
-                       <li> <a href="/howitworks.html" target="_blank"> How it works </a> </li>
-                       <!--<li> <a href="#"> Privacy Policy </a> </li>-->
-                   </ul>
-               </div>
-               <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 ">
-                 <h3> Connect with us </h3>
-                 <ul class="social">
-                     <li> <a href="https://www.facebook.com/Bemygenie-122063531714874/" target="#"> <i class=" fa fa-facebook">   </i> </a> </li>
-                     <li> <a href="https://twitter.com/bemygenie_" target="#"> <i class="fa fa-twitter">   </i> </a> </li>
-                     <li> <a href="https://in.pinterest.com/bemygenie/" target="#"> <i class="fa fa-pinterest">   </i> </a> </li>
-                     <li> <a href="https://www.youtube.com/channel/UCfc9QGG2GFnjJi0Kq7If5_w" target="#"> <i class="fa fa-youtube">   </i> </a> </li>
-                     <li> <a href="https://www.instagram.com/bmygenie/" target="#"> <i class="fa fa-instagram">   </i> </a> </li>
-                 </ul>
-               </div>
-
-               <div class="col-lg-4 col-md-3 col-sm-6 col-xs-12 ">
-              <!--     <h3> Join our newsletter </h3>
-                   <ul>
-                       <li>
-                           <div class="input-append newsletter-box text-center">
-                               <input type="text" class="full text-center" placeholder="Email ">
-                               <button class="btn btn-success" type="button"> Thank you! <i class="fa fa-long-arrow-right"> </i> </button>
-                           </div>
-                       </li>
-                   </ul>-->
-                   <h3> Learn More </h3>
-                   <p> Have you ever received a duplicate gift?<br>Have you ever received an undesirable gift?<br>Have you ever wondered what to give as gift to someone?
-                     <br>Bemygenie is here to help!!! Click <a href="/learnmore.html" target="_blank">here to learn more</a>
-                   </p>
-               </div>
-             </div>
-             <!--/.row-->
-         </div>
-         <!--/.container-->
-     </div>
-     <!--/.footer-->
 
      <div class="footer-bottom">
          <div class="container">

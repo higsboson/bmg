@@ -31,22 +31,28 @@
     .createReg {
       font-family: 'Rochester', cursive;
     }
+      nav {
+        font-family: 'Rochester', cursive;
+      }
     </style>
 </head>
 
 <body>
   <nav class="navbar navbar-default navbar-fixed-top">
         <div class="nav-container">
-          <!--<div class="navbar">
+          <div class="navbar" style="margin-bottom:0px">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-          </div>-->
-          <a href="/"><img class="navbar-brand wide" src="images/logos/logo.png" ></a>
 
+          <a href="/"><img class="navbar-brand wide" src="images/logos/logo.png" ></a>
+          <ul class="nav navbar-nav navbar-right" style="text-shadow:1px 1px 2px black">
+            <li style="padding-right:15px"><a href="/learnmore.html" target="_blank">Learn More</a></li>
+          </ul>
+          </div>
         </div>
   </nav> <!--Navigation bar -->
 
@@ -83,7 +89,7 @@
   </div>
   <div class="row">
     <div class="col-sm-12" style="text-align:center;padding-bottom:20px">
-      <p class="createReg"><a class="btn btn-lg btn-warning" style="font-size:24px;font-weight:bold" href="#" role="button" onclick="checkEvents();">Create my Registry!</a></p>
+      <p class="createReg"><a class="btn btn-lg btn-warning" style="font-size:24px;font-weight:bold;text-shadow:1px 1px 2px black" href="#" role="button" onclick="checkEvents();">Create my Registry!</a></p>
     </div>
 
   </div>

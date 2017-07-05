@@ -2,16 +2,126 @@
   var _MS_PER_DAY = 1000 * 60 * 60 * 24;
   var signuporlogin = "";
 
+  function setReminder() {
+    $('#set_reminder').modal('show');
+  }
 
-  function checkEvents() {
-    //alert(getCookie("event_name"));
-    if(getCookie("event_name") == "") {
-      window.location.href = "/new_registry";
-      // Just a fail safe for deleteing ProdID
-      deleteCookie('ProdID');
+  function showReminderDate(){
+    $('#datepicker').focus();
+    setTimeout(function(){
+      $('#ui-datepicker-div').css('z-index', '9999');
+    }, 500);
+  }
+
+  function saveReminder() {
+    if ($('#reminder_name').val() == "") {
+      document.getElementById("modalMessage").innerHTML = "Please provide a valid name.";
+      $('#set_reminder').modal('hide');
+      $("#validateModal").modal('show');
+      return;
     }
-    else
+    if ($('#reminder_email').val() == "") {
+      document.getElementById("modalMessage").innerHTML = "Please provide a valid email.";
+      $('#set_reminder').modal('hide');
+      $("#validateModal").modal('show');
+      return;
+    }
+    if (!validateEmail($('#reminder_email').val())) {
+      document.getElementById("modalMessage").innerHTML = "Please provide a valid email.";
+      $('#set_reminder').modal('hide');
+      $("#validateModal").modal('show');
+      return;
+    }
+    if ($('#datepicker').val() == "") {
+      document.getElementById("modalMessage").innerHTML = "Please provide a valid date in the future.";
+      $('#set_reminder').modal('hide');
+      $("#validateModal").modal('show');
+      return;
+    }
+    var date = new Date($('#datepicker').datepicker("getDate"));
+    var today = new Date();
+    if (dateDifferenceInDays(date,today) <= 0) {
+      document.getElementById("modalMessage").innerHTML = "Please choose a valid future date for your event";
+      $('#set_reminder').modal('hide');
+      $("#validateModal").modal('show');
+      return;
+    }
+    date.setDate(date.getDate()-14);
+    if (dateDifferenceInDays(date,today) < 0) {
+      $('#set_reminder').modal('hide');
+      $("#validateDateModal").modal('show');
+      return false;
+    }
+    var origDate = new Date($('#datepicker').datepicker("getDate"));
+    var dISO = origDate.toISOString();
+    $.ajax({
+      type: 'POST',
+      url: '/saveReminder',
+      data: {date: dISO,email: $('#reminder_email').val(),name: $('#reminder_name').val()},
+      success: function(res) {
+        if (res == "Success") {
+          $('#set_reminder').modal('hide');
+          $("#reminderSuccess").modal('show');
+        } else if (res == "Already present in DB") {
+          document.getElementById("modalMessage").innerHTML = "You already have a reminder set.";
+          $('#set_reminder').modal('hide');
+          $("#validateModal").modal('show');
+        } else {
+          $('#set_reminder').modal('hide');
+          alert('Unable to save reminder');
+        }
+
+      },
+      error: function(err) {
+        alert('unable to save');
+      }
+    })
+
+  }
+
+  function redirectToEvent(mode) {
+    if (mode == 'New') {
+      deleteCookie('ProdID');
+      deleteCookie('age_group');
+      deleteCookie('event_date');
+      deleteCookie('gender');
+      deleteCookie('event_name');
+      setCookie('event_category',$('#new_event').val(),2);
+      window.location.href = "/new_registry";
+    } else {
       window.location.href = "/New-Cart.html";
+    }
+  }
+
+  function checkEvents(event_cat) {
+    if((getCookie('event_category') != event_cat && getCookie('event_category') != "") && getCookie("event_name") != "") {
+      $('#new_event').val(event_cat);
+      //alert(' you have a cart in progress - discard ?');
+      if (getCookie('event_category') == "Birthday")
+        $('#clearCartMessage').text('You are already planning a wishlist at the moment for a Birthday.');
+      if (getCookie('event_category') == "Anniversary")
+        $('#clearCartMessage').text('You are already planning a wishlist at the moment for an Anniversary.');
+      if (getCookie('event_category') == "Baby Shower")
+        $('#clearCartMessage').text('You are already planning a wishlist at the moment for a Baby Shower.');
+      if (getCookie('event_category') == "Wedding")
+        $('#clearCartMessage').text('You are already planning a wishlist at the moment for a Wedding.');
+      if (getCookie('event_category') == "House Warming")
+        $('#clearCartMessage').text('You are already planning a wishlist at the moment for a House Warming.');
+      if (getCookie('event_category') == "A Special Event")
+        $('#clearCartMessage').text('You are already planning a wishlist at the moment for a Special Event.');
+      $('#clearCart').modal('show');
+    } else {
+
+    //alert('in else');
+      if(getCookie("event_name") == "") {
+        setCookie('event_category',event_cat,2);
+        window.location.href = "/new_registry";
+        // Just a fail safe for deleteing ProdID
+        deleteCookie('ProdID');
+      }
+      else
+        window.location.href = "/New-Cart.html";
+    }
   }
 
   function msieversion() {
@@ -344,11 +454,11 @@
    htmlStr = '<div class = "container-fluid" style="padding-top:120px" id="mainContentPage">';
    htmlStr = htmlStr+'<form class="form" name="save_wishlist_form" action="/home" method="POST" id="signup" onsubmit="saveWishlist();return false;" ><div class="row"><div class="col-md-2">';
    htmlStr = htmlStr+'<button type="button" class = "btn btn-responsive" onclick="loadNewCart()">Search more products</button></div></div><hr>';
-   htmlStr = htmlStr+'<div class="row"><div class="container save_wishlist"><div class="list-group-create-registry">';
+   htmlStr = htmlStr+'<div class="row"><div class="container save_wishlist"><input style="display:none" type="text" name="fakeusernameremembered"/><input style="display:none" type="password" name="fakepasswordremembered"/><div class="list-group-create-registry">';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "event_name">Name of the event: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" name="the_new_event_name" id="event_name" value="'+eventName+'"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "hostfullname">Your name: </label></div></div>';
-   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><div class="form-group" id="form_group_hostfullname"><input type="text" class="form-control" id="hostfullname" placeholder="e.g. Will Smith"></div></div></div>';
+   htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><div class="form-group" id="form_group_hostfullname"><input type="text" class="form-control" id="hostfullname" name="tempname" placeholder="e.g. Will Smith"></div></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "receiver">Gift receiver\'s name: </label></div></div>';
    htmlStr = htmlStr+'<div class="col-sm-6" style="text-align:center;font-size:20px"><input type="text" class="form-control" id="rcvrname" placeholder="e.g. John Doe"></div></div>';
    htmlStr = htmlStr+'<div class="row"><div class="col-sm-4" style="text-align:right;font-size:20px"><div class="form-group"><label for "cellphnum">Mobile number: </label></div></div>';
@@ -364,6 +474,11 @@
    htmlStr = htmlStr+'</div></div><div class="row"><div class="col-sm-12"><hr></div></div></form>'
    htmlStr = htmlStr+'</div>';
    $('#mainContentPage').replaceWith(htmlStr);
+   $(".fake-autofill-fields").show();
+        // some DOM manipulation/ajax here
+        window.setTimeout(function () {
+            $(".fake-autofill-fields").hide();
+        },1);
    $( "#emailaddr" )
     .focusout(function() {
       if ($('#emailaddr').val().length > 0)
@@ -737,10 +852,29 @@ function getUserProfileDetails(user,div) {
    catch (e) {alert(e)}
  };*/
 
+ function productExists(prod) {
+   //alert('in prod exists');
+   var cartProds = getCookie("ProdID");
+   var prodArr = cartProds.split(',');
+   //alert('lenght is ' + prodArr.length);
+   for (var i = 0; i < prodArr.length;i++) {
+       if (('BMG' + prod) == prodArr[i])
+        return true;
+       if (prod == prodArr[i])
+        return true;
+   }
+   return false;
+ }
+
  function AddToCart(Id,MRP,PrdGrp) {
+   var productAdded = false;
    try {
      var bmgId = "";
      var cartProds = getCookie("ProdID");
+     if (productExists(Id)) {
+       //alert('Product added already');
+       return;
+     }
      var prodArr = [];
      var cartLngth = 0;
      if (Id.substring(0,3) != "BMG") {
@@ -808,8 +942,8 @@ function getUserProfileDetails(user,div) {
          type : 'POST',
          url :"/addToDBByUser",
          data : {"Product":prd},
-         success : function(res) {$('#addToCartComplete').modal('show');},
-         error : function(res) {alert("Error in adding product to cart!")}
+         success : function(res) {productAdded = true;},
+         error : function(res) {alert("Error in adding product to cart!");return;}
        })
      } //Amazon product -- write to DB
      else {bmgId = Id};
@@ -822,6 +956,7 @@ function getUserProfileDetails(user,div) {
      else (cartProds=bmgId)
      cartLngth++;
      setCookie("ProdID",cartProds,2);
+     $('#addToCartComplete').modal('show');
 
      document.getElementById("CartId").innerHTML="Registry <span class=\"glyphicon glyphicon-gift\" aria-hidden=\"true\"></span> ("+cartLngth+")";
    }
@@ -935,41 +1070,45 @@ function redirectToHome() {
            htmlStr = '<div class = "carousel-wrapper" id="carousel-wrapper">';
            //alert(data);
            if(data.length != 0) {
-             $.each(data, function(key,doc){
-               try {
-                 prdName1 = doc.ProdNm.toString();
-                 if (prdName1.length>60) {prdName=prdName1.slice(0,30)+'...'+prdName1.slice(-25)}
-                 else {prdName=prdName1};
-                 if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
-                 htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
-                 htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
-                 htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
-                 htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
-                 htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
-                 htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></div></a>';
-                 htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-warning" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to registry</button></p>';
-                 //htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\',\''+prdName1+'\')">Add to wishlist</button></p>';
-                 htmlStr = htmlStr + '</div></div>'
-                 cnt++;
-                 if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+             if (data != "Error in fetching products"){
+               $.each(data, function(key,doc){
+                 try {
+                   prdName1 = doc.ProdNm.toString();
+                   if (prdName1.length>60) {prdName=prdName1.slice(0,30)+'...'+prdName1.slice(-25)}
+                   else {prdName=prdName1};
+                   if (cnt%4 == 0){htmlStr = htmlStr + '<div class = "row">'}
+                   htmlStr = htmlStr + '<div class="col-sm-3"><div class="thumbnail">';
+                   htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
+                   htmlStr = htmlStr + '<a id = "detURL_'+doc.ProdID+'" href='+doc.ProdDsc+' target="_blank">';
+                   htmlStr = htmlStr + '<img id = "imgURL_'+doc.ProdID+'" src='+doc.ImageURL+'>';
+                   htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc.ProdID+'" align="middle">'+prdName+'</p></div></div>';
+                   htmlStr = htmlStr + '<div class="caption"><p align="middle"> &#8377;'+doc.MRP+'</p></div></a>';
+                   htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-warning" id="addtocart_'+cnt+'" onclick="AddToCart(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\')">Add to registry</button></p>';
+                   //htmlStr = htmlStr + '<p align="middle"><button type="button" class="btn btn-default" id="addtocart_'+cnt+'" onclick="AddToCartUserProd(\''+doc.ProdID+'\',\''+doc.MRP+'\',\''+doc.ProdGrp+'\',\''+prdName1+'\')">Add to wishlist</button></p>';
+                   htmlStr = htmlStr + '</div></div>'
+                   cnt++;
+                   if (cnt%4 == 0){htmlStr = htmlStr + "</div>"};
+                 }
+                 catch (e) {}
+               }) //for eachs
+               if (cnt%4 != 0) {htmlStr = htmlStr + '</div>'};
+               htmlStr = htmlStr +'<div class="row"><div class="col-sm-2">';
+               var prevPage=pageNum-1;
+               var nextPage=pageNum+1;
+               if (pageNum > 1) {htmlStr = htmlStr +'<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon(' + min + ',' + max + ','+prevPage+',\''+prdGrpSel+'\')">Previous Page</button>'}
+               htmlStr = htmlStr +'</div><div class="col-sm-8"></div>';
+               if ($('#amazonLastPage').val() == "100" || $('#amazonLastPage').val() != pageNum) {
+                 htmlStr = htmlStr + '<div class="col-sm-2"><button type="button" class="btn btn-primary" id="nextButton" onclick="srchInAmazon(' + min + ',' + max + ','+nextPage+',\''+prdGrpSel+'\')">Next Page</button></div>';
+               } else if ($('#amazonLastPage').val() == pageNum) {
+                 htmlStr = htmlStr + '<div class="col-sm-2"></div>';
                }
-               catch (e) {}
-             }) //for eachs
-             if (cnt%4 != 0) {htmlStr = htmlStr + '</div>'};
-             htmlStr = htmlStr +'<div class="row"><div class="col-sm-2">';
-             var prevPage=pageNum-1;
-             var nextPage=pageNum+1;
-             if (pageNum > 1) {htmlStr = htmlStr +'<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon(' + min + ',' + max + ','+prevPage+',\''+prdGrpSel+'\')">Previous Page</button>'}
-             htmlStr = htmlStr +'</div><div class="col-sm-8"></div>';
-             if ($('#amazonLastPage').val() == "100" || $('#amazonLastPage').val() != pageNum) {
-               htmlStr = htmlStr + '<div class="col-sm-2"><button type="button" class="btn btn-primary" id="nextButton" onclick="srchInAmazon(' + min + ',' + max + ','+nextPage+',\''+prdGrpSel+'\')">Next Page</button></div>';
-             } else if ($('#amazonLastPage').val() == pageNum) {
-               htmlStr = htmlStr + '<div class="col-sm-2"></div>';
+               htmlStr = htmlStr + '<hr></div><br><br>';
+               $("#page-number").val(pageNum);
+               //alert(htmlStr);
+               $('#carousel-wrapper').replaceWith(htmlStr);
+             } else {
+               alert('Search has failed. Please try again');
              }
-             htmlStr = htmlStr + '<hr></div><br><br>';
-             $("#page-number").val(pageNum);
-             //alert(htmlStr);
-             $('#carousel-wrapper').replaceWith(htmlStr);
            } else {
              if(pageNum > 1) {
               htmlStr += '<div class="row"><div class="col-sm-12" style="padding-top:100px;text-align:center"><h2>Sorry, we were unable to find any more matches. Why not search for something different?</h2>' + '<button type="button" class="btn btn-primary" id="prevButton" onclick="srchInAmazon(' + min + ',' + max + ','+(parseInt(pageNum) - 1)+',\''+prdGrpSel+'\')">Previous</button>' + '</div></div></div>';
@@ -1182,7 +1321,7 @@ function showBabyProducts() {
     $('#backup').val($("#marketing-row").html());
     $("#house-marketing").slideUp('fast', function() {
       if ($("#baby-side-bar").length == 0) {
-        $("#marketing-row").html('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:left;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div><div class="col-lg-4" id="baby-marketing">                 <img class="img-circle" src="images/babyshower.png" alt="Generic placeholder image" width="140" height="140"> <h2 class="marketing-headlines">Baby Showers!</h2>  <p>For the mom-to-be. One of the most special days of your life! Build your baby shower gift list with clothes and toys for the little one and also for the new Mommy! Check out our very special range of gifts. </p> <p><a class="btn btn-default" id="baby-a-link"  role="button" onclick="showBabyProducts();">Back</a></p>    </div>')
+        $("#marketing-row").html('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:left;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div><div class="col-lg-4" id="baby-marketing">                 <a href="#" onclick="checkEvents(\'Baby Shower\');"><img class="img-circle" src="images/babyshower.png" alt="Generic placeholder image" width="140" height="140"></a> <h2 class="marketing-headlines"><b><a href="#" style="text-decoration:none;color:#000000" onclick="checkEvents(\'Baby Shower\');">Baby Showers!</a></b></h2>  <p>For the mom-to-be. One of the most special days of your life! Build your baby shower gift list with clothes and toys for the little one and also for the new Mommy! Check out our very special range of gifts. </p> <p><a class="btn btn-default" id="baby-a-link"  role="button" onclick="showBabyProducts();">Back</a></p>    </div>')
         //$("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
       }
       else
@@ -1216,7 +1355,7 @@ function showWeddingProducts() {
     $('#backup').val($("#marketing-row2").html());
     $("#spcl-marketing").slideUp('fast', function() {
       if ($("#wed-side-bar").length == 0) {
-        $("#marketing-row2").html('<div class="col-lg-4" id="wed-marketing"> <img class="img-circle" src="images/wedding.jpg" alt="Generic placeholder image" width="140" height="140"> <h2 class="marketing-headlines">Weddings!</h2>  <p>The biggest party of your life! The beginning of a great new adventure with the one you love! Let\'s make sure you are all set to begin this journey. Have a look at our amazing wedding gift collection.  </p> <p><a class="btn btn-default" id="wed-a-link"  role="button" onclick="showWeddingProducts();">Back</a></p>    </div><div class="col-lg-8 marketing-headlines" id="wed-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> Happily Everafter. </b></p></div>')
+        $("#marketing-row2").html('<div class="col-lg-4" id="wed-marketing"> <a href="#" onclick="checkEvents(\'Wedding\');"><img class="img-circle" src="images/wedding1.jpeg" alt="Generic placeholder image" width="140" height="140"></a> <h2 class="marketing-headlines"><b><a href="#" style="text-decoration:none;color:#000000" onclick="checkEvents(\'Wedding\');">Weddings!</a></b></h2>  <p>The biggest party of your life! The beginning of a great new adventure with the one you love! Let\'s make sure you are all set to begin this journey. Have a look at our amazing wedding gift collection.  </p> <p><a class="btn btn-default" id="wed-a-link"  role="button" onclick="showWeddingProducts();">Back</a></p>    </div><div class="col-lg-8 marketing-headlines" id="wed-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> Happily Everafter. </b></p></div>')
         //$("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
       }
       else
@@ -1249,7 +1388,7 @@ function showSpclProducts() {
     $('#backup').val($("#marketing-row2").html());
     $("#wed-marketing").slideUp('fast', function() {
       if ($("#spcl-side-bar").length == 0) {
-        $("#marketing-row2").html('<div class="col-lg-8 marketing-headlines" id="spcl-side-bar"><p style="text-align:left;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For every<br> Special Occasion. </b></p></div><div class="col-lg-4" id="spcl-marketing"> <img class="img-circle" src="images/special_events.jpeg" alt="Generic placeholder image" width="140" height="140"> <h2 class="marketing-headlines">Special Events!</h2>  <p>Celebrating a bridal shower, a graduation or for the holiday season, create a gift registry with us to let people know what to get you for the occasion. Take a peek to see our cool selection of gifts. </p> <p><a class="btn btn-default" id="spcl-a-link"  role="button" onclick="showSpclProducts();">Back</a></p>    </div>')
+        $("#marketing-row2").html('<div class="col-lg-8 marketing-headlines" id="spcl-side-bar"><p style="text-align:left;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For every<br> Special Occasion. </b></p></div><div class="col-lg-4" id="spcl-marketing"> <a href="#" onclick="checkEvents(\'A Special Event\');"><img class="img-circle" src="images/special_events.jpeg" alt="Generic placeholder image" width="140" height="140"></a> <h2 class="marketing-headlines"><b><a href="#" style="text-decoration:none;color:#000000" onclick="checkEvents(\'A Special Event\');">Special Events!</a></b></h2>  <p>Celebrating a bridal shower, a graduation or for the holiday season, create a gift registry with us to let people know what to get you for the occasion. Take a peek to see our cool selection of gifts. </p> <p><a class="btn btn-default" id="spcl-a-link"  role="button" onclick="showSpclProducts();">Back</a></p>    </div>')
         //$("#marketing-row").append('<div class="col-lg-8 marketing-headlines" id="baby-side-bar"><p style="text-align:right;padding:20px;padding-bottom:100px;background-color:#ffffff;font-size:100px;color:#454282"> <b>For your<br> bundle of joy. </b></p></div>')
       }
       else

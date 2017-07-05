@@ -22,18 +22,25 @@
     <link href="https://fonts.googleapis.com/css?family=Droid+Serif|Merriweather|Rochester|Sue+Ellen+Francisco" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Bitter" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <style>
       li {
         font-size: 20px;
       }
+
       body {
-          background-image: url("images/learn-more-background.jpeg");
-          height: 100%;
+        background-image: url("images/learn-more-background.jpeg");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 100%;
+      }
+      #content {
+
           color: #FFFFFF;
           /* Center and scale the image nicely */
-          background-position: center;
-          background-repeat: no-repeat;
-          background-size: cover;
+
           text-shadow: 2px 2px 3px black;
       }
       h1 {
@@ -55,13 +62,28 @@
           text-align: center;
           padding:20px;
         }
+
+        nav {
+          font-family: 'Rochester', cursive;
+        }
+
+
+
     </style>
+    <script>
+
+    $(document).ready(function () {
+
+      $('#datepicker').datepicker({dateFormat: 'dd/mm/yy'});
+    });
+
+    </script>
 </head>
 
 <body>
   <nav class="navbar navbar-default navbar-fixed-top">
         <div class="nav-container">
-          <div class="navbar">
+          <div class="navbar" style="margin-bottom:0px">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
               <span class="sr-only">Toggle navigation</span>
               <span class="icon-bar"></span>
@@ -69,12 +91,142 @@
               <span class="icon-bar"></span>
             </button>
             <a href="/"><img class="navbar-brand wide"  src="images/logos/logo.png" ></a>
+            <ul class="nav navbar-nav navbar-right">
+              <li style="padding-right:15px"><p><a class="btn btn-lg btn-warning" style="font-size:24px;font-weight:bold;text-shadow:1px 1px 2px black" href="#" role="button" onclick="checkEvents();">Create my Registry!</a></p></li>
+              <!--<li><a href="#contact" data-toggle="modal" data-toggle="modal" data-target="#wishListURLModal">Find a registry</a></li>
+              <li class="invisible"><a href="#contact">Track your order</a></li>-->
+            </ul>
           </div>
 
         </div>
   </nav> <!--Navigation bar -->
 
-  <div class = "container FAQ" style="padding-top:160px">
+  <div class="modal fade" id="clearCart" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Warning</h4>
+        </div>
+        <div class="modal-body">
+          <p id="clearCartMessage">
+             You are already planning a wishlist at the moment for a different event.
+          </p>
+      </div>
+      <div class="modal-footer">
+        <input type="hidden" name="new_event" id="new_event" value=""/>
+        <button type="button" data-dismiss="modal" class="btn btn-success" style="float:left" onclick="redirectToEvent('New')">Discard and Plan New Event</button>
+        <button type="button" data-dismiss="modal" class="btn btn-info" onclick="redirectToEvent('Current')">Continue with Current Event</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+  <div id="Floating">
+    <p style="opacity:1.0;font-size:12px">
+      Remind me in time for my next event.
+    </p>
+    <button class="btn btn-success" style="opacity:1.0;text-shadow:1px 1px 2px black" onclick="setReminder()">Set Reminder</button>
+  </div>
+
+  <div id="validateModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="validateModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Invalid input</h4>
+        </div>
+        <div class="modal-body">
+            <p style="font-family:'Merriweather', serif;font-size:16px" id="modalMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- 5/14/2017 - trznt - Invalid Password Modal -->
+  <!-- Modal Starts here-->
+    <div class="modal" id="set_reminder" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" style="font-family: 'Rochester', cursive;font-size:30px">Send me a reminder</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+               Leave your contact details and the date for your next event with us and we will remind you in time for you to plan out your gift wishlist on Bemygenie!
+            </p>
+            <div class="form-group" id="form-group_login_username">
+              <label for="username">Name:</label>
+            </div>
+            <input type="text" class="form-control" name="reminder_name" id="reminder_name" placeholder="Your name" required/>
+            <br />
+            <div class="form-group" id="form-group_login_password">
+              <label for="password">Email:</label>
+            </div>
+            <input type="email" class="form-control" name="reminder_email" id="reminder_email" placeholder="Email" required/>
+            <br />
+            <div class="form-group" id="form-group_login_password">
+              <label for="password">Date of Event:</label>
+            </div>
+            <div class="input-group date" data-provide="datepicker">
+               <input type="text" class="form-control" id="datepicker" placeholder="Click to select date" onclick="showReminderDate()" readonly>
+               <div class="input-group-addon">
+                   <a href="#" onclick="showReminderDate()"><span class="glyphicon glyphicon-th"></span></a>
+               </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="saveReminder()">Set Reminder</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- Modal Ends here-->
+
+  <div id="validateDateModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="validateDateModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Warning</h4>
+        </div>
+        <div class="modal-body">
+            <p style="font-family:'Merriweather', serif;font-size:16px">Your Selected date is less than two weeks away. So it's best to just create your registry right away to ensure that your guests are able to get the gifts in time.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="reminderSuccess" class="modal" tabindex="-1" role="dialog" aria-labelledby="reminderSuccessModalLabel">
+      <div class="modal-dialog">
+        <div class = "modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Success</h4>
+          </div>
+          <div class="modal-body">
+              <p style="font-family:'Merriweather', serif;font-size:16px">We have set a reminder for you.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+  <div class = "container FAQ" id="content" style="padding-top:160px">
     <div class="row">
       <div class="col-sm-12" style="text-align:center">
           <h1>When was the last time you truely appreciated a gift?</h1>
@@ -116,7 +268,7 @@
     </ul>
     </div>
     <div class="col-sm-12" id="howitworks">
-      <a href="/howitworks.html" class="btn btn-lg btn-warning" style="font-size:24px;text-shadow: 2px 2px 3px black;"><b>How it Works!</b></a>
+      <a href="/howitworks.html" class="btn btn-lg btn-warning" style="font-size:24px;text-shadow: 1px 1px 2px black;"><b>How it Works!</b></a>
     </div>
   </div>
 

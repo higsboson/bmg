@@ -11,15 +11,45 @@
      <meta property="og:image" content="https://www.bemygenie.com/images/logo_og.png" />
      <meta property="og:title" content="Bringing people the gifts they love!" />
      <meta property="og:description" content="Bemygenie is India's premier gift registry service. Now you can make every occasion a truly joyous one." />
-
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+     <link href="https://fonts.googleapis.com/css?family=Droid+Serif|Merriweather|Rochester|Sue+Ellen+Francisco" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
     <link rel="stylesheet" href="css/main.css" >
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="JSFiles/main.js"></script>
     <script src="JSFiles/sha256.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Bitter" rel="stylesheet">
+    <script>
+    $(document).ready(function () {
+
+      $('#datepicker').datepicker({dateFormat: 'dd/mm/yy'});
+    });
+
+    </script>
+
+    <style>
+        nav {
+          font-family: 'Rochester', cursive;
+        }
+        #myCarousel {
+          font-family:         'Merriweather', serif;
+        }
+
+        .featured-products {
+          font-family:         'Merriweather', serif;
+        }
+        .myCarousel-buttons {
+          font-family: 'Droid Serif', serif;
+        }
+        .marketing-headlines
+        {
+          font-family: 'Rochester', cursive;
+        }
+      </style>
 </head>
 
 <body>
@@ -38,6 +68,105 @@
         </div>
   </nav> <!--Navigation bar -->
 
+  <div id="validateModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="validateModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Invalid input</h4>
+        </div>
+        <div class="modal-body">
+            <p style="font-family:'Merriweather', serif;font-size:16px" id="modalMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- 5/14/2017 - trznt - Invalid Password Modal -->
+  <!-- Modal Starts here-->
+    <div class="modal" id="set_reminder" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" style="font-family: 'Rochester', cursive;font-size:30px">Send me a reminder</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+               Leave your contact details and the date for your next event with us and we will remind you in time for you to plan out your gift wishlist on Bemygenie!
+            </p>
+            <div class="form-group" id="form-group_login_username">
+              <label for="username">Name:</label>
+            </div>
+            <input type="text" class="form-control" name="reminder_name" id="reminder_name" placeholder="Your name" required/>
+            <br />
+            <div class="form-group" id="form-group_login_password">
+              <label for="password">Email:</label>
+            </div>
+            <input type="email" class="form-control" name="reminder_email" id="reminder_email" placeholder="Email" required/>
+            <br />
+            <div class="form-group" id="form-group_login_password">
+              <label for="password">Date of Event:</label>
+            </div>
+            <div class="input-group date" data-provide="datepicker">
+               <input type="text" class="form-control" id="datepicker" placeholder="Click to select date" onclick="showReminderDate()" readonly>
+               <div class="input-group-addon">
+                   <a href="#" onclick="showReminderDate()"><span class="glyphicon glyphicon-th"></span></a>
+               </div>
+           </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="saveReminder()">Set Reminder</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- Modal Ends here-->
+
+  <div id="validateDateModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="validateDateModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Warning</h4>
+        </div>
+        <div class="modal-body">
+            <p style="font-family:'Merriweather', serif;font-size:16px">Your Selected date is less than two weeks away. So it's best to just create your registry right away to ensure that your guests are able to get the gifts in time.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="reminderSuccess" class="modal" tabindex="-1" role="dialog" aria-labelledby="reminderSuccessModalLabel">
+      <div class="modal-dialog">
+        <div class = "modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Success</h4>
+          </div>
+          <div class="modal-body">
+              <p style="font-family:'Merriweather', serif;font-size:16px">We have set a reminder for you.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="Floating">
+        <p style="opacity:1.0;font-size:12px">
+          Remind me in time for my next event.
+        </p>
+        <button class="btn btn-success" style="opacity:1.0;text-shadow:1px 1px 2px black" onclick="setReminder()">Set Reminder</button>
+      </div>
   <div class = "container FAQ">
 
     <div class="row">

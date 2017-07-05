@@ -381,7 +381,6 @@
 
 .create_registry {
   padding-top: 150px;
-  padding-bottom: 150px;
   background: #FFFFFF;
 }
 
@@ -712,6 +711,21 @@ a.product-review {
    box-shadow: 0 0 0 0px #945266, 2px 1px 1px 1px rgba(10, 10, 0, 0.5);
    text-shadow: 1px 1px #aa3030;
    font-weight: normal;
+}
+
+#Floating {
+  text-align: center;
+  padding: 10px;
+    position: fixed;
+    top: 700px;
+    right: 20px;
+    height: 100px;
+    width: 200px;
+    color: #ffffff;
+    background-color: #454282;
+    box-shadow: 2px 2px 1px #888888;
+    opacity: 0.9;
+    z-index: 99;
 }
 
 /* CSS animation */

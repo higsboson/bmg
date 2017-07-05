@@ -188,7 +188,7 @@ app.get('/aboutus',function(req,res) {
 })
 
 app.get('/learnmore.html',function(req,res) {
-  console.log(getTimeStamp() + 'About|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'LearnMore|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/learnmore.html");
 })
 
@@ -272,7 +272,7 @@ app.post('/showReports',function(req,res) {
         })
       };
     } //try
-    catch (e) {console.log("Error in show reports : "+e)}
+    catch (e) {console.log("Error in show reports : "+e);console.log('Data is: ' + req.body.Data)}
   } else {
     res.send("Un-Autorized Access. Your IP will be recorded.")
   }
@@ -514,7 +514,30 @@ app.post('/addToDBByUser',urlencodedParser,function(req,res){
       }
     })
   }
-  catch (e) {console.log(e);res.send("Error in adding product to cart!")}
+  catch (e) {console.log(e);console.log('Data is ' + req.body.Product);res.send("Error in adding product to cart!")}
+})
+
+app.post('/saveReminder',urlencodedParser,function(req,res){
+  try {
+    var remCollection = bmgDB.collection('Reminder');
+    //console.log("Body Product:" +req.body.Product);
+    var remToBeAdded = {};
+
+    //console.log("ProdID : "+prdToBeAdded.ProdID);
+    remToBeAdded.date = new Date(req.body.date);
+    remToBeAdded.email = req.body.email;
+    remToBeAdded.name = req.body.name;
+    //console.log("Update Date : "+prdToBeAdded.UpdDate);
+    remCollection.find({Email:remToBeAdded.email.toUpperCase()}).toArray(function(err,docs){
+      if (docs.length != 0) {res.send("Already present in DB")}
+      else {
+        remCollection.insert({"Name":remToBeAdded.name,"Email":remToBeAdded.email.toUpperCase(),"Date":remToBeAdded.date});
+        if (!err) {res.send("Success")}
+        else {res.send("Error")}
+      }
+    })
+  }
+  catch (e) {console.log(e);console.log('Data is ' + req.body.email + ',' + req.body.name);res.send("Error in adding product to cart!")}
 })
 
 app.post('/saveReviewedProducts',urlencodedParser,function(req,res){
@@ -604,7 +627,7 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
       }
     })
   }
-  catch (e) {console.log(e);res.send("Error in saving wishlist!")}
+  catch (e) {console.log(e);console.log('Data is ' + req.body.Wishlist);res.send("Error in saving wishlist!")}
 })
 
 app.post('/updProductStatus',urlencodedParser,function(req,res) {//change the status of the product
@@ -623,7 +646,7 @@ app.post('/updProductStatus',urlencodedParser,function(req,res) {//change the st
         else {res.send("Error in updating product status")}
       })}*/
   }
-  catch (e) {console.log("Error - "+e)}
+  catch (e) {console.log("Error - "+e);console.log('Data is ' + req.body.Data)}
 }) //updProductStatus
 
 app.post('/resetPassword',urlencodedParser,function(req,res) {//change the status of the product
@@ -1011,7 +1034,7 @@ app.post('/filterWishListByCatg',function(req,res){
     }
     });
   }
-  catch (e) {console.log("Error - "+e)}
+  catch (e) {console.log("Error - "+e);console.log('Data is ' + req.body.criteria)}
 }); //filter wishlist by category
 
 app.get('/showListProducts',function(req,res){
