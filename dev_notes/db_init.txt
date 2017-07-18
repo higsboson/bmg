@@ -1,0 +1,7 @@
+The following commands need to be run to set up a DB:
+
+
+1. Set up Config collection with required information_modal
+
+2. db.WishListRef.createIndex({"WishListID":1}, { unique: true } ) - This is to create reference look up collection named
+WishListRef which will have a unique index on WishListID along with Wishlist's object ref.

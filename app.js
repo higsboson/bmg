@@ -192,6 +192,11 @@ app.get('/learnmore.html',function(req,res) {
   res.sendFile(__dirname + "/site/learnmore.html");
 })
 
+app.get('/findRegistry',function(req,res) {
+  console.log(getTimeStamp() + 'FindRegistry|' + req.connection.remoteAddress)
+  res.sendFile(__dirname + "/site/findRegistry.html");
+})
+
 app.get('/review_product',function(req,res) {
   if (req.session.adminUser && req.session) {
     res.sendFile(__dirname + "/site/review_product.html");
@@ -541,6 +546,28 @@ app.post('/saveReminder',urlencodedParser,function(req,res){
   catch (e) {console.log(e);console.log('Data is ' + req.body.email + ',' + req.body.name);res.send("Error in adding product to cart!")}
 })
 
+app.post('/checkRegistry',urlencodedParser,function(req,res){
+  console.log(getTimeStamp() + 'checkRegistry|' + req.connection.remoteAddress);
+  var response = {};
+  console.log(JSON.stringify(req.body.registry));
+  try {
+    var refCollection = bmgDB.collection('WishListRef');
+
+    refCollection.find({WishListID:req.body.registry.toUpperCase()}).toArray(function(err,docs){
+      if (docs.length == 0) {response.status = "not found";res.send(response)}
+      else {
+        console.log(JSON.stringify(docs));
+        response.status = "found";
+        response.wid = docs[0].wid;
+        response.uid = docs[0].uid;
+        console.log(JSON.stringify(response));
+        res.send(response);
+      }
+    })
+  }
+  catch (e) {console.log(e);console.log('Data is ' + req.body.registry);res.send("Error")}
+})
+
 app.post('/saveReviewedProducts',urlencodedParser,function(req,res){
   var prodCollection = bmgDB.collection('Product');
   WaterfallOver(req.body.array,function (val,report){
@@ -554,6 +581,19 @@ app.post('/saveReviewedProducts',urlencodedParser,function(req,res){
     });
 
 });
+
+function WaterfallRetry(firstrand,iterator, callback) {
+  var random;
+  function report(t) {
+    if (t)
+      callback();
+    else {
+      random = bmgaux.randomString();
+      iterator(random,report);
+    }
+  }
+  iterator(firstrand, report);
+}
 
 app.post('/saveWishlist',urlencodedParser,function(req,res){
   try {
@@ -601,26 +641,52 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
                       "wcd" :new Date(),
                       "Products":docs};
         }
+        var random_string = bmgaux.randomString();
 
         wishlistCollection.insert(wishList, function(err,insertedObj) {
           if (!err) {
             //we need to send back the link
-            var wishListId = insertedObj["ops"][0]["wid"];
-            var hostName = insertedObj["ops"][0]["HostName"];
-            var hostEmail = insertedObj["ops"][0]["HostEmail"];
-            var wid = insertedObj["ops"][0]["wid"];
-            var uid = insertedObj["ops"][0]["uid"];
+            try {
+              var random_string = bmgaux.randomString();
+              var wishlistRef = bmgDB.collection('WishListRef');
+              var wishListId = insertedObj["ops"][0]["wid"];
+              var hostName = insertedObj["ops"][0]["HostName"];
+              var hostEmail = insertedObj["ops"][0]["HostEmail"];
+              var wid = insertedObj["ops"][0]["wid"];
+              var uid = insertedObj["ops"][0]["uid"];
+              var _id = insertedObj["ops"][0]["_id"];
+              var refDoc = {};
+              refDoc.wid = wid;
+              refDoc.uid = uid;
+              var firstrand = bmgaux.randomString();
+              console.log(JSON.stringify(refDoc));
 
-            //console.log("Wishlist is inserted in database");
-            //25/4/2017 - Made a change to have URL domain automatically populated
-            var wishListModalTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wid + "\&u=" + uid  + " \" readonly/><br>We have also sent you the link via e-mail.";
-            var wishListEmailTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><a href=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\&u=" + uid  + "\"><br>http://"+ urlHost +"/showWishList?eventID=" + wid + "\&u=" + uid  + "</a>";
-            var emailTxt = '<p style="font-family:"Merriweather", serif;font-size:16px">Dear '+ hostName +',<br><br>Thank you for choosing Bemygenie.</p>';
-            emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+ wishListEmailTxt +'<br><br><br>Team Bemygenie</p>';
-
-            bmgaux.mailer(emailPassword,'support',hostEmail,'New Wishlist Created',emailTxt,function(message,response) {});
-            res.send(wishListModalTxt + '<input type="hidden" name="wishlistIdReference" id="wishlistIdReference" value="' + wishListId + '" ><input type="hidden" name="UIDReference" id="UIDReference" value="' + uid + '" >');
-
+              WaterfallRetry(firstrand, function tryInsert(rand,report){
+                refDoc.WishListID = rand;
+                wishlistRef.insert(refDoc, function(err, result) {
+                  if (!err) {
+                    report(true);
+                  } else {
+                    console.log(err.code);
+                    report(false);
+                  }
+                })
+              }, function callback() {
+                var arr = refDoc.WishListID.split('');
+                var ref_ID = arr[0] + arr[1] + arr[2] + " - " + arr[3] + arr[4] + arr[5] + " - " + arr[6] + arr[7] + arr[8];
+                var wishListModalTxt = "Your wishlist has been created! You can now share your wishlist with your guests so that they know what to get you on this special occasion. You can share using any of the methods below:<br><br>1. Copy the below URL and share/email it to your guests <br><br><input class=\"form-control\" style=\"font-size:20px\" onClick=\"this.select();\" value=\"http://"+ urlHost +"/showWishList?eventID=" + wid + "\&u=" + uid  + " \" readonly/><br><br>2. Send across the wish list reference ID to your guests. They will be able to look up the registry on our site directly. <div class=\"help-tip-learnmore\" style=\"text-align:center;font-size:12px\">	<p>This is the best option in case you are planning out an event with a large number of guests. For eg. if it's a wedding, you can have this wishlist ID mentioned in your wedding invitation.</p> </div> <br<div style='text-align:center'><p><b>" + ref_ID + "</b></p><br><br>3. Use Bemygenie's registry notification service. We will directly send a notifciation email to your guests with a link to your wish list. You can launch this service from your homepage</div>";
+                var wishListEmailTxt = "Your wishlist has been created! You can now share the following URL with your friends and family so that they know what to get you on this special occasion:<br><a href=\"http://"+ urlHost +"/showWishList?eventID=" + wishListId + "\&u=" + uid  + "\"><br>http://"+ urlHost +"/showWishList?eventID=" + wid + "\&u=" + uid  + "</a><br><br>Your wishlist can also be accessed using your registry reference ID on bemygenie.com. This registry's ID is: <br><br><div style='text-align:center'><p><b>" + ref_ID + "</b></p></div>";
+                var emailTxt = '<p style="font-family:"Merriweather", serif;font-size:16px">Dear '+ hostName +',<br><br>Thank you for choosing Bemygenie.</p>';
+                emailTxt = emailTxt + '<p style="font-family:"Merriweather", serif;font-size:16px">'+ wishListEmailTxt +'<br><br><br>Team Bemygenie</p>';
+                wishlistCollection.update({"_id":new ObjectId(_id)},{$set: {event_id: ref_ID,notification_sent:0}}, function (err){
+                  bmgaux.mailer(emailPassword,'support',hostEmail,'New Wishlist Created',emailTxt,function(message,response) {});
+                  res.send(wishListModalTxt + '<input type="hidden" name="wishlistIdReference" id="wishlistIdReference" value="' + wishListId + '" ><input type="hidden" name="UIDReference" id="UIDReference" value="' + uid + '" ><input type="hidden" name="refID" id="refID" value="' + ref_ID + '" ><input type="hidden" name="WishListRef" id="UIDReference" value="' + refDoc.WishListID + '" >');
+                })
+              })
+            }
+            catch (e) {
+              console.log(e);
+            }
           }
           else {res.send("Error in saving wishlist. Please try again later")}
 
@@ -630,6 +696,55 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
   }
   catch (e) {console.log(e);console.log('Data is ' + req.body.Wishlist);res.send("Error in saving wishlist!")}
 })
+
+app.post('/sendMailerNotification',urlencodedParser,function(req,res) {//change the status of the product
+  try {
+    var mail_adds = [];
+    var mail_add_set = [];
+    var bcc = ""
+    var i = 0,j = 0,k = 0;
+    console.log('length is ' + req.body.email_adds.length);
+    for (i = 0,j = 0,k = 0;i < req.body.email_adds.length;i++) {
+      console.log(req.body.email_adds[i]);
+      if (j != 0) {
+        bcc += ",";
+      }
+      if (j < 0 ) {
+        bcc += req.body.email_adds[i];
+        j++;
+      }
+      else {
+         bcc += req.body.email_adds[i];
+         console.log(bcc);
+         mail_add_set[k] = bcc;
+         k++;
+         bcc = "";
+         j = 0;
+       }
+    }
+    if (j != 0) {
+      mail_add_set[k] = bcc;
+      k++;
+      bcc = "";
+      j = 0;
+    }
+    console.log(JSON.stringify(mail_add_set));
+    WaterfallOver(req.body.email_adds, function (set, report) {
+      var wishListEmailTxt = "Hi There! <br><br> " + req.body.username + " has just created a gift wishlist on bemygenie.com and has shared it with you. Please go through the list and select the gift that you would like to present to " + req.body.username + " on this special occasion!<br><br> The wishlist can be accessed via the folloring URL: <br><br><a href='" + req.body.url  + "' target='_blank'>Wishlist</a><br><br>The wishlist can also be accessed by the 'Find Registry' option on <a href='www.bemygenie.com' target='_blank'>www.bemygenie.com</a> using the following reference ID: <br><br><div style='text-align:center'><p><b>" + req.body.event_id + "</b></p></div><br>Thanks<br>Team Bemygenie.com";
+        bmgaux.mailer(emailPassword,'support',set,req.body.username + ' has shared a wishlist with you.',wishListEmailTxt,function(message,response) {
+          setTimeout(function () {
+            report();
+          }, 1000)
+        });
+      }, function (){
+        res.send("Sent Mailer Success for " + req.body.event_id + ' - ' + req.body.url)
+    })
+  }
+  catch (e) {
+    console.log(e);
+    res.send("Error in sendingMailer")
+  }
+});
 
 app.post('/updProductStatus',urlencodedParser,function(req,res) {//change the status of the product
   try {
@@ -784,7 +899,7 @@ app.get('/getUserWishLists', function (req,res) {
   var wishlistCollection = bmgDB.collection('WishList');
   //console.log("getting wishlist for " + sha256(req.query.userid) + req.query.mode);
   //We only return pertinent information such as the event names, types and open/closed registries
-  wishlistCollection.find({$and: [{"uid": req.query.userid},{"EventStatus": parseInt(req.query.mode)}]},{"wid":1,"uid":1,"EventName":1,"EventType":1,"EventStatus":1,"EventDate":1}).toArray(function(err,docs){
+  wishlistCollection.find({$and: [{"uid": req.query.userid},{"EventStatus": parseInt(req.query.mode)}]},{"wid":1,"uid":1,"EventName":1,"EventType":1,"EventStatus":1,"EventDate":1,"event_id":1,"notification_sent":1}).toArray(function(err,docs){
     if (!err) {
       if (docs.length) {
         res.format({'application/json': function(){res.send(docs)}})
@@ -904,7 +1019,7 @@ function getProductsFrmAmzn(req,callback) {
     var hash = crypto.createHmac('sha256', aws_secret_key).update(string_to_sign).digest('base64');
     //console.log("hash - "+hash);
     var signed_url = amazon_end_point + uri + "\?" + canonical_query_string + "\&Signature=" + encodeURIComponent(hash);
-    //console.log(signed_url);
+    console.log(signed_url);
 
     var rawData = '';
     let error;

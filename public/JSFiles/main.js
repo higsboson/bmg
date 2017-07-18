@@ -204,16 +204,68 @@
     }
   }
 
+  function reloadPage() {
+    location.reload();
+  }
+
+
+  function findRegistry() {
+    if ($('#key1').val() == '' || $('#key2').val() == '' || $('#key3').val() == '') {
+      $('#warning_modal-title-id').text('Warning');
+      $('#warning_modal-p-id').text('Please provide a valid registry ID');
+      $('#warning_modal').modal('show');
+      return false;
+    }
+    if ($('#key1').val().length != 3 || $('#key2').val().length != 3 || $('#key3').val().length != 3) {
+      $('#warning_modal-title-id').text('Warning');
+      $('#warning_modal-p-id').text('Please provide a valid registry ID');
+      $('#warning_modal').modal('show');
+      return false;
+    }
+    $.ajax({
+       type  : 'POST',
+       url   : '/verifyRecaptcha',
+       data  : {"Response":grecaptcha.getResponse()},
+       success: function(res) {
+         if (res.success) {
+            $.ajax({
+              type  : 'POST',
+              url   : '/checkRegistry',
+              data : {registry: $('#key1').val() + $('#key2').val() + $('#key3').val()},
+              success : function (res) {
+                if (res.status == 'found') {
+                  //alert('found registry ' + res.wid);
+                  window.location.replace("/showWishList?eventID=" + res.wid + "\&u=" + res.uid);
+                } else {
+                  $('#warning_modal-title-id').text('Warning');
+                  $('#warning_modal-p-id').text('This registry ID is invalid. Please reconfirm the ID and try again.');
+                  $('#close').attr("onclick","reloadPage()");
+                  $('#warning_modal').modal('show');
+                }
+              },
+              error : function (err) {
+                alert ("Error: " + err);
+              }
+            })
+          } else if (res["error-codes"][0] == "missing-input-response") {
+            $('#warning_modal-title-id').text('Warning');
+            $('#warning_modal-p-id').text('Please click checkbox to verify that you are a human :)');
+            $('#warning_modal').modal('show');
+          }
+        },
+        error : function (res) {
+          alert("Error in validating captcha response - "+  res.error_codes);
+        }
+      })
+  }
+
   function passWordReset() {
-
-
     if ($('#username').val() == '') {
       $('#warning_modal-title-id').text('Warning');
       $('#warning_modal-p-id').text('Please provide an email address.');
       $('#warning_modal').modal('show');
       return false;
     }
-
     //alert('posting');
     $('#passwordChangeButton').html('<i class="fa fa-circle-o-notch fa-spin" style="font-size:24px;"></i><br><p>Processing...</p>')
     $.ajax({
@@ -237,8 +289,11 @@
                 alert ("Error: " + err);
               }
             })
-          } else if (res["error-codes"][0] == "missing-input-response")
-            alert('Please click checkbox to verify that you are a human :)')
+          } else if (res["error-codes"][0] == "missing-input-response") {
+            $('#warning_modal-title-id').text('Warning');
+            $('#warning_modal-p-id').text('Please click checkbox to verify that you are a human :)');
+            $('#warning_modal').modal('show');
+          }
         },
         error : function (res) {
           alert("Error in validating captcha response - "+  res.error_codes);
@@ -378,6 +433,7 @@
                          //alert('Wish list ref ID is ' + $('#wishlistIdReference').val())
                          setCookie("wishlistIdReference",$('#wishlistIdReference').val(),2);
                          setCookie("UIDReference",$('#UIDReference').val(),2);
+                         setCookie("eventID",$('#refID').val(),2);
                          $("#signUpOrNot").modal('hide');
                          $("#wishListURLModal").modal('show');
 
@@ -621,9 +677,65 @@ function showDisclaimer() {
   alert('');
 }
 
+function showSendNotification() {
+  $('#bmgNotificationModal').modal('show');
+}
+
+function sendNotification() {
+
+  var note = $('#notification_message').val();
+  if ($('#notification_message').val().length == 0) {
+    document.getElementById("modalMessage").innerHTML = '"' + emails[i] + '" is an invalid email.';
+    document.getElementById("validate_modal_title").innerHTML = 'Invalid Input';
+    $("#validateModal").modal('show');
+  }
+  var emails = note.split(',');
+  var realmails = [];
+  var valid = true;
+  for (var i = 0;i < emails.length;i++) {
+    if(emails[i] != "") {
+      if(!validateEmail(emails[i])) {
+        document.getElementById("modalMessage").innerHTML = '"' + emails[i] + '" is an invalid email.';
+        document.getElementById("validate_modal_title").innerHTML = 'Invalid Input';
+        $("#validateModal").modal('show');
+        valid = false;
+      }
+      else {
+        realmails[i] = emails[i];
+      }
+    }
+  }
+
+  if (realmails.length > 50) {
+    document.getElementById("modalMessage").innerHTML = 'You can only send the notification to a maximum of 50 email addresses.';
+    document.getElementById("validate_modal_title").innerHTML = 'Too many email IDs';
+    $("#validateModal").modal('show');
+    valid = false;
+  }
+
+  if (valid) {
+  //
+
+    $.ajax({
+      type: 'POST',
+      url: '/sendMailerNotification',
+      data: {event_id: $('#event_ID_notification').val(), url: $('#event_URL_notification').val(), email_adds: realmails, username: $('#username').val()},
+      success: function (res) {
+        alert(res);
+      },
+      error: function (err) {
+        alert(err);
+      }
+    });
+  }
+}
+
 //4/22/2017 - trznt
 //Getting Data of WishList item
-function getListData(wid,uid,name,mode) {
+function getListData(wid,uid,name,event_id,notification_sent,mode) {
+  //$('#wishListLink').html("");
+  $('#event_ID_notification').val("");
+  $('#event_URL_notification').val("");
   $('#summaryDescription').html("");
   if (mode) {
     $('#wishlistname').text(name);
@@ -640,6 +752,14 @@ function getListData(wid,uid,name,mode) {
       data : {"wid":wid,"uid":uid},
       success : function(res) {
         //The following alert will need to be replaced by a modal dialog
+            $('#event_ID_notification').val(event_id);
+            $('#event_URL_notification').val("http://" + window.location.hostname + "/showWishList?eventID=" + wid + "\&u=" + uid);
+            $('#event_notification_status').val(notification_sent);
+            if (notification_sent == 0) {
+              $('#sendNotificationButton').prop('disabled', false);
+            } else {
+              $('#sendNotificationButton').prop('disabled', true);
+            }
             var data = '';
             var boughtCount = 0;
             //alert(JSON.stringify(res));
@@ -694,7 +814,7 @@ function getListData(wid,uid,name,mode) {
               $('#wishlistoldsummary').html(data);
             }
             if (mode) {
-              $('#wishListLink').html('<table><tr><td><p class="summary" style="padding-top:8px">Link to this wishlist: </p></td><td><div class="help-tip">	<p>To share this wishlist with your friends and family, pass along this link.</p> </div></td></tr></table> <input class="form-control" value="http://'+ window.location.hostname + ':8080/showWishList?eventID=' + res.wid + '\&u=' + res.uid + '" id="wishListLinkUrl" readonly>');
+              $('#wishListLink').html('<table><tr><td><p class="summary" style="padding-top:8px">Link to this wishlist: </p></td><td><div class="help-tip">	<p>To share this wishlist with your friends and family, pass along this link - or you can use the BMG notification system.</p> </div></td></tr></table> <input class="form-control" value="http://'+ window.location.hostname + '/showWishList?eventID=' + res.wid + '\&u=' + res.uid + '" id="wishListLinkUrl" readonly><br><div style="text-align:center"></div><p style="font-size:15px">This wishlist\'s ID: <b>' + event_id + '<b></p><br><hr><br>');
               $("#wishListLinkUrl").focus(function() { $(this).select(); } );
             }
             //$('#' + div).text("You have " + res[0].EventName);
@@ -703,6 +823,8 @@ function getListData(wid,uid,name,mode) {
       error : function(res) {alert("Error in retrieving user informaton!")}
     })
 }
+
+
 
 // 26/4/2017
 // Getting Profile information form the DB
@@ -750,16 +872,16 @@ function getUserProfileDetails(user,div) {
        data : {"userid":user,"mode":mode},
        success : function(res) {
          //The following alert will need to be replaced by a modal dialog
-             //alert(JSON.stringify(res));
+             alert(JSON.stringify(res));
              if (res.length >=1) {
                var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead style="background:#454282;color:#FFFFFF"><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Date</th></tr></thead><tbody>';
                for (i = 0; i < res.length ;i++) {
                  var d = new Date(res[i].EventDate);
                  var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear();
                  if (mode)
-                  table_text += '<tr data-toggle="modal" data-target="#viewWishListModal" onclick="getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',1)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
+                  table_text += '<tr data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
                  else
-                  table_text += '<tr data-toggle="modal" data-target="#viewOldWishListModal" onclick="getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',0)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
+                  table_text += '<tr data-toggle="modal" data-target="#viewOldWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',,\'' + res[i].notification_sent +  '\'0)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
                }
               table_text += '</tbody></table>';
               if (mode)
@@ -1270,7 +1392,7 @@ function showBdayProducts() {
       $("#house-marketing").slideDown();
       $("#baby-marketing").slideDown();
       $("#bday-side-bar").css("display","none");
-      $('#bday-a-link').text("Trending Now " + $('#raqval').text());
+      $('#bday-a-link').text("Trending Gifts " + $('#raqval').text());
     }
 }
 
@@ -1301,7 +1423,7 @@ function showHomeProducts() {
       $("#bday-marketing").slideDown();
       $("#baby-marketing").slideDown();
       $("#home-side-bar").css("display","none");
-      $('#house-a-link').text("Trending Now " + $('#raqval').text());
+      $('#house-a-link').text("Trending Gifts " + $('#raqval').text());
     }
 }
 
@@ -1336,7 +1458,7 @@ function showBabyProducts() {
       $("#bday-marketing").slideDown();
       $("#house-marketing").slideDown();
       $("#baby-side-bar").css("display","none");
-      $('#baby-a-link').text("Trending Now " + $('#raqval').text());
+      $('#baby-a-link').text("Trending Gifts " + $('#raqval').text());
     }
 }
 
@@ -1369,7 +1491,7 @@ function showWeddingProducts() {
       $("#wedProducts").slideUp();
       $("#spcl-marketing").slideDown();
       $("#wed-side-bar").css("display","none");
-      $('#wed-a-link').text("Trending Now " + $('#raqval').text());
+      $('#wed-a-link').text("Trending Gifts " + $('#raqval').text());
     }
 }
 
@@ -1402,7 +1524,7 @@ function showSpclProducts() {
       $("#spclProducts").slideUp();
       $("#wed-marketing").slideDown();
       $("#spcl-side-bar").css("display","none");
-      $('#spcl-a-link').text("Trending Now " + $('#raqval').text());
+      $('#spcl-a-link').text("Trending Gifts " + $('#raqval').text());
     }
 }
 

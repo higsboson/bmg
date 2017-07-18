@@ -56,6 +56,40 @@
     </div>
   </div>
 
+  <div id="validateModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="validateModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" id="validate_modal_title">Invalid input</h4>
+        </div>
+        <div class="modal-body">
+            <p style="font-family:'Merriweather', serif;font-size:16px" id="modalMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <div id="emailModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header"><h1 class="modal-title" style="font-family:'Merriweather', serif" id="personalizeHeading"><b>BeMyGenie Registry Notification</b></h1></div>
+        <div class="modal-body">
+            <p id="personalize" style="font-family:'Merriweather', serif;font-size:16px">Want bemygenie to send out an email notification to your guests for your upcoming event ? Please key in the email addresses and we will send them an email with a link to your registry!</p>
+            <textarea class="form-control" rows="5" id="message" placeholder="abc@gmail.com;xyz@hotmail.com;guest3@gmail.com"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" style="display:default;float:left" data-dismiss="modal" id="saveMessageDefault">Skip</button>
+            <button type="button" class="btn btn-info" style="display:default;float:right" data-dismiss="modal" id="saveMessageButton">Save Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <div class="modal fade" id="amzDisclaimer" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -78,9 +112,35 @@
 
 <body class="admin-body">
 
+  <div class="modal" id="bmgNotificationModal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">BMG Registry Notification System</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+            Please provide the list of email addresses to which you would like us to send the email. Do note that we can only send upto a maximum of 50 email addresses. Please use a comma to seperate each email address.</p>
+            <textarea class="form-control" rows="5" id="notification_message" placeholder="guest@example.com,guest1@example.com,guest2@example.com,guest3@example.com,guest4@example.com,guest5@example.com"></textarea>
+            <br />
+            <p>
+              Note: This notification system can be used only once per wishlist.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-success" style="float:left" onclick="sendNotification()")>Send Notification</button>
+        <button type="button" data-dismiss="modal" class="btn btn-primary">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<body class="admin-body">
+
   <!-- Modal Starts here-->
   <!-- This is the modal that will list out the product list for active wishlists.-->
-    <div class="modal fade" id="viewWishListModal" role="dialog">
+    <div class="modal" id="viewWishListModal" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -99,11 +159,12 @@
 
 
             <br />
-            <div id="wishlistsummary" style="height:500px;overflow: scroll;">
+            <div id="wishlistsummary" style="height:300px;overflow: scroll;">
 
             </div>
           </div>
           <div class="modal-footer">
+            <button class="btn btn-success" data-dismiss="modal" style="float:left" onclick="showSendNotification()" id="sendNotificationButton" disabled>Send BMG Notification</button>
             <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
           </div>
         </div>
@@ -290,6 +351,7 @@
 
 <p>
    <input type="hidden" name="user" value="<%=userID%>" id="user">
+   <input type="hidden" name="username" value="<%=username%>" id="username">
 
 
 
@@ -317,6 +379,8 @@
 
     </div>
    </div>
+   <input type="hidden" id="event_ID_notification" name="event_ID_notification" value="" />
+   <input type="hidden" id="event_URL_notification" name="event_URL_notification" value="" />
 </div>
 <!--/.footer-bottom-->
 </footer>

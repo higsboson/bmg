@@ -568,6 +568,57 @@ ul.dropdown-menu {
 	left:0;
 }
 
+.help-tip-learnmore:before{
+	content:'Learn More';
+	font-weight: bold;
+  font-size: 8px;
+	color:#00f;
+}
+
+.help-tip-learnmore:hover p{
+	display:block;
+	transform-origin: 100% 0%;
+
+	-webkit-animation: fadeIn 0.3s ease-in-out;
+	animation: fadeIn 0.3s ease-in-out;
+
+}
+
+.help-tip-learnmore p{	/* The tooltip */
+	display: none;
+	text-align: left;
+	background-color: #454282;
+	padding: 20px;
+	width: 300px;
+	position: absolute;
+	border-radius: 3px;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+	right: -4px;
+	color: #FFF;
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.help-tip-learnmore p:before{ /* The pointer of the tooltip */
+	position: absolute;
+	content: '';
+	width:0;
+	height: 0;
+	border:6px solid transparent;
+	border-bottom-color:#1E2021;
+	right:10px;
+	top:-12px;
+}
+
+.help-tip-learnmore p:after{ /* Prevents the tooltip from being hidden */
+	width:100%;
+	height:40px;
+	content:'';
+	position: absolute;
+	top:-40px;
+	left:0;
+}
+
 .tooltip1 {
     position: relative;
     display: inline-block;

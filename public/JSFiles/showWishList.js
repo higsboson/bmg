@@ -98,7 +98,7 @@ function showProducts() {
         }
       }) //for each
       if (cnt%4 != 0) {htmlStr = htmlStr + "</div>"};
-      htmlStr = htmlStr + '<hr></div>';
+      htmlStr = htmlStr + '<hr><p style="color:#454282">Except where mentioned, the price shown here is list price for the particular item. The price that will utilmately be applicable for the item will be what is shown on the third party site.</p></div>';
       //alert(htmlStr);
       $('#carousel-wrapper').replaceWith(htmlStr);
    }
