@@ -172,6 +172,11 @@ app.get('/FAQ.html',function(req,res) {
   res.sendFile(__dirname + "/site/FAQ.html");
 })
 
+app.get('/invite.html',function(req,res) {
+  console.log(getTimeStamp() + 'invite|' + req.connection.remoteAddress);
+  res.sendFile(__dirname + "/email_templates/invite.html");
+})
+
 app.get('/aboutus.html',function(req,res) {
   console.log(getTimeStamp() + 'About|' + req.connection.remoteAddress)
   res.sendFile(__dirname + "/site/aboutus.html");
@@ -283,6 +288,19 @@ app.post('/showReports',function(req,res) {
   }
 })
 
+app.get('/getEventTmplt',function(req,res) {
+  try {
+    console.log(getTimeStamp() + 'getEventTmplt|' + req.connection.remoteAddress);
+    var tmpltCollection = bmgDB.collection("Templates");
+    var eventType = req.query.EventType;
+    tmpltCollection.find({"EventType":eventType}).toArray(function(err,docs) {
+      if (!err) { res.send(docs)}
+      else {res.send("Unable to fetch invitiation templates")}
+    })
+  }
+  catch (e) {console.log(getTimeStamp() + 'getEventTmplt|Error - ' + e)}
+})
+
 app.get('/getProductReview',function(req,res) {
   if (req.session.adminUser && req.session) {
     var prdCollection = bmgDB.collection('Product');
@@ -329,6 +347,21 @@ app.get('/admin',function(req,res) {
     res.sendFile(__dirname + "/site/admin.html");
   }
 
+})
+
+app.post('/eventDetails',function(req,res) {
+  try {
+    console.log(getTimeStamp() + 'eventDetails|' + req.connection.remoteAddress);
+    var wishlistCollection = bmgDB.collection('WishList');
+    var qryStr = req.body.EventId;
+    wishlistCollection.find({"event_id":qryStr},{"EventType":1,"RcvrName":1,"wishlistMsg":1,"addr":1,"EventDate":1,"dtTime":1}).toArray(function(err,docs) {
+      if (!err) {
+        res.send(docs);
+      }
+      else {res.send("Error in fetching wishlist")}
+    })
+  }
+  catch (e) {console.log(getTimeStamp() + 'eventDetails|Error - ' + e)}
 })
 
 app.post('/getProdByCatg',function(req,res){

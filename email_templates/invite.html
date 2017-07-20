@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta property="og:url" content="https://www.bemygenie.com/" />
+    <meta property="og:image" content="https://www.bemygenie.com/images/logo_og.png" />
+    <meta property="og:title" content="Bemygenie.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Thanks for checking out my wishlist. :) " />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="css/main.css" >
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Droid+Serif|Merriweather|Rochester|Sue+Ellen+Francisco" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
+    <script src="JSFiles/moment-with-locales.min.js"></script>
+    <script src="JSFiles/main.js"></script>
+    <script>
+    function showInvite (index,eventId,eventType,rcvrName,dtTime) {
+      try {
+        var tmpltStr = $("#templates").val();
+        var tmpltArr =[];
+        if (tmpltStr.indexOf(',') > 0) {tmpltArr = tmpltStr.split(",")}
+        else {tmpltArr[0]=tmpltStr}
+
+        var tmpltId = tmpltArr[index];
+        var addr = $("#address").val();
+        var cstmIvnviteMsg = $("#message").val();
+        var prevIndex = index-1;
+        var nextIndex = index+1;
+        var imgStr = "";
+        var wishHeadStr = "";
+        $('head:first').append('<link rel="stylesheet" type="text/css" href="css/'+tmpltId+'.css" />');
+          imgStr = '<img src="images/'+tmpltId+'.jpg" alt="" id="back-img"/>';
+          $("#back-img").replaceWith(imgStr);
+          // Create invite header
+          hdrHtml = '<div class="row invite-row-header" id="invite-header">';
+          hdrHtml = hdrHtml + '<div class="col-sm-2" style="text-align:center"></div>';
+          hdrHtml = hdrHtml + '<div class="col-sm-8"><p class="invite-header">You\'re invited!</p></div>';
+          hdrHtml = hdrHtml + '<div class="col-sm-2" style="text-align:center"></div>';
+          hdrHtml = hdrHtml + '</div>';
+          $("#invite-header").replaceWith(hdrHtml);
+          //header complete
+          //create invite title
+          //seed = seed+190;
+          ttleHtml = '<div class="row invite-row-title"  id="invite-title">';
+          ttleHtml = ttleHtml + '<div class="col-xs-2"></div>';
+          ttleHtml = ttleHtml + '<div class="col-xs-8"><p class="invite-title">'+cstmIvnviteMsg+'</p></div>';
+          ttleHtml = ttleHtml + '<div class="col-xs-2"></div></div>';
+          $("#invite-title").replaceWith(ttleHtml);
+          //title complete
+          //create invite address
+          //seed = seed + 100;
+          addrHtml = '<div class="row invite-row-address" id="invite-address">';
+          if (index==0) {
+            addrHtml = addrHtml + '<div class="col-xs-3"></div>';
+          }
+          else {
+            addrHtml = addrHtml + '<div class="col-xs-3"><button class="btn btn-info" style="text-align:center" onclick="showInvite('+prevIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>';
+          }
+          addrHtml = addrHtml + '<div class="col-xs-6"><p class="invite-address"><br>At: '+addr+'</p><p class="invite-address" id="event-time">On: '+dtTime+'</p></div>';
+          if (index == tmpltArr.length-1) {
+            addrHtml = addrHtml + '<div class="col-xs-3"></div></div>';
+          }
+          else {
+            addrHtml = addrHtml + '<div class="col-xs-3" style="text-align:center"><button class="btn btn-info" onclick="showInvite('+nextIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span><span class="sr-only">Next</span></button></div></div>';
+          }
+          $('#invite-address').replaceWith(addrHtml);
+          //address complete
+          //wishlist header
+          //seed = seed + 150;
+          wishHeadStr = '<div class="row invite-row-wishlist-head" id="wishlistHead">';
+          wishHeadStr = wishHeadStr + '<div class="col-xs-2"></div>';
+          wishHeadStr = wishHeadStr + '<div class="col-xs-8"><p class="invite-wishlist" id="wishlist-head"><br>Have a look at a list of gifts collated at Bemygenie which will delight your host:</p></div>';
+          wishHeadStr = wishHeadStr + '<div class="col-xs-2"></div></div>';
+          $("#wishlistHead").replaceWith(wishHeadStr);
+          //wishlist head complete
+          //footer
+          //seed = seed + 60;
+          footerHtml = '<div class="row invite-row-footer" id="invite-footer">';
+          footerHtml = footerHtml + '<div class="col-xs-2" style="text-align:left"></div>';//'<img src="images/'+tmpltId+'-btm-lt.png"></div>';
+          footerHtml = footerHtml + '<div class="col-xs-8" style="text-align:center">';
+          footerHtml = footerHtml + '<a href="#" target="_blank" class="invite-wishlist-url">https://www.bemygenie.com/findRegistry</a>';
+          footerHtml = footerHtml + '<p id="wishlist-event-id" class="invite-wishlist-id" style="text-align:center;">Event Id : '+eventId+'</p>';
+          footerHtml = footerHtml + '<div class="row bmg-logo-row"><div class="col-xs-1"></div>';
+          footerHtml = footerHtml + '<div class="col-xs-10" style="text-align:center">';
+          footerHtml = footerHtml + '<a href="https://www.bemygenie.com/howitworks.html" target="_blank">It is Free, It is Online, It is convenient & It is optional. Clck to find out how it works</a>';
+          footerHtml = footerHtml + '<p> Powered by : <img src="images/logos/logo-invite.png"></p>';
+          footerHtml = footerHtml + '</div><div class="col-xs-1"></div></div></div>';
+          footerHtml = footerHtml + '<div class="col-xs-2" style="text-align:right"></div></div>';//'<img src="images/'+tmpltId+'-btm-rt.png"></div></div>';
+          $('#invite-footer').replaceWith(footerHtml);
+          //footer
+      }
+      catch (e) {alert(e)}
+      finally {
+        tmpltArr =null;
+      }
+    }
+    window.onload = function() {
+      try {
+      var hdrHtml = "";
+      var ttleHtml = "";
+      var addrHtml = "";
+      var footerHtml = "";
+      var addr ="";
+      var dtTime = "";
+      var rcvrName = "";
+      var cstmIvnviteMsg = "";
+      var eventType = "";
+      var tmpltTop = "";
+      var tmpltLeft = "";
+      var tmpltFont = "";
+      var tmpltWFont = "";
+      //setCookie('eventID','9WG - ZMO - 8L0',2);
+      var eventId = getCookie("eventID");
+      $.ajax ({
+        type : 'POST',
+        url  : '/eventDetails',
+        data : {"EventId":eventId},
+        success : function (result) {
+          try {
+            rcvrName = result[0].RcvrName;
+            $("#address").val(result[0].addr);
+            dtTime = result[0].dtTime; //need to check how to get date + time in non-iso
+            eventType = result[0].EventType;
+            $("#message").val(result[0].wishlistMsg);
+            //get the templates for the event type
+            $.get("/getEventTmplt",{"EventType":eventType},function(data,status) {
+              var tmpltStr = "";
+              for (var i=0;i<data.length;i++) {
+                if (i==0) {tmpltStr=data[i].TmpltId}
+                else {tmpltStr=tmpltStr+","+data[i].TmpltId}}
+              $("#templates").val(tmpltStr);
+              showInvite(0,eventId,eventType,rcvrName,dtTime);
+            }) //end get templates
+          }
+          catch (e) {alert("Invalid input. Please check the event id you have entered and retry.")}
+        },
+        error : function (res) {
+          alert("Invalid input. Please check the event id you have entered and retry.")
+        }
+      })
+
+    }
+    catch (e) {alert(e)}
+    finally {data=null;result=null}
+    }
+    </script>
+</head>
+<body>
+  <!--<div class="container container-fluid" style="background-color: #454282" id="invite-container">-->
+    <form>
+      <input type="hidden" class="form-control" id="templates" disabled>
+      <input type="hidden" class="form-control" id="address" disabled>
+      <input type="hidden" class="form-control" id="message" disabled>
+    </form>
+    <div class = "row" style="text-align:center"><div class="col-xs-12">
+      <div class="image">
+      <img src="" alt="" id="back-img" />
+      <div class="row invite-row-header" id="invite-header">
+        <div class="col-sm-2" style="text-align:center"></div>
+        <div class="col-sm-8"></div>
+        <div class="col-sm-2" style="text-align:center"></div>
+      </div>
+      <div class="row invite-row-title"  id="invite-title">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8"></div>
+        <div class="col-xs-2"></div>
+      </div>
+      <div class="row invite-row-address" id="invite-address">
+        <div class="col-xs-3"></div>
+        <div class="col-xs-6"><p class="invite-address"><br></p><p class="invite-address" id="event-time"></p></div>
+        <div class="col-xs-3"></div>
+      </div>
+      <div class="row invite-row-wishlist-head" id="wishlistHead">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8"><p class="invite-wishlist" id="wishlist-head"><br>Have a look at a list of gifts collated at Bemygenie which will delight your host:</p></div>
+        <div class="col-xs-2"></div>
+      </div>
+
+      <div class="row invite-row-footer" id="invite-footer">
+        <div class="col-xs-2" style="text-align:left"></div>
+        <div class="col-xs-8" style="text-align:center">
+          <a href="#" target="_blank" class="invite-wishlist-url">https://www.bemygenie.com/findRegistry</a>
+          <p class="invite-wishlist-id" style="text-align:center">Event Id : </p>
+          <br>
+          <div class="row"><div class="col-xs-2"></div>
+            <div class="col-xs-8">
+              <p><a href="https://www.bemygenie.com/howitworks.html" target="_blank">It is Free, It is Online, It is convenient & It is optional. Clck to find out how it works</a>
+              Powered by : <img src="images/logos/logo-invite.png"></p>
+            </div><div class="col-xs-2"></div>
+          </div>
+        </div>
+        <div class="col-xs-2" style="text-align:right"></div>
+      </div>
+    </div> <!--image-->
+  </div></div>
+    <!--</div>-->
+</body>
+</html>

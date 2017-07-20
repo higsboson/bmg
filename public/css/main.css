@@ -13,7 +13,10 @@
 .amz-note {
   font-size: 8px;
 }
-
+.image {
+   position: relative;
+   width: 100%; /* for IE 6 */
+}
 .full {
     width: 100%;
 }
@@ -104,7 +107,10 @@
   padding-bottom: 5px;
   padding-left: 25px;
 }
-
+.user-header{
+  background-color: #7a2b43;
+  border-color: #ffffff;
+}
 .learnMoreItem ul {
   font-family: Droid Serif;
   font-size: 24px;
