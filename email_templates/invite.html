@@ -17,6 +17,24 @@
     <script src="JSFiles/moment-with-locales.min.js"></script>
     <script src="JSFiles/main.js"></script>
     <script>
+    function saveTmplt (templateId) {
+      try {
+        var eventId = getCookie("eventID");
+        $.ajax ({
+          type : 'POST',
+          url  : '/saveInviteTmplt',
+          data : {"EventId":eventId,"TemplateId":templateId},
+          success : function (result) {
+            $("#tmpltModal").modal('show');
+          },
+          error : function (res) {
+            alert("Error in saving event template. Please try again later.")
+          }
+        })
+      }
+      catch (e) {alert("Error in saving event template. Please try again later.")}
+    }
+
     function showInvite (index,eventId,eventType,rcvrName,dtTime) {
       try {
         var tmpltStr = $("#templates").val();
@@ -31,6 +49,7 @@
         var nextIndex = index+1;
         var imgStr = "";
         var wishHeadStr = "";
+        var btnHtml = "";
         $('head:first').append('<link rel="stylesheet" type="text/css" href="css/'+tmpltId+'.css" />');
           imgStr = '<img src="images/'+tmpltId+'.jpg" alt="" id="back-img"/>';
           $("#back-img").replaceWith(imgStr);
@@ -91,6 +110,8 @@
           footerHtml = footerHtml + '<div class="col-xs-2" style="text-align:right"></div></div>';//'<img src="images/'+tmpltId+'-btm-rt.png"></div></div>';
           $('#invite-footer').replaceWith(footerHtml);
           //footer
+          btnHtml = '<div class="row invite-row-btn" id="savebtn-row"><div class="col-xs-2"></div><div class="col-xs-8" style="text-align:center"><button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button></div><div class="col-xs-2"></div></div>';
+          $("#savebtn-row").replaceWith(btnHtml);
       }
       catch (e) {alert(e)}
       finally {
@@ -150,6 +171,20 @@
 </head>
 <body>
   <!--<div class="container container-fluid" style="background-color: #454282" id="invite-container">-->
+  <div id="tmpltModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tmpltModal">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header"><h1 class="modal-title" style="font-family: 'Parisienne', cursive;"><b>Thank you for choosing Bemygenie invites...</b></h1></div>
+        <div class="modal-body">
+            <p id="wishListLink" style="font-family:'Merriweather', serif;font-size:16px">Your invite is saved and will be sent out as per your preferences within the next 24 hours.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" style="display:default" onclick="redirectToHome()">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <form>
       <input type="hidden" class="form-control" id="templates" disabled>
       <input type="hidden" class="form-control" id="address" disabled>
@@ -193,6 +228,12 @@
           </div>
         </div>
         <div class="col-xs-2" style="text-align:right"></div>
+      </div>
+      <div class="row invite-row-btn" id="savebtn-row">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8" style="text-align:center">
+          <button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button>
+        </div><div class="col-xs-2"></div>
       </div>
     </div> <!--image-->
   </div></div>

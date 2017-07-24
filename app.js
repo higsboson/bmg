@@ -364,6 +364,22 @@ app.post('/eventDetails',function(req,res) {
   catch (e) {console.log(getTimeStamp() + 'eventDetails|Error - ' + e)}
 })
 
+app.post('/saveInviteTmplt',function(req,res) {
+  try {
+    console.log(getTimeStamp() + 'saveInviteTmplt|' + req.connection.remoteAddress);
+    var wishlistCollection = bmgDB.collection('WishList');
+    var eventID = req.body.EventId;
+    var templateId = req.body.TemplateId;
+    wishlistCollection.update({"event_id":eventID},{$set:{"TmpltId":templateId}}, function(err){
+      if (!err) {
+        res.send("Success");
+      }
+      else {res.send("Error in fetching wishlist")}
+    })
+  }
+  catch (e) {console.log(getTimeStamp() + 'eventDetails|Error - ' + e)}
+})
+
 app.post('/getProdByCatg',function(req,res){
   try {
     var prdCollection = bmgDB.collection('Product');

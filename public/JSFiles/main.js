@@ -1119,6 +1119,7 @@ function redirectToHome() {
   deleteCookie('event_date');
   deleteCookie('event_category');
   deleteCookie('gender');
+  deleteCookie('eventID');
 
   $("#wishListURLModal").modal('hide');
   signuporlogin = "";
