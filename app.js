@@ -203,12 +203,12 @@ app.get('/findRegistry',function(req,res) {
 })
 
 app.get('/exportinvites',function(req,res) {
-/*  if (req.session.adminUser && req.session) {
-    console.log(getTimeStamp() + 'exportinvites|' + req.connection.remoteAddress);*/
+  if (req.session.adminUser && req.session) {
+    console.log(getTimeStamp() + 'exportinvites|' + req.connection.remoteAddress);
     res.sendFile(__dirname + "/email_templates/exportinvites.html");
-/*  } else {
+  } else {
     res.send("Un-Autorized Access. Your IP will be recorded.")
-  }*/
+  }
 })
 
 app.get('/review_product',function(req,res) {
