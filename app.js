@@ -202,6 +202,15 @@ app.get('/findRegistry',function(req,res) {
   res.sendFile(__dirname + "/site/findRegistry.html");
 })
 
+app.get('/exportinvites',function(req,res) {
+/*  if (req.session.adminUser && req.session) {
+    console.log(getTimeStamp() + 'exportinvites|' + req.connection.remoteAddress);*/
+    res.sendFile(__dirname + "/email_templates/exportinvites.html");
+/*  } else {
+    res.send("Un-Autorized Access. Your IP will be recorded.")
+  }*/
+})
+
 app.get('/review_product',function(req,res) {
   if (req.session.adminUser && req.session) {
     res.sendFile(__dirname + "/site/review_product.html");
@@ -370,7 +379,7 @@ app.post('/saveInviteTmplt',function(req,res) {
     var wishlistCollection = bmgDB.collection('WishList');
     var eventID = req.body.EventId;
     var templateId = req.body.TemplateId;
-    wishlistCollection.update({"event_id":eventID},{$set:{"TmpltId":templateId}}, function(err){
+    wishlistCollection.update({"event_id":eventID},{$set:{"TmpltId":templateId,"invExp":"N"}}, function(err){
       if (!err) {
         res.send("Success");
       }
@@ -379,6 +388,22 @@ app.post('/saveInviteTmplt',function(req,res) {
   }
   catch (e) {console.log(getTimeStamp() + 'eventDetails|Error - ' + e)}
 })
+
+app.post('/inviteSent',function(req,res) {
+  try {
+    console.log(getTimeStamp() + 'inviteSent|' + req.connection.remoteAddress);
+    var wishlistCollection = bmgDB.collection('WishList');
+    var eventID = req.body.EventId;
+    wishlistCollection.update({"event_id":eventID},{$set:{"invExp":"Y"}}, function(err){
+      if (!err) {
+        res.send("Success");
+      }
+      else {res.send("Error in fetching wishlist")}
+    })
+  }
+  catch (e) {console.log(getTimeStamp() + 'inviteSent|Error - ' + e)}
+})
+
 
 app.post('/getProdByCatg',function(req,res){
   try {
@@ -1126,8 +1151,29 @@ app.get('/New-Cart.html',function(req,res){
 app.get('/showWishList',function(req,res) {
   var qryStr = req.query.eventID;
   var uid = req.query.u;
+  console.log(getTimeStamp() + 'showWishList|' + req.connection.remoteAddress);
   res.render(__dirname+"/site/showWishList.ejs",{eventID : qryStr, uid_val : uid});
 });
+
+app.post('/invitesNotSent',function(req,res) {
+  try {
+    console.log(getTimeStamp() + 'invitesNotSent|' + req.connection.remoteAddress);
+    var wishList = bmgDB.collection('WishList');
+    wishList.find({"TmpltId":{$ne:null},"invExp":"N"},{event_id:1,TmpltId:1}).toArray(function(err,docs) {
+      if (!err) {
+        if (docs.length == 0) {res.send({})}
+        else {
+          //console.log(JSON.stringify(docs));
+          res.send(docs);
+        }
+      } //!err
+      else {console.log(err+'|'+req.connection.remoteAddress)}
+    })
+  }
+  catch (e) {
+    console.log(e+'|'+req.connection.remoteAddress);
+  }
+})
 
 app.post('/filterWishListByCatg',function(req,res){
   try {
