@@ -111,7 +111,7 @@
               footerHtml = footerHtml + '<div class="col-xs-2" style="text-align:right"></div></div>';//'<img src="images/'+tmpltId+'-btm-rt.png"></div></div>';
               $('#invite-footer').replaceWith(footerHtml);
               //footer
-              btnHtml = '<div class="row invite-row-btn" id="savebtn-row" style="top:780px">';
+              btnHtml = '<div class="row invite-row-btn" id="savebtn-row">';
               if (index == 0) {btnHtml = btnHtml + '<div class="col-xs-2"></div>'}
               else {btnHtml = btnHtml + '<div class="col-xs-2 style="text-align:center"><button class="btn btn-info" style="text-align:center" onclick="showInvites('+prevIndex+')"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>'}
               btnHtml = btnHtml + '<div class="col-xs-8" style="text-align:center"><button class="btn btn-primary btn-lg" onclick="inviteSent(\''+eventId+'\')">Send this invite</button></div>';
