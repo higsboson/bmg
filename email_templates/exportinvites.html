@@ -79,14 +79,14 @@
               //create invite title
               ttleHtml = '<div class="row invite-row-title"  id="invite-title">';
               ttleHtml = ttleHtml + '<div class="col-xs-2"></div>';
-              ttleHtml = ttleHtml + '<div class="col-xs-8"><p class="invite-title">'+result[0].wishlistMsg+'</p></div>';
+              ttleHtml = ttleHtml + '<div class="col-xs-8"><p class="invite-title">'+result[0].inviteGreeting+'</p></div>';
               ttleHtml = ttleHtml + '<div class="col-xs-2"></div></div>';
               $("#invite-title").replaceWith(ttleHtml);
               //title complete
               //create invite address
               addrHtml = '<div class="row invite-row-address" id="invite-address">';
               addrHtml = addrHtml + '<div class="col-xs-3"></div>';
-              addrHtml = addrHtml + '<div class="col-xs-6"><p class="invite-address"><br>At: '+result[0].addr+'</p><p class="invite-address" id="event-time">On: '+dtTime+'</p></div>';
+              addrHtml = addrHtml + '<div class="col-xs-6"><p class="invite-address"><br>At: '+result[0].addr+'</p><p class="invite-address" id="event-time">On: '+result[0].invite_date + ' at ' + result[0].invite_time +'</p></div>';
               addrHtml = addrHtml + '<div class="col-xs-3"></div></div>';
               $('#invite-address').replaceWith(addrHtml);
               //address complete
@@ -111,7 +111,7 @@
               footerHtml = footerHtml + '<div class="col-xs-2" style="text-align:right"></div></div>';//'<img src="images/'+tmpltId+'-btm-rt.png"></div></div>';
               $('#invite-footer').replaceWith(footerHtml);
               //footer
-              btnHtml = '<div class="row invite-row-btn" id="savebtn-row">';
+              btnHtml = '<div class="row invite-row-btn" style="top:850px" id="savebtn-row">';
               if (index == 0) {btnHtml = btnHtml + '<div class="col-xs-2"></div>'}
               else {btnHtml = btnHtml + '<div class="col-xs-2 style="text-align:center"><button class="btn btn-info" style="text-align:center" onclick="showInvites('+prevIndex+')"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>'}
               btnHtml = btnHtml + '<div class="col-xs-8" style="text-align:center"><button class="btn btn-primary btn-lg" onclick="inviteSent(\''+eventId+'\')">Send this invite</button></div>';
