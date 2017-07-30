@@ -874,14 +874,14 @@ function getUserProfileDetails(user,div) {
          //The following alert will need to be replaced by a modal dialog
              alert(JSON.stringify(res));
              if (res.length >=1) {
-               var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead style="background:#454282;color:#FFFFFF"><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Date</th></tr></thead><tbody>';
+               var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead style="background:#454282;color:#FFFFFF"><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Date</th><th>Notify</th></tr></thead><tbody>';
                for (i = 0; i < res.length ;i++) {
                  var d = new Date(res[i].EventDate);
                  var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear();
                  if (mode)
-                  table_text += '<tr data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
+                  table_text += '<tr ><th scope="row" data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + (i + 1) + '</th><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + res[i].EventName + '</td><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + res[i].EventType + '</td><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + datestring + '</td><td><a href="/invite_composer" onclick="setCookie(\'eventID\',\'' + res[i].event_id +  '\',2);setCookie(\'eventUID\',\'' + res[i].uid +  '\',2);setCookie(\'eventWID\',\'' + res[i].wid +  '\',2);">Send Invite</a></td></tr>';
                  else
-                  table_text += '<tr data-toggle="modal" data-target="#viewOldWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',,\'' + res[i].notification_sent +  '\'0)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td></tr>';
+                  table_text += '<tr data-toggle="modal" data-target="#viewOldWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',,\'' + res[i].notification_sent +  '\'0)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td><td><a href="#" onclick="alert(\'test\')">Send Invite</a></td></tr>';
                }
               table_text += '</tbody></table>';
               if (mode)
@@ -1110,6 +1110,10 @@ function getUserProfileDetails(user,div) {
    document.getElementById("CartId").innerHTML="Registry ("+newCartLngth+")";
    $("#CartId").click();
  };
+
+function sendInvite() {
+  window.location.href = "/send_invite";
+}
 
 function redirectToHome() {
   //4/16/2017 - higsboson - moved redirection to home in separate fuction & called on OK button of modal
