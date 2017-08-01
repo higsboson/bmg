@@ -1,0 +1,457 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="css/main.css" >
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
+  <script src="JSFiles/moment-with-locales.min.js"></script>
+  <script src="JSFiles/main.js"></script>
+  <script src="JSFiles/sha256.js"></script>
+  <script src="JSFiles/invite_composer.js"></script>
+  <script>
+  $(document).ready(function() {
+    $('#invite_details').hide();
+
+
+  });
+  </script>
+
+
+</head>
+
+<div id="personalizationModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="personalizationModalLabel">
+  <div class="modal-dialog">
+    <div class = "modal-content">
+      <div class="modal-header"><h1 class="modal-title" style="font-family:'Merriweather', serif" id="personalizeHeading"><b>Planning Event...</b></h1></div>
+      <div class="modal-body">
+          <p id="personalize" style="font-family:'Merriweather', serif;font-size:16px">Want to personalize your wishlist? Leave a special message for the people who will be viewing your wishlist.</p>
+          <textarea class="form-control" rows="5" id="message" placeholder="Hello There!&#10;&#13;&#10;&#13;Thanks for taking the time to go through my wishlist. :)&#10;&#13;&#10;&#13;See you soon!"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" style="display:default;float:left" data-dismiss="modal" id="saveMessageDefault">Skip</button>
+          <button type="button" class="btn btn-info" style="display:default;float:right" data-dismiss="modal" id="saveMessageButton">Save Message</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="validateModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="validateModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" id="validate_modal_title">Invalid input</h4>
+        </div>
+        <div class="modal-body">
+            <p style="font-family:'Merriweather', serif;font-size:16px" id="modalMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <div id="emailModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel">
+    <div class="modal-dialog">
+      <div class = "modal-content">
+        <div class="modal-header"><h1 class="modal-title" style="font-family:'Merriweather', serif" id="personalizeHeading"><b>BeMyGenie Registry Notification</b></h1></div>
+        <div class="modal-body">
+            <p id="personalize" style="font-family:'Merriweather', serif;font-size:16px">Want bemygenie to send out an email notification to your guests for your upcoming event ? Please key in the email addresses and we will send them an email with a link to your registry!</p>
+            <textarea class="form-control" rows="5" id="message" placeholder="abc@gmail.com;xyz@hotmail.com;guest3@gmail.com"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning" style="display:default;float:left" data-dismiss="modal" id="saveMessageDefault">Skip</button>
+            <button type="button" class="btn btn-info" style="display:default;float:right" data-dismiss="modal" id="saveMessageButton">Save Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="modal fade" id="amzDisclaimer" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Disclaimer</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+             Product prices and availability are accurate as of the date/time indicated and are subject to change. Any price and availability information displayed on Amazon.in at the time of purchase will apply to the purchase of this product.
+          </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<body class="admin-body">
+
+  <div class="modal" id="bmgNotificationModal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">BMG Registry Notification System</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+            Please provide the list of email addresses to which you would like us to send the email. Do note that we can only send upto a maximum of 50 email addresses. Please use a comma to seperate each email address.</p>
+            <textarea class="form-control" rows="5" id="notification_message" placeholder="guest@example.com,guest1@example.com,guest2@example.com,guest3@example.com,guest4@example.com,guest5@example.com"></textarea>
+            <br />
+            <p>
+              Note: This notification system can be used only once per wishlist.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-success" style="float:left" onclick="sendNotification()")>Send Notification</button>
+        <button type="button" data-dismiss="modal" class="btn btn-primary">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+  <!-- Modal Starts here-->
+  <!-- This is the modal that will list out the product list for active wishlists.-->
+    <div class="modal" id="viewWishListModal" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title"><div id="wishlistname">The Names</div></h3>
+          </div>
+          <div class="modal-body">
+            <div id="summaryDescription">
+              <p class="summary">Your wishlist has x items of which y has already been purchased.</p>
+            </div>
+            <div id="wishListLink">
+              <br />
+              <p class="summary">Wishlist Link:
+              </p>
+            </div>
+
+
+            <br />
+            <div id="wishlistsummary" style="height:300px;overflow: scroll;">
+
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" data-dismiss="modal" style="float:left" onclick="showSendNotification()" id="sendNotificationButton" disabled>Send BMG Notification</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  <!-- Modal Ends here-->
+  <!-- This is the modal that will list out the product list for inactive wishlists.-->
+    <div class="modal fade" id="viewOldWishListModal" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h3 class="modal-title"><div id="wishlistoldname">The Names</div></h3>
+          </div>
+          <div class="modal-body">
+            <div id="summaryOldDescription">
+              <p class="summary">Your wishlist has x items of which y has already been purchased.</p>
+            </div>
+
+
+
+            <br />
+            <div id="wishlistoldsummary" style="height:500px;overflow: scroll;">
+
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  <!-- Modal Ends here-->
+  <!-- 3/31/2017 - trznt - This is a Login modal. -->
+  <!-- Modal Starts here-->
+    <div class="modal fade" id="changePassword" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Change Password</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+               You can change your password here.
+            </p>
+            <div class="form-group" id="form-group_existing-password">
+              <label for="username">Current Password:</label>
+            </div>
+            <input type="password" class="form-control" name="email" id="e_password" required/>
+            <br />
+            <div class="form-group" id="form-group_new-password1">
+              <label for="password">New Password:</label>
+            </div>
+            <input type="password" class="form-control" name="email" id="login_password" required/>
+            <br />
+            <div class="form-group" id="form-group_new-password2">
+              <label for="password">Repeat New Password:</label>
+            </div>
+            <input type="password" class="form-control" name="email" id="login_password2" required/>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="changePassword()">Change Password</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  <!-- Modal Ends here-->
+  <!-- Modal Starts here-->
+  <div class="modal fade" id="information_modal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" id="information_modal-title-id"></h4>
+        </div>
+        <div class="modal-body">
+        <span class="glyphicon glyphicon-info-sign"></span>
+          <p id="information_modal-p-id">
+
+          </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  <div class="modal fade" id="warning_modal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" id="warning_modal-title-id"></h4>
+        </div>
+        <div class="modal-body">
+        <span class="glyphicon glyphicon-warning-sign"></span>
+          <p id="warning_modal-p-id" style="text-align:left">
+
+          </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-primary">Close</button>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+  <div class="modal fade" id="error_modal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" id="error_modal-title-id"></h4>
+        </div>
+        <div class="modal-body">
+        <span class="glyphicon glyphicon-remove-sign"></span>
+          <p id="error_modal-p-id">
+
+          </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-primary" id="error_modal-close">Close</button>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+      <div class="nav-container ">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <!--<a class="navbar-brand wide" href="/home">bemygenie.com - Hello, <%=username%> !</a>-->
+          <a href="/home"><img class="navbar-brand wide" src="images/logos/logo.png" ></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse user-header">
+          <ul class="nav navbar-nav">
+
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><div class="welcome-message">Hello, <br> <%=username%>!</div></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#" onclick=getUserProfileDetails($('#user').val(),'active_lists')>Profile</a></li>
+                <li><a href="#" onclick="getUserWishLists($('#user').val(),'active_lists',0);">Previous Wishlists</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#" onclick="logout();">Logout</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Help</a></li>
+
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container user-dashboard" id="invite_options">
+        <div class="row" style="padding-top:100px"></div>
+        <div class="row">
+          <div col="col-sm-12">
+            <h2>Send your Invite.</h2>
+            <p style="font-size:16px">
+              You can choose one of the options to send an invite. Once you have created the invite, we will also be sending a copy  of the invite (as an image) via whatsapp to your phone!.
+            </p>
+          </div>
+        </div>
+        <div class="row" style="padding-top:30px"></div>
+        <div class="row">
+          <div class="col-sm-1"></div>
+          <div class="col-sm-4 invite-option">
+            <h2>Have Bemygenie.com email invites to your guests.</h2>
+            <p>
+              (You will need to have a list of your guests' email addresses handy.)
+            </p>
+          </div>
+          <div class="col-sm-2"></div>
+          <div class="col-sm-4 invite-option">
+            <h2>Have Bemygenie email the invite only to me. I will forward it along to all guests.</h2>
+          </div>
+          <div class="col-sm-1"></div>
+        </div>
+
+
+        <div class="row" style="padding-top:100px"></div>
+    </div>
+
+
+
+
+  <div class="container user-dashboard" id="invite_details">
+      <div class="row" style="padding-top:100px"></div>
+      <div class="row">
+        <div col="col-sm-12">
+          <h2>Invitation Details</h2>
+        </div>
+      </div>
+    <div class="row">
+      <div class="col-sm-4" style="text-align:right;font-size:20px">
+        <div class="form-group" id="event_name_field">
+        <label for="event_name">Welcome Greeting:</label>
+        </div>
+      </div>
+
+      <div class="col-sm-6" style="text-align:center">
+        <input type="text" class="form-control" name="event_name" id="event_greeting" placeholder="eg. We are setting up an amazing party!" />
+      </div>
+      <div class="col-sm-2" style="text-align:center">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4" style="text-align:right;font-size:20px">
+        <div class="form-group" id="event_name_field">
+        <label for="event_name">Event Venue Address:</label>
+        </div>
+      </div>
+
+      <div class="col-sm-6" style="text-align:center">
+        <input type="text" class="form-control" name="event_name" id="event_address" />
+      </div>
+      <div class="col-sm-2" style="text-align:center">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4" style="text-align:right;font-size:20px">
+        <div class="form-group" id="event_name_field">
+        <label for="event_name">Date of Event</label>
+        </div>
+      </div>
+
+      <div class="col-sm-6" style="text-align:center">
+        <input type="text" class="form-control" name="event_name" id="event_date" placeholder="17/11/2017"/>
+      </div>
+      <div class="col-sm-2" style="text-align:center">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-4" style="text-align:right;font-size:20px">
+        <div class="form-group" id="event_name_field">
+        <label for="event_name">Time of Event:</label>
+        </div>
+      </div>
+
+      <div class="col-sm-6" style="text-align:center">
+        <input type="text" class="form-control" name="event_name" id="event_time" placeholder="5:00 PM"/>
+      </div>
+      <div class="col-sm-2" style="text-align:center">
+      </div>
+    </div>
+    <div class="row" style="padding-top:50px"></div>
+    <div class="row" style="padding-top:15px;text-align:center">
+      <button type="button" class="btn btn-primary btn-lg" onclick="startComposing();">Create Invite!</button>
+    </div>
+    <div class="row" style="padding-top:100px"></div>
+    <div class="row" style="padding-top:100px"></div>
+  </div>
+
+
+<p>
+   <input type="hidden" name="user" value="<%=userID%>" id="user">
+   <input type="hidden" name="username" value="<%=username%>" id="username">
+
+
+
+
+</p>
+<footer>
+  <!--/.footer-->
+<div class="footer-bottom user-dashboard">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-2">
+        <a href="https://www.instantssl.com/ssl-certificate-products/multi-domain-ssl-certificate.html">
+          <img src="https://ssl.comodo.com/images/comodo_secure_seal_113x59_transp.png" alt="Multi Domain SSL" width="113" height="59" style="border: 0px;"><br> <span style="color:#FFFFFF;font-weight:bold; font-size:7pt">Multi Domain SSL</span></a><br>
+      </div>
+      <div class="col-sm-8" style="padding-top:20px">
+        <p class="pull-left"> Copyright © bemygenie.com 2017 </p>
+        <br />
+        <p class="pull-left" style="font-size:8px">
+           CERTAIN CONTENT THAT APPEARS ON THIS SITE COMES FROM AMAZON.IN PRIVATE LTD. THIS CONTENT IS PROVIDED 'AS IS' AND IS SUBJECT TO CHANGE OR REMOVAL AT ANY TIME.
+        </p>
+        </div>
+        <div class="col-sm-2" style="padding-top:20px">
+          <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:admin@bemygenie.com" style="color:#ffffff">Planet Joy</a></a>.</p>
+         </div>
+
+    </div>
+   </div>
+   <input type="hidden" id="event_ID_notification" name="event_ID_notification" value="" />
+   <input type="hidden" id="event_URL_notification" name="event_URL_notification" value="" />
+</div>
+<!--/.footer-bottom-->
+</footer>
+</body>
+</html>

@@ -19,20 +19,21 @@
     <script>
     function saveTmplt (templateId) {
       try {
-        var eventId = getCookie("eventID");
+        var eventUID = getCookie("eventUID");
+        var eventWID = getCookie("eventWID");
         $.ajax ({
           type : 'POST',
           url  : '/saveInviteTmplt',
-          data : {"EventId":eventId,"TemplateId":templateId},
+          data : {"eventUID":eventUID,"eventWID":eventWID,"TemplateId":templateId},
           success : function (result) {
             $("#tmpltModal").modal('show');
           },
           error : function (res) {
-            alert("Error in saving event template. Please try again later.")
+            alert("Error in saving event template. Please try again later." + res)
           }
         })
       }
-      catch (e) {alert("Error in saving event template. Please try again later.")}
+      catch (e) {alert("Error in saving event template. Please try again later." + e)}
     }
 
     function showInvite (index,eventId,eventType,rcvrName,dtTime) {
@@ -143,9 +144,9 @@
           try {
             rcvrName = result[0].RcvrName;
             $("#address").val(result[0].addr);
-            dtTime = result[0].dtTime; //need to check how to get date + time in non-iso
+            dtTime = result[0].invite_date + ' at ' + result[0].invite_time; //need to check how to get date + time in non-iso
             eventType = result[0].EventType;
-            $("#message").val(result[0].wishlistMsg);
+            $("#message").val(result[0].inviteGreeting);
             //get the templates for the event type
             $.get("/getEventTmplt",{"EventType":eventType},function(data,status) {
               var tmpltStr = "";
@@ -179,7 +180,7 @@
             <p id="wishListLink" style="font-family:'Merriweather', serif;font-size:16px">Your invite is saved and will be sent out as per your preferences within the next 24 hours.</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" style="display:default" onclick="redirectToHome()">Ok</button>
+            <button type="button" class="btn btn-default" style="display:default" onclick="sendInvite()">Ok</button>
           </div>
         </div>
       </div>

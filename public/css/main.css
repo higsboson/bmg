@@ -785,6 +785,24 @@ a.product-review {
     z-index: 99;
 }
 
+.invite-option {
+  padding: 30px;
+  border-radius: 10px;
+  background-color: rgb(226,174,190);
+  color: #ffffff;
+  -webkit-transition: background-color 0.3s; /* For Safari 3.1 to 6.0 */
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s;
+  font-smoothing: antialiased;
+}
+
+.invite-option:hover {
+  padding: 30px;
+  border-radius: 10px;
+  background-color: rgb(122,43,67);
+  color: #ffffff;
+}
+
 /* CSS animation */
 
 @-webkit-keyframes fadeIn {

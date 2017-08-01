@@ -363,7 +363,7 @@ app.post('/eventDetails',function(req,res) {
     console.log(getTimeStamp() + 'eventDetails|' + req.connection.remoteAddress);
     var wishlistCollection = bmgDB.collection('WishList');
     var qryStr = req.body.EventId;
-    wishlistCollection.find({"event_id":qryStr},{"EventType":1,"RcvrName":1,"wishlistMsg":1,"addr":1,"EventDate":1,"dtTime":1}).toArray(function(err,docs) {
+    wishlistCollection.find({"event_id":qryStr},{"EventType":1,"RcvrName":1,"inviteGreeting":1,"addr":1,"EventDate":1,"invite_date":1,"invite_time":1}).toArray(function(err,docs) {
       if (!err) {
         res.send(docs);
       }
@@ -377,13 +377,29 @@ app.post('/saveInviteTmplt',function(req,res) {
   try {
     console.log(getTimeStamp() + 'saveInviteTmplt|' + req.connection.remoteAddress);
     var wishlistCollection = bmgDB.collection('WishList');
-    var eventID = req.body.EventId;
     var templateId = req.body.TemplateId;
-    wishlistCollection.update({"event_id":eventID},{$set:{"TmpltId":templateId,"invExp":"N"}}, function(err){
+        wishlistCollection.update({"uid":req.body.eventUID,"wid":req.body.eventWID},{$set:{"TmpltId":templateId,"invExp":"N"}}, function(err){
       if (!err) {
         res.send("Success");
       }
       else {res.send("Error in fetching wishlist")}
+    })
+  }
+  catch (e) {console.log(getTimeStamp() + 'eventDetails|Error - ' + e)}
+})
+
+app.post('/updateEventDetailsForWishList',function(req,res) {
+  try {
+    console.log(getTimeStamp() + 'updateEventDetailsForWishList|' + req.connection.remoteAddress);
+    var wishlistCollection = bmgDB.collection('WishList');
+    var eventUID = req.body.EventUID;
+    var eventWID = req.body.EventWID;
+    console.log(req.body.addr + req.body.inviteGreeting + req.body.event_time);
+      wishlistCollection.update({"uid":eventUID,"wid":eventWID},{$set:{addr:req.body.addr,inviteGreeting:req.body.inviteGreeting,invite_date:req.body.invite_date,invite_time:req.body.invite_time}}, function(err){
+      if (!err) {
+        res.send("Success");
+      }
+      else {res.send("Error in fetching wishlist" + err)}
     })
   }
   catch (e) {console.log(getTimeStamp() + 'eventDetails|Error - ' + e)}
@@ -913,6 +929,40 @@ app.post('/home',urlencodedParser, function (req,res) {
     // To pick information about the user.
     console.log(getTimeStamp() + 'UserHome|' + req.connection.remoteAddress)
     res.render(__dirname + "/site/home.ejs",{userID : sha256(req.session.user),username: req.session.name});
+    //console.log("call made to home.html with valid session " + req.session.user);
+  } else {
+    // If this is not a valid session then the user gets a message that the
+    // session is not valid
+    // At a later time, this should be a login page
+    res.redirect('/');
+  }
+});
+
+app.get('/invite_composer',urlencodedParser, function (req,res) {
+  // Checking if a valid session exists.
+  if (req.session && req.session.user) {
+    //rendering Home page with user ID
+    // On load of the ejs file, it will use the user ID reference
+    // To pick information about the user.
+    console.log(getTimeStamp() + 'InviteComposer|' + req.connection.remoteAddress)
+    res.render(__dirname + "/site/invite_composer.ejs",{userID : sha256(req.session.user),username: req.session.name});
+    //console.log("call made to home.html with valid session " + req.session.user);
+  } else {
+    // If this is not a valid session then the user gets a message that the
+    // session is not valid
+    // At a later time, this should be a login page
+    res.redirect('/');
+  }
+});
+
+app.get('/send_invite',urlencodedParser, function (req,res) {
+  // Checking if a valid session exists.
+  if (req.session && req.session.user) {
+    //rendering Home page with user ID
+    // On load of the ejs file, it will use the user ID reference
+    // To pick information about the user.
+    console.log(getTimeStamp() + 'SendInvite|' + req.connection.remoteAddress)
+    res.render(__dirname + "/site/send_invite.ejs",{userID : sha256(req.session.user),username: req.session.name});
     //console.log("call made to home.html with valid session " + req.session.user);
   } else {
     // If this is not a valid session then the user gets a message that the
