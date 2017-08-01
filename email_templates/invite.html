@@ -26,7 +26,8 @@
           url  : '/saveInviteTmplt',
           data : {"eventUID":eventUID,"eventWID":eventWID,"TemplateId":templateId},
           success : function (result) {
-            $("#tmpltModal").modal('show');
+            //$("#tmpltModal").modal('show');
+            sendInvite();
           },
           error : function (res) {
             alert("Error in saving event template. Please try again later." + res)
@@ -230,13 +231,14 @@
         </div>
         <div class="col-xs-2" style="text-align:right"></div>
       </div>
-      <div class="row invite-row-btn" id="savebtn-row">
-        <div class="col-xs-2"></div>
-        <div class="col-xs-8" style="text-align:center">
-          <button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button>
-        </div><div class="col-xs-2"></div>
-      </div>
+
     </div> <!--image-->
+    <div class="row invite-row-btn" id="savebtn-row">
+      <div class="col-xs-2"></div>
+      <div class="col-xs-8" style="text-align:center">
+        <button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button>
+      </div><div class="col-xs-2"></div>
+    </div>
   </div></div>
     <!--</div>-->
 </body>

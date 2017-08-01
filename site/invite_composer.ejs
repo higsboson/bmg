@@ -14,6 +14,7 @@
   <script>
   $(document).ready(function() {
     $('#invite_options').hide();
+    $('#event_date').val(getCookie("event_date"));
 
 
   });
@@ -319,7 +320,7 @@
     <div class="container user-dashboard" id="invite_options">
         <div class="row" style="padding-top:100px"></div>
         <div class="row">
-          <div col="col-sm-12">
+          <div col="col-sm-12 user-active-list">
             <h2>Send an Invite.</h2>
             <p>
               You can choose one of the options to send an invite. Once you have created the invite, we will also be sending a copy  of the invite (as an image) via whatsapp to your phone!.
@@ -348,10 +349,11 @@
   <div class="container user-dashboard" id="invite_details">
       <div class="row" style="padding-top:100px"></div>
       <div class="row">
-        <div col="col-sm-12">
+        <div class="col-sm-12 user-active-list">
           <h2>Invitation Details</h2>
         </div>
       </div>
+      <div class="row" style="padding-top:30px"></div>
     <div class="row">
       <div class="col-sm-4" style="text-align:right;font-size:20px">
         <div class="form-group" id="event_name_field">
