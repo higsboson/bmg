@@ -30,10 +30,27 @@
                         //$("#tmpltModal").modal('show');
             html2canvas(document.getElementById('image'), {
               onrendered: function(canvas) {
-                document.body.appendChild(canvas);
+                //document.body.appendChild(canvas);
+                var dataURL = canvas.toDataURL();
+                $.ajax({
+                  type: "POST",
+                  url: "/saveInviteImage",
+                  data: {
+                     imgBase64: dataURL,
+                     fname: getCookie("eventID").replace(/ /g,'')
+                  }
+                }).done(function(o) {
+                  alert('reponse is ' + o);
+                  sendInvite();
+                  // If you want the file to be visible in the browser
+                  // - please modify the callback in javascript. All you
+                  // need is to return the url to the file, you just saved
+                  // and than put the image in your browser.
+                });
               }
+
             });
-            //sendInvite();
+
           },
           error : function (res) {
             alert("Error in saving event template. Please try again later." + res)
@@ -42,6 +59,14 @@
       }
       catch (e) {alert("Error in saving event template. Please try again later." + e)}
     }
+
+    $(document).ready(function() {
+      //var screenWidth = $(window).width();
+      //alert(screenWidth);
+
+       //$('#image').css('width', (parseInt('836') + (screenWidth/2)) + 'px');
+
+    })
 
     function showInvite (index,eventId,eventType,rcvrName,dtTime) {
       try {
@@ -61,64 +86,66 @@
         $('head:first').append('<link rel="stylesheet" type="text/css" href="css/'+tmpltId+'.css" />');
           imgStr = '<img src="images/'+tmpltId+'.jpg" alt="" id="back-img"/>';
           $("#back-img").replaceWith(imgStr);
+          var img = document.getElementById('back-img');
+          img.onload = function () { alert(img.width + ' x ' + img.height); $('#image').css('width', img.width + 'px');$('#image').css('height', img.height + 'px');};
           // Create invite header
-          hdrHtml = '<div class="row invite-row-header" id="invite-header">';
-          hdrHtml = hdrHtml + '<div class="col-sm-2" style="text-align:center"></div>';
-          hdrHtml = hdrHtml + '<div class="col-sm-8"><p class="invite-header">You\'re invited!</p></div>';
-          hdrHtml = hdrHtml + '<div class="col-sm-2" style="text-align:center"></div>';
+          hdrHtml = '<div class="invite-row-header" id="invite-header">';
+          hdrHtml = hdrHtml + '<div  style="text-align:center"></div>';
+          hdrHtml = hdrHtml + '<div ><p class="invite-header">You\'re invited!</p></div>';
+          hdrHtml = hdrHtml + '<div  style="text-align:center"></div>';
           hdrHtml = hdrHtml + '</div>';
           $("#invite-header").replaceWith(hdrHtml);
           //header complete
           //create invite title
           //seed = seed+190;
-          ttleHtml = '<div class="row invite-row-title"  id="invite-title">';
-          ttleHtml = ttleHtml + '<div class="col-xs-2"></div>';
-          ttleHtml = ttleHtml + '<div class="col-xs-8"><p class="invite-title">'+cstmIvnviteMsg+'</p></div>';
-          ttleHtml = ttleHtml + '<div class="col-xs-2"></div></div>';
+          ttleHtml = '<div class="invite-row-title"  id="invite-title">';
+          ttleHtml = ttleHtml + '<div ></div>';
+          ttleHtml = ttleHtml + '<div ><p class="invite-title">'+cstmIvnviteMsg+'</p></div>';
+          ttleHtml = ttleHtml + '<div ></div></div>';
           $("#invite-title").replaceWith(ttleHtml);
           //title complete
           //create invite address
           //seed = seed + 100;
-          addrHtml = '<div class="row invite-row-address" id="invite-address">';
+          addrHtml = '<div class="invite-row-address" id="invite-address">';
           if (index==0) {
-            addrHtml = addrHtml + '<div class="col-xs-3"></div>';
+            addrHtml = addrHtml + '<div ></div>';
           }
           else {
-            addrHtml = addrHtml + '<div class="col-xs-3"><button class="btn btn-info" style="text-align:center" onclick="showInvite('+prevIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>';
+            addrHtml = addrHtml + '<div><button class="btn btn-info" style="text-align:center" onclick="showInvite('+prevIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>';
           }
-          addrHtml = addrHtml + '<div class="col-xs-6"><p class="invite-address"><br>At: '+addr+'</p><p class="invite-address" id="event-time">On: '+dtTime+'</p></div>';
+          addrHtml = addrHtml + '<div><p class="invite-address"><br>At: '+addr+'</p><p class="invite-address" id="event-time">On: '+dtTime+'</p></div>';
           if (index == tmpltArr.length-1) {
-            addrHtml = addrHtml + '<div class="col-xs-3"></div></div>';
+            addrHtml = addrHtml + '<div></div></div>';
           }
           else {
-            addrHtml = addrHtml + '<div class="col-xs-3" style="text-align:center"><button class="btn btn-info" onclick="showInvite('+nextIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span><span class="sr-only">Next</span></button></div></div>';
+            addrHtml = addrHtml + '<div style="text-align:center"><button class="btn btn-info" onclick="showInvite('+nextIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span><span class="sr-only">Next</span></button></div></div>';
           }
           $('#invite-address').replaceWith(addrHtml);
           //address complete
           //wishlist header
           //seed = seed + 150;
-          wishHeadStr = '<div class="row invite-row-wishlist-head" id="wishlistHead">';
-          wishHeadStr = wishHeadStr + '<div class="col-xs-2"></div>';
-          wishHeadStr = wishHeadStr + '<div class="col-xs-8"><p class="invite-wishlist" id="wishlist-head"><br>Have a look at a list of gifts collated at Bemygenie which will delight your host:</p></div>';
-          wishHeadStr = wishHeadStr + '<div class="col-xs-2"></div></div>';
+          wishHeadStr = '<div class="invite-row-wishlist-head" id="wishlistHead">';
+          wishHeadStr = wishHeadStr + '<div ></div>';
+          wishHeadStr = wishHeadStr + '<div ><p class="invite-wishlist" id="wishlist-head"><br>You are welcome to check out our gift registry for this event at:</p></div>';
+          wishHeadStr = wishHeadStr + '<div ></div></div>';
           $("#wishlistHead").replaceWith(wishHeadStr);
           //wishlist head complete
           //footer
           //seed = seed + 60;
-          footerHtml = '<div class="row invite-row-footer" id="invite-footer">';
-          footerHtml = footerHtml + '<div class="col-xs-2" style="text-align:left"></div>';//'<img src="images/'+tmpltId+'-btm-lt.png"></div>';
-          footerHtml = footerHtml + '<div class="col-xs-8" style="text-align:center">';
-          footerHtml = footerHtml + '<a href="#" target="_blank" class="invite-wishlist-url">https://www.bemygenie.com/findRegistry</a>';
+          footerHtml = '<div class="invite-row-footer" id="invite-footer">';
+          footerHtml = footerHtml + '<div  style="text-align:left"></div>';//'<img src="images/'+tmpltId+'-btm-lt.png"></div>';
+          footerHtml = footerHtml + '<div  style="text-align:center">';
+          footerHtml = footerHtml + '<p class="bemygenie">www.bemygenie.com</p>';
           footerHtml = footerHtml + '<p id="wishlist-event-id" class="invite-wishlist-id" style="text-align:center;">Event Id : '+eventId+'</p>';
-          footerHtml = footerHtml + '<div class="row bmg-logo-row"><div class="col-xs-1"></div>';
-          footerHtml = footerHtml + '<div class="col-xs-10" style="text-align:center">';
+          footerHtml = footerHtml + '<div class="bmg-logo-row"><div ></div>';
+          footerHtml = footerHtml + '<div  style="text-align:center">';
           footerHtml = footerHtml + '<a href="https://www.bemygenie.com/howitworks.html" target="_blank">It is Free, It is Online, It is convenient & It is optional. Clck to find out how it works</a>';
           footerHtml = footerHtml + '<p> Powered by : <img src="images/logos/logo-invite.png"></p>';
-          footerHtml = footerHtml + '</div><div class="col-xs-1"></div></div></div>';
-          footerHtml = footerHtml + '<div class="col-xs-2" style="text-align:right"></div></div>';//'<img src="images/'+tmpltId+'-btm-rt.png"></div></div>';
+          footerHtml = footerHtml + '</div><div></div></div></div>';
+          footerHtml = footerHtml + '<div style="text-align:right"></div></div>';//'<img src="images/'+tmpltId+'-btm-rt.png"></div></div>';
           $('#invite-footer').replaceWith(footerHtml);
           //footer
-          btnHtml = '<div class="row invite-row-btn" id="savebtn-row"><div class="col-xs-2"></div><div class="col-xs-8" style="text-align:center"><button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button></div><div class="col-xs-2"></div></div>';
+          btnHtml = '<div class="invite-row-btn" id="savebtn-row"><div></div><div style="text-align:center"><button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button></div><div ></div></div>';
           $("#savebtn-row").replaceWith(btnHtml);
       }
       catch (e) {alert(e)}
@@ -198,56 +225,56 @@
       <input type="hidden" class="form-control" id="address" disabled>
       <input type="hidden" class="form-control" id="message" disabled>
     </form>
-<div class="container">
+<div >
 
 
 
-    <div class = "row" style="text-align:center"><div class="col-xs-12">
-      <div class="image" id="image">
+    <div style="text-align:center"><div >
+      <div class="image" id="image" style="height:836px;width:1150px">
       <img src="" alt="" id="back-img" />
-      <div class="row invite-row-header" id="invite-header">
-        <div class="col-sm-2" style="text-align:center"></div>
-        <div class="col-sm-8"></div>
-        <div class="col-sm-2" style="text-align:center"></div>
+      <div class="invite-row-header" id="invite-header">
+        <div style="text-align:center"></div>
+        <div ></div>
+        <div  style="text-align:center"></div>
       </div>
-      <div class="row invite-row-title"  id="invite-title">
-        <div class="col-xs-2"></div>
-        <div class="col-xs-8"></div>
-        <div class="col-xs-2"></div>
+      <div class="invite-row-title"  id="invite-title">
+        <div ></div>
+        <div ></div>
+        <div ></div>
       </div>
-      <div class="row invite-row-address" id="invite-address">
-        <div class="col-xs-3"></div>
-        <div class="col-xs-6"><p class="invite-address"><br></p><p class="invite-address" id="event-time"></p></div>
-        <div class="col-xs-3"></div>
+      <div class="invite-row-address" id="invite-address">
+        <div ></div>
+        <div ><p class="invite-address"><br></p><p class="invite-address" id="event-time"></p></div>
+        <div ></div>
       </div>
-      <div class="row invite-row-wishlist-head" id="wishlistHead">
-        <div class="col-xs-2"></div>
-        <div class="col-xs-8"><p class="invite-wishlist" id="wishlist-head"><br>Have a look at a list of gifts collated at Bemygenie which will delight your host:</p></div>
-        <div class="col-xs-2"></div>
+      <div class="invite-row-wishlist-head" id="wishlistHead">
+        <div ></div>
+        <div ><p class="invite-wishlist" id="wishlist-head"><br>Have a look at a list of gifts collated at Bemygenie which will delight your host:</p></div>
+        <div ></div>
       </div>
 
-      <div class="row invite-row-footer" id="invite-footer">
-        <div class="col-xs-2" style="text-align:left"></div>
-        <div class="col-xs-8" style="text-align:center">
+      <div class="invite-row-footer" id="invite-footer">
+        <div  style="text-align:left"></div>
+        <div  style="text-align:center">
           <a href="#" target="_blank" class="invite-wishlist-url">https://www.bemygenie.com/findRegistry</a>
           <p class="invite-wishlist-id" style="text-align:center">Event Id : </p>
           <br>
-          <div class="row"><div class="col-xs-2"></div>
-            <div class="col-xs-8">
+          <div ><div ></div>
+            <div >
               <p><a href="https://www.bemygenie.com/howitworks.html" target="_blank">It is Free, It is Online, It is convenient & It is optional. Clck to find out how it works</a>
               Powered by : <img src="images/logos/logo-invite.png"></p>
-            </div><div class="col-xs-2"></div>
+            </div><div ></div>
           </div>
         </div>
-        <div class="col-xs-2" style="text-align:right"></div>
+        <div  style="text-align:right"></div>
       </div>
 
     </div> <!--image-->
-    <div class="row invite-row-btn" id="savebtn-row">
-      <div class="col-xs-2"></div>
-      <div class="col-xs-8" style="text-align:center">
+    <div class="invite-row-btn" id="savebtn-row">
+      <div ></div>
+      <div  style="text-align:center">
         <button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button>
-      </div><div class="col-xs-2"></div>
+      </div><div ></div>
     </div>
   </div></div></div>
     <!--</div>-->

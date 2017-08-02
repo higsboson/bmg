@@ -12,3 +12,15 @@ function startComposing(){
     error : function(res) {alert("Error addint!")}
   })
 }
+
+
+function getFile() {
+  $.ajax({
+    type : 'GET',
+    url :"/downloadFile",
+    success : function(res) {
+      //window.location.href = "/"
+    },
+    error : function(res) {alert("Error with download!")}
+  })
+}
