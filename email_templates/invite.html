@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css?family=Alex+Brush|Great+Vibes|Parisienne" rel="stylesheet">
     <script src="JSFiles/moment-with-locales.min.js"></script>
     <script src="JSFiles/main.js"></script>
+    <script src="JSFiles/html2canvas.js"></script>
     <script>
     function saveTmplt (templateId) {
       try {
@@ -26,8 +27,13 @@
           url  : '/saveInviteTmplt',
           data : {"eventUID":eventUID,"eventWID":eventWID,"TemplateId":templateId},
           success : function (result) {
-            //$("#tmpltModal").modal('show');
-            sendInvite();
+                        //$("#tmpltModal").modal('show');
+            html2canvas(document.getElementById('image'), {
+              onrendered: function(canvas) {
+                document.body.appendChild(canvas);
+              }
+            });
+            //sendInvite();
           },
           error : function (res) {
             alert("Error in saving event template. Please try again later." + res)
@@ -192,8 +198,12 @@
       <input type="hidden" class="form-control" id="address" disabled>
       <input type="hidden" class="form-control" id="message" disabled>
     </form>
+<div class="container">
+
+
+
     <div class = "row" style="text-align:center"><div class="col-xs-12">
-      <div class="image">
+      <div class="image" id="image">
       <img src="" alt="" id="back-img" />
       <div class="row invite-row-header" id="invite-header">
         <div class="col-sm-2" style="text-align:center"></div>
@@ -239,7 +249,7 @@
         <button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button>
       </div><div class="col-xs-2"></div>
     </div>
-  </div></div>
+  </div></div></div>
     <!--</div>-->
 </body>
 </html>
