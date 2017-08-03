@@ -313,7 +313,7 @@ app.post('/showReports',function(req,res) {
 })
 
 app.get('/downloadFile',function(req,res) {
-  console.log(getTimeStamp() + 'DownlaodFile|' + req.connection.remoteAddress)
+  console.log(getTimeStamp() + 'DownloadFile|' + req.connection.remoteAddress)
   if (typeof req.session.downloadkey === 'undefined') {
         res.send("Un-Autorized Access.")
         console.log('Un-Autorized Access')
@@ -887,6 +887,17 @@ app.post('/sendMailerNotification',urlencodedParser,function(req,res) {//change 
   }
 });
 
+app.post('/updateSentNotification',urlencodedParser,function(req,res) {//change the status of the product
+  console.log(getTimeStamp() + 'UpdateNotification|' + req.connection.remoteAddress)
+  try {
+    var wishlistCollection = bmgDB.collection('WishList');
+    wishlistCollection.update({"wid":req.body.EventWID,"uid":req.body.EventUID},{$set: {notification_sent:1}}, function (err){
+      res.send('NotificationUpdated');
+    })
+  }
+  catch (e) {console.log("Error - "+e);console.log('Data is ' + req.body.Data)}
+}) //updProductStatus
+
 app.post('/updProductStatus',urlencodedParser,function(req,res) {//change the status of the product
   try {
     var wishlistCollection = bmgDB.collection('WishList');
@@ -905,6 +916,7 @@ app.post('/updProductStatus',urlencodedParser,function(req,res) {//change the st
   }
   catch (e) {console.log("Error - "+e);console.log('Data is ' + req.body.Data)}
 }) //updProductStatus
+
 
 app.post('/resetPassword',urlencodedParser,function(req,res) {//change the status of the product
   try {
