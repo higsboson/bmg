@@ -42,19 +42,13 @@
   color:#7a2b43;
 }
 
-.bmg-logo-row {
-  position: absolute;
-  left : 200px;
-  align-content: center;
-  top:100px;
-  color: #color: #454282;
-}
 .invite-row-header {
   position: absolute;
   width:90%;
   top:20px;
   left:100px;
   color:#454282;
+  visibility: hidden;
 }
 .invite-row-title {
   position: absolute;
@@ -81,12 +75,13 @@
   position: absolute;
   width: 100%;
   top:510px;
-  left:250px;
+  left:200px;
   color:#454282;
 }
-.invite-row-btn {
-  
-  width: 90%;
-  top:750px;
-  left:150px;
+.bmg-logo-row {
+  position: absolute;
+  left : 380px;
+  align-content: center;
+  top:100px;
+  color: #454282;
 }

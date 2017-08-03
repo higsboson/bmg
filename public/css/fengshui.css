@@ -1,15 +1,20 @@
 .invite-header {
   font-family: Rochester;
-  font-size: 96px;
-  text-align: right;
+  font-size: 120px;
+  text-align: center;
   text-shadow: 2px 2px #7a2b43;
 }
 
 .invite-title {
   font-family: Droid Serif cursive;
   font-size: 36px;
-  text-align: right;
+  text-align: center;
+}
 
+.bemygenie {
+  font-family: Droid Serif cursive;
+  font-size: 24px;
+  text-align: center;
 }
 
 .invite-address {
@@ -22,61 +27,62 @@
   font-family: Droid Serif cursive;
   font-size: 18px;
   text-align: center;
+  color: #1b3c88;
 }
 
 .invite-wishlist-url {
   font-family: Droid Serif cursive;
   font-size: 20px;
-  color:#7a2b43;
+  color:#1b3c88;
 }
 
 .invite-wishlist-id {
   font-family: Droid Serif cursive;
   font-size: 20px;
   text-align: left;
-  color:#7a2b43;
+  color:#1b3c88;
 }
 
 .invite-row-header {
   position: absolute;
-  width:100%;
-  top:0px;
-  left:0px;
-  color:#454282;
-  visibility: visible;
+  width:90%;
+  top:20px;
+  left:100px;
+  color:#3c2a4d;
+  visibility: hidden;
 }
 .invite-row-title {
   position: absolute;
   width: 90%;
-  top:130px;
-  left:100px;
-  color:#454282;
+  top:350px;
+  left:125px;
+  color:#3c2a4d;
 }
 .invite-row-address {
   position: absolute;
   width: 100%;
-  top:450px;
-  left:10px;
-  color:#454282;
+  top:400px;
+  left:70px;
+  color:#3c2a4d;
 }
 .invite-row-wishlist-head {
   position: absolute;
   width: 100%;
-  top:600px;
-  left:20px;
-  color: #454282;
+  top:540px;
+  left:90px;
+  color: #3c2a4d;
 }
 .invite-row-footer {
   position: absolute;
   width: 100%;
-  top:650px;
-  left:50px;
-  color:#454282;
+  top:590px;
+  left:80px;
+  color:#1b3c88;
 }
 .bmg-logo-row {
   position: absolute;
-  left : 400px;
+  left : 410px;
   align-content: center;
-  top:90px;
-  color: #color: #454282;
+  top:100px;
+  color: #3c2a4d;
 }
