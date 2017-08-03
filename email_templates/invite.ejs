@@ -206,6 +206,9 @@
 </head>
 <body>
   <!--<div class="container container-fluid" style="background-color: #454282" id="invite-container">-->
+
+
+
   <div id="tmpltModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tmpltModal">
     <div class="modal-dialog">
       <div class = "modal-content">
@@ -220,12 +223,57 @@
       </div>
     </div>
 
+    <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="nav-container ">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <!--<a class="navbar-brand wide" href="/home">bemygenie.com - Hello, <%=username%> !</a>-->
+              <a href="/home"><img class="navbar-brand wide" src="images/logos/logo.png" ></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse user-header">
+              <ul class="nav navbar-nav">
+
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li><div class="welcome-message">Hello, <br> <%=username%>!</div></li>
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#" onclick=getUserProfileDetails($('#user').val(),'active_lists')>Profile</a></li>
+                    <li><a href="#" onclick="getUserWishLists($('#user').val(),'active_lists',0);">Previous Wishlists</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#" onclick="logout();">Logout</a></li>
+                  </ul>
+                </li>
+                <li><a href="#">Help</a></li>
+
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+        </nav>
+
     <form>
       <input type="hidden" class="form-control" id="templates" disabled>
       <input type="hidden" class="form-control" id="address" disabled>
       <input type="hidden" class="form-control" id="message" disabled>
     </form>
-<div >
+    <div class="container user-dashboard" id="invite_options">
+        <div class="row" style="padding-top:100px"></div>
+        <div class="row">
+          <div col="col-sm-12">
+            <h2>Select a template</h2>
+            <p style="font-size:16px">
+              Choose a template for your invitiation.
+            </p>
+          </div>
+        </div>
+      </div>
+<div style="padding-top:50px">
 
 
 
@@ -270,13 +318,59 @@
       </div>
 
     </div> <!--image-->
-    <div class="invite-row-btn" id="savebtn-row">
-      <div ></div>
-      <div  style="text-align:center">
-        <button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button>
-      </div><div ></div>
-    </div>
+    <div class="container" style="padding:50px" >
+        <div class="row"></div>
+        <div class="row">
+          <div col="col-sm-12">
+            <div class="invite-row-btn" id="savebtn-row">
+              <div ></div>
+              <div  style="text-align:center">
+                <button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Select Template</button>
+              </div><div ></div>
+            </div>
+          </div>
+        </div>
+      </div>
   </div></div></div>
     <!--</div>-->
+
+    <p>
+       <input type="hidden" name="user" value="<%=userID%>" id="user">
+       <input type="hidden" name="username" value="<%=username%>" id="username">
+
+
+
+
+    </p>
+    <footer>
+      <!--/.footer-->
+    <div class="footer-bottom user-dashboard">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-2">
+            <a href="https://www.instantssl.com/ssl-certificate-products/multi-domain-ssl-certificate.html">
+              <img src="https://ssl.comodo.com/images/comodo_secure_seal_113x59_transp.png" alt="Multi Domain SSL" width="113" height="59" style="border: 0px;"><br> <span style="color:#FFFFFF;font-weight:bold; font-size:7pt">Multi Domain SSL</span></a><br>
+          </div>
+          <div class="col-sm-8" style="padding-top:20px">
+            <p class="pull-left"> Copyright © bemygenie.com 2017 </p>
+            <br />
+            <p class="pull-left" style="font-size:8px">
+               CERTAIN CONTENT THAT APPEARS ON THIS SITE COMES FROM AMAZON.IN PRIVATE LTD. THIS CONTENT IS PROVIDED 'AS IS' AND IS SUBJECT TO CHANGE OR REMOVAL AT ANY TIME.
+            </p>
+            </div>
+            <div class="col-sm-2" style="padding-top:20px">
+              <p class="pull-right" style="padding-top:6px"> Design by <a href="mailto:admin@bemygenie.com" style="color:#ffffff">Planet Joy</a></a>.</p>
+             </div>
+
+        </div>
+       </div>
+       <input type="hidden" id="event_ID_notification" name="event_ID_notification" value="" />
+       <input type="hidden" id="event_URL_notification" name="event_URL_notification" value="" />
+    </div>
+    <!--/.footer-bottom-->
+    </footer>
+    </body>
+    </html>
+
 </body>
 </html>

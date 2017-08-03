@@ -172,10 +172,25 @@ app.get('/FAQ.html',function(req,res) {
   res.sendFile(__dirname + "/site/FAQ.html");
 })
 
-app.get('/invite.html',function(req,res) {
-  console.log(getTimeStamp() + 'invite|' + req.connection.remoteAddress);
-  res.sendFile(__dirname + "/email_templates/invite.html");
-})
+
+
+app.get('/invite.html',urlencodedParser, function (req,res) {
+  // Checking if a valid session exists.
+  if (req.session && req.session.user) {
+    //rendering Home page with user ID
+    // On load of the ejs file, it will use the user ID reference
+    // To pick information about the user.
+    console.log(getTimeStamp() + 'Invite|' + req.connection.remoteAddress)
+    res.render(__dirname + "/email_templates/invite.ejs",{userID : sha256(req.session.user),username: req.session.name});
+    //console.log("call made to home.html with valid session " + req.session.user);
+  } else {
+    // If this is not a valid session then the user gets a message that the
+    // session is not valid
+    // At a later time, this should be a login page
+    res.redirect('/');
+  }
+});
+
 
 app.get('/aboutus.html',function(req,res) {
   console.log(getTimeStamp() + 'About|' + req.connection.remoteAddress)
