@@ -81,7 +81,15 @@
                       htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
                       htmlStr = htmlStr + '<img id = "imgURL_'+doc._id+'" src="'+doc.ImageURL+'">';
                       htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc._id+'" align="middle">'+prdName+'</p></div></div>';
-                      htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+                      if ((doc.MRP == 0) || (typeof(doc.MRP)=="undefined")) {
+                        htmlStr = htmlStr + '<div class="caption"><p align="middle">INR '+doc.OfferPrice+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+                      }
+                      else if ((doc.OfferPrice == 0) || (typeof(doc.OfferPrice) == "undefined")) {
+                        htmlStr = htmlStr + '<div class="caption"><p align="middle">INR '+doc.MRP+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+                      }
+                      else {
+                        htmlStr = htmlStr + '<div class="caption"><p align="middle"><s>INR '+doc.MRP+'</s></p><p align="middle">INR '+doc.OfferPrice+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+                      }
                       if (doc.Status == "Blocked")
                         {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc._id+'">Blocked</button></p>'}
                       else if (doc.Status == "Bought")
@@ -139,7 +147,15 @@
                      htmlStr = htmlStr + '<div class="thumbnail" style="height:215px;border:0;">';
                      htmlStr = htmlStr + '<img id = "imgURL_'+doc._id+'" src="'+doc.ImageURL+'">';
                      htmlStr = htmlStr + '<div class="caption"><p id="ProdNm_'+doc._id+'" align="middle">'+prdName+'</p></div></div>';
-                     htmlStr = htmlStr + '<div class="caption"><p align="middle"> INR '+doc.MRP+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+                     if ((doc.MRP == 0) || (typeof(doc.MRP)=="undefined")) {
+                       htmlStr = htmlStr + '<div class="caption"><p align="middle">INR '+doc.OfferPrice+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+                     }
+                     else if ((doc.OfferPrice == 0) || (typeof(doc.OfferPrice) == "undefined")) {
+                       htmlStr = htmlStr + '<div class="caption"><p align="middle">INR '+doc.MRP+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+                     }
+                     else {
+                       htmlStr = htmlStr + '<div class="caption"><p align="middle"><s>INR '+doc.MRP+'</s></p><p align="middle">INR '+doc.OfferPrice+'</p><div class="amz-note" style="text-align:center">(as of ' + getDateFromUTC(doc.UpdDate) + ' IST - <a data-toggle="modal" href="#amzDisclaimer">Details</a>)</div></div>';
+                     }
                      if (doc.Status == "Blocked")
                        {htmlStr = htmlStr + '<p align="middle"><button class="btn btn-info disabled" id="btn_'+doc._id+'">Blocked</button></p>'}
                      else if (doc.Status == "Bought")
