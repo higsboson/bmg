@@ -185,7 +185,7 @@ $(document).ready(function () {
 
         <!-- 3/31/2017 - trznt - This is a Login modal. -->
         <!-- Modal Starts here-->
-          <div class="modal fade" id="login" role="dialog">
+          <div class="modal" id="login" role="dialog">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -215,10 +215,25 @@ $(document).ready(function () {
             </div>
           </div>
         <!-- Modal Ends here-->
+        <div id="processingModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="processingModalLabel">
+          <div class="modal-dialog">
+            <div class = "modal-content">
+              <div class="modal-header">
+              </div>
+              <div class="modal-body" style="text-align:center">
+                <i class="fa fa-circle-o-notch fa-spin" style="font-size:72px"></i>
+                <br />
+                  <p id="processingMessage"></p>
+                </div>
+                <div class="modal-footer">
+                </div>
+              </div>
+            </div>
+          </div>
 
         <!-- 5/14/2017 - trznt - Invalid Password Modal -->
         <!-- Modal Starts here-->
-          <div class="modal fade" id="invalid_password" role="dialog">
+          <div class="modal" id="invalid_password" role="dialog">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">

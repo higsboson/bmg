@@ -25,7 +25,7 @@ function startComposing(){
   }
   var uid = getCookie('eventUID');
   var wid = getCookie('eventWID');
-  alert(uid);
+  //alert(uid);
   $.ajax({
     type : 'POST',
     url :"/updateEventDetailsForWishList",

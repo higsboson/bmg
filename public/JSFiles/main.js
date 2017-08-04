@@ -383,6 +383,7 @@
 
 
   function doLogin(action) {
+    $('#processingModal').modal('show');
     try {
       //alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
       var t_sha256 = new jsSHA('SHA-256', 'TEXT');
@@ -446,6 +447,7 @@
                    window.location.href = "/home";
                  }
                } else {
+                 $('#processingModal').modal('hide');
                  $('#invalid_password').modal('show');
                }
              },
@@ -874,7 +876,7 @@ function getUserProfileDetails(user,div) {
        data : {"userid":user,"mode":mode},
        success : function(res) {
          //The following alert will need to be replaced by a modal dialog
-             alert(JSON.stringify(res));
+             //alert(JSON.stringify(res));
              if (res.length >=1) {
                var table_text = '<table class="table table-hover" style="background:#FFFFFF;color:#000000"><thead style="background:#454282;color:#FFFFFF"><tr><th>#</th><th>Event Name</th><th>Event Type</th><th>Event Date</th><th>Notify</th></tr></thead><tbody>';
                for (i = 0; i < res.length ;i++) {

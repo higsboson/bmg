@@ -40,7 +40,7 @@
                      fname: getCookie("eventID").replace(/ /g,'')
                   }
                 }).done(function(o) {
-                  alert('reponse is ' + o);
+                  //alert('reponse is ' + o);
                   sendInvite();
                   // If you want the file to be visible in the browser
                   // - please modify the callback in javascript. All you
@@ -61,11 +61,7 @@
     }
 
     $(document).ready(function() {
-      //var screenWidth = $(window).width();
-      //alert(screenWidth);
-
-       //$('#image').css('width', (parseInt('836') + (screenWidth/2)) + 'px');
-
+      $('#holder').hide();
     })
 
     function showInvite (index,eventId,eventType,rcvrName,dtTime) {
@@ -83,11 +79,16 @@
         var imgStr = "";
         var wishHeadStr = "";
         var btnHtml = "";
+        var rightBtnHtml = "";
+        var leftBtnHtml = "";
         $('head:first').append('<link rel="stylesheet" type="text/css" href="css/'+tmpltId+'.css" />');
           imgStr = '<img src="images/'+tmpltId+'.jpg" alt="" id="back-img"/>';
           $("#back-img").replaceWith(imgStr);
           var img = document.getElementById('back-img');
           img.onload = function () { //alert(img.width + ' x ' + img.height);
+
+            $('#loading').hide();
+            $('#holder').show();
             $('#image').css('width', img.width + 'px');$('#image').css('height', img.height + 'px');
           };
           // Create invite header
@@ -149,18 +150,20 @@
           //footer
           btnHtml = '<div id="savebtn-row">';
           if (index==0) {
-            btnHtml = btnHtml+'<div class="col-xs-4"></div>';
+            leftBtnHtml = leftBtnHtml+'<div id="leftBtnHtml"></div>';
           }
           else {
-            btnHtml = btnHtml+'<div class="col-xs-4"><button class="btn btn-info btn-lg" onclick="showInvite('+prevIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>';
+            leftBtnHtml = leftBtnHtml+'<div id="leftBtnHtml" style="padding:5px"><button class="btn btn-info btn-lg" onclick="$(\'#loading\').show();$(\'#holder\').hide();showInvite('+prevIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-left" style="font-size:30px" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>';
           }
-          btnHtml = btnHtml+'<div class="col-xs-4" style="text-align:center"><button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button></div>';
+          btnHtml = btnHtml+'<div class="col-xs-12" style="text-align:center"><button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button></div>';
           if (index == tmpltArr.length-1) {
-            btnHtml = btnHtml+'<div class="col-xs-4"></div></div>';
+            rightBtnHtml = rightBtnHtml+'<div id="rightBtnHtml" ></div></div>';
           }
           else {
-            btnHtml = btnHtml+'<div class="col-xs-4"><button class="btn btn-info btn-lg" onclick="showInvite('+nextIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span><span class="sr-only">Next</span></button></div></div>';
+            rightBtnHtml = rightBtnHtml+'<div id="rightBtnHtml" style="padding:5px"><button class="btn btn-info btn-lg" onclick="$(\'#loading\').show();$(\'#holder\').hide();showInvite('+nextIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-right" style="font-size:30px" aria-hidden="true"></span><span class="sr-only">Next</span></button></div></div>';
           }
+          $("#leftBtnHtml").replaceWith(leftBtnHtml);
+          $("#rightBtnHtml").replaceWith(rightBtnHtml);
           $("#savebtn-row").replaceWith(btnHtml);
       }
       catch (e) {alert(e)}
@@ -290,10 +293,10 @@
       </div>
 <div style="padding-top:50px">
 
-
-
-    <div style="text-align:center"><div >
-      <div class="image" id="image" style="height:836px;width:1150px">
+<table style="text-align:center;width:100%"><tr><td><div id="leftBtnHtml"></div></td><td>
+    <div style="padding:200px;text-align:center" id="loading"><i class="fa fa-spinner fa-spin" style="font-size:84px;"></i></div >
+    <div style="text-align:center" id="holder"><div >
+      <div class="image" id="image">
       <img src="" alt="" id="back-img" />
       <div class="invite-row-header" id="invite-header">
         <div style="text-align:center"></div>
@@ -333,6 +336,7 @@
       </div>
 
     </div> <!--image-->
+  </td><td><div id="rightBtnHtml"></div></td></tr></table>
     <div class="container" style="padding:50px" >
         <div class="row"></div>
         <div class="row">

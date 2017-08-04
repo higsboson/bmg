@@ -65,7 +65,7 @@ function WaterfallOverRetry(list, iterator, callback) {
 
 function sendEmailFor(item,report,retry) {
   var templateDir = __dirname + '/email_templates/saved/';
-  bmgaux.mailerWithAttachments(emailPassword,'support',item.email,item.username + 'has invited you to a party!','<b>This is the body</b><br><br> - Team Bemygenie.com',templateDir + item.event_id + ".png", function(message,response) {
+  bmgaux.mailerWithAttachments(emailPassword,'support',item.email,item.username + ' has invited you to a party!','<b>This is the body</b><br><br> - Team Bemygenie.com',templateDir + item.event_id + ".png", function(message,response) {
     console.log('mail reponse is ' + response);
     report();
   });

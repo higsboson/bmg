@@ -300,7 +300,25 @@
   </div>
   </div>
 
+  <div class="modal" id="help" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Need help?</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+             For a quick response, send us a <b>WhatsApp message at: +91 91108 36922</b>. <br><br>Alternatively you can also reach us at <b>support@bemygenie.com</b>.
+          </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-primary" onclick="showLoginModal()">Close</button>
+      </div>
 
+    </div>
+  </div>
+  </div>
 
 <nav class="navbar navbar-default navbar-fixed-top">
       <div class="nav-container ">
@@ -329,7 +347,7 @@
                 <li><a href="#" onclick="logout();">Logout</a></li>
               </ul>
             </li>
-            <li><a href="#">Help</a></li>
+            <li><a href="" data-toggle="modal" data-target="#help">Help</a></li>
 
           </ul>
         </div><!--/.nav-collapse -->
