@@ -76,7 +76,7 @@
         else {tmpltArr[0]=tmpltStr}
 
         var tmpltId = tmpltArr[index];
-        var addr = $("#address").val();
+        var addr = stringDivider($("#address").val(),60,'<br/>');
         var cstmIvnviteMsg = $("#message").val();
         var prevIndex = index-1;
         var nextIndex = index+1;
@@ -87,7 +87,9 @@
           imgStr = '<img src="images/'+tmpltId+'.jpg" alt="" id="back-img"/>';
           $("#back-img").replaceWith(imgStr);
           var img = document.getElementById('back-img');
-          img.onload = function () { alert(img.width + ' x ' + img.height); $('#image').css('width', img.width + 'px');$('#image').css('height', img.height + 'px');};
+          img.onload = function () { //alert(img.width + ' x ' + img.height);
+            $('#image').css('width', img.width + 'px');$('#image').css('height', img.height + 'px');
+          };
           // Create invite header
           hdrHtml = '<div class="invite-row-header" id="invite-header">';
           hdrHtml = hdrHtml + '<div  style="text-align:center"></div>';
@@ -107,19 +109,19 @@
           //create invite address
           //seed = seed + 100;
           addrHtml = '<div class="invite-row-address" id="invite-address">';
-          if (index==0) {
+          //if (index==0) {
             addrHtml = addrHtml + '<div ></div>';
-          }
-          else {
-            addrHtml = addrHtml + '<div><button class="btn btn-info" style="text-align:center" onclick="showInvite('+prevIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>';
-          }
+          //}
+          //else {
+          //  addrHtml = addrHtml + '<div><button class="btn btn-info" style="text-align:center" onclick="showInvite('+prevIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>';
+          //}
           addrHtml = addrHtml + '<div><p class="invite-address"><br>At: '+addr+'</p><p class="invite-address" id="event-time">On: '+dtTime+'</p></div>';
-          if (index == tmpltArr.length-1) {
+          //if (index == tmpltArr.length-1) {
             addrHtml = addrHtml + '<div></div></div>';
-          }
-          else {
-            addrHtml = addrHtml + '<div style="text-align:center"><button class="btn btn-info" onclick="showInvite('+nextIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span><span class="sr-only">Next</span></button></div></div>';
-          }
+          //}
+          //else {
+          //  addrHtml = addrHtml + '<div style="text-align:center"><button class="btn btn-info" onclick="showInvite('+nextIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span><span class="sr-only">Next</span></button></div></div>';
+          //}
           $('#invite-address').replaceWith(addrHtml);
           //address complete
           //wishlist header
@@ -139,13 +141,26 @@
           footerHtml = footerHtml + '<p id="wishlist-event-id" class="invite-wishlist-id" style="text-align:center;">Event Id : '+eventId+'</p>';
           footerHtml = footerHtml + '<div class="bmg-logo-row"><div ></div>';
           footerHtml = footerHtml + '<div  style="text-align:center">';
-          footerHtml = footerHtml + '<a href="https://www.bemygenie.com/howitworks.html" target="_blank">It is Free, It is Online, It is convenient & It is optional. Clck to find out how it works</a>';
+          footerHtml = footerHtml + '<p>It is Free, It is Online, It is convenient & It is optional.</p>';
           footerHtml = footerHtml + '<p> Powered by : <img src="images/logos/logo-invite.png"></p>';
           footerHtml = footerHtml + '</div><div></div></div></div>';
           footerHtml = footerHtml + '<div style="text-align:right"></div></div>';//'<img src="images/'+tmpltId+'-btm-rt.png"></div></div>';
           $('#invite-footer').replaceWith(footerHtml);
           //footer
-          btnHtml = '<div class="invite-row-btn" id="savebtn-row"><div></div><div style="text-align:center"><button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button></div><div ></div></div>';
+          btnHtml = '<div id="savebtn-row">';
+          if (index==0) {
+            btnHtml = btnHtml+'<div class="col-xs-4"></div>';
+          }
+          else {
+            btnHtml = btnHtml+'<div class="col-xs-4"><button class="btn btn-info btn-lg" onclick="showInvite('+prevIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">Previous</span></button></div>';
+          }
+          btnHtml = btnHtml+'<div class="col-xs-4" style="text-align:center"><button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Send this invite</button></div>';
+          if (index == tmpltArr.length-1) {
+            btnHtml = btnHtml+'<div class="col-xs-4"></div></div>';
+          }
+          else {
+            btnHtml = btnHtml+'<div class="col-xs-4"><button class="btn btn-info btn-lg" onclick="showInvite('+nextIndex+',\''+eventId+'\',\''+eventType+'\',\''+rcvrName+'\',\''+dtTime+'\')"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span><span class="sr-only">Next</span></button></div></div>';
+          }
           $("#savebtn-row").replaceWith(btnHtml);
       }
       catch (e) {alert(e)}
@@ -322,11 +337,11 @@
         <div class="row"></div>
         <div class="row">
           <div col="col-sm-12">
-            <div class="invite-row-btn" id="savebtn-row">
-              <div ></div>
-              <div  style="text-align:center">
+            <div id="savebtn-row">
+              <div></div>
+              <div style="text-align:center">
                 <button class="btn btn-primary btn-lg" onclick="saveTmplt(\''+tmpltId+'\')">Select Template</button>
-              </div><div ></div>
+              </div><div></div>
             </div>
           </div>
         </div>

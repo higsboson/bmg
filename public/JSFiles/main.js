@@ -1683,3 +1683,17 @@ function saveMessageDefault(id,uid) {
   deleteCookie('wishlistIdReference');
   deleteCookie('UIDReference');
 }
+
+function stringDivider(str, width, spaceReplacer) {//splits the string after specified characters
+  if (str.length>width) {
+    var p=width
+    for (;p>0 && str[p]!=' ';p--) {
+    }
+    if (p>0) {
+        var left = str.substring(0, p);
+        var right = str.substring(p+1);
+        return left + spaceReplacer + stringDivider(right, width, spaceReplacer);
+    }
+  }
+  return str;
+}
