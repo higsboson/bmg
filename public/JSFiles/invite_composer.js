@@ -59,7 +59,7 @@ function showThanks() {
     data : {"EventUID":uid,"EventWID":wid},
     success : function(res) {
       if (res == "NotificationUpdated")
-        $('#options').html('<div class="col-sm-12" style="text-align:center;font-size:30px;">Thank You for using bemygenie invites!<br><button class="btn btn-default" onclick="location.href=\'/home\'">Home</button>  </div>')
+        $('#options').html('<div class="col-sm-12" style="text-align:center;font-size:30px;">Downloading...<br>Thank You for using bemygenie invites!<br><button class="btn btn-default" onclick="location.href=\'/home\'">Home</button>  </div>')
     },
     error : function(res) {alert("Error addint!")}
   })

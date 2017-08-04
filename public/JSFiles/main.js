@@ -719,9 +719,11 @@ function sendNotification() {
     $.ajax({
       type: 'POST',
       url: '/sendMailerNotification',
-      data: {event_id: $('#event_ID_notification').val(), url: $('#event_URL_notification').val(), email_adds: realmails, username: $('#username').val()},
+      data: {event_id_num: getCookie('eventID'), email_adds: realmails, username: $('#username').val()},
       success: function (res) {
-        alert(res);
+        if (res == "AllSaved"){
+          $('#options').html('<div class="col-sm-12" style="text-align:center;font-size:30px;">Sending Emails...<br>Thank You for using bemygenie invites!<br><button class="btn btn-default" onclick="location.href=\'/home\'">Home</button>  </div>')
+        }
       },
       error: function (err) {
         alert(err);

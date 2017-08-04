@@ -57,7 +57,7 @@ module.exports.mailer = function(pass,from,to,subject,body,callback) {
 }
 
 
-module.exports.bccmailer = function(pass,from,to,subject,body,callback) {
+module.exports.mailerWithAttachments = function(pass,from,to,subject,body,filepath,callback) {
 
   //encoding from:
 
@@ -80,10 +80,15 @@ module.exports.bccmailer = function(pass,from,to,subject,body,callback) {
   // setup email data with unicode symbols
   var mailOptions = {
       from: from, // sender address
-      bcc: to, // list of receivers
+      to: to, // list of receivers
       subject: subject, // Subject line
+      attachments: [{   // file on disk as an attachment
+        filename: 'invite.png',
+        path: filepath, // stream this file
+        cid: 'invite'
+      }],
       generateTextFromHTML: true,
-      html: body // html body
+      html: "<img src='cid:invite' /> <br> <br> - Team Bemygenie<br>" // html body
   };
 
   function sendingTheEmail(tporter,callback) {

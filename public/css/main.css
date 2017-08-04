@@ -20,10 +20,14 @@
    margin-right: auto;
 }
 
+
+
 a.no-effect {
   color: inherit; /* blue colors for links too */
   text-decoration: inherit; /* no underline */
 }
+
+
 
 .full {
     width: 100%;

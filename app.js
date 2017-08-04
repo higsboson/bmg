@@ -838,7 +838,23 @@ app.post('/saveWishlist',urlencodedParser,function(req,res){
   catch (e) {console.log(e);console.log('Data is ' + req.body.Wishlist);res.send("Error in saving wishlist!")}
 })
 
-app.post('/sendMailerNotification',urlencodedParser,function(req,res) {//change the status of the product
+app.post('/sendMailerNotification',urlencodedParser,function(req,res) {
+  var aux_invite_mailer = bmgDB.collection('AUX_INVITE_MAILER');
+  var eventid = req.body.event_id_num.replace(/ /g,'');
+  var realmails = req.body.email_adds;
+  var username = req.body.username;
+  WaterfallOver(req.body.email_adds,function (item,report) {
+    aux_invite_mailer.insert({event_id:eventid,email:item,username:username,sent:0}, function(err,result) {
+      if (!err) {
+          report();
+        }
+      });
+  }, function () {
+    res.end("AllSaved");
+  })
+});
+
+/*app.post('/sendMailerNotification',urlencodedParser,function(req,res) {//change the status of the product
   try {
     var mail_adds = [];
     var mail_add_set = [];
@@ -885,7 +901,7 @@ app.post('/sendMailerNotification',urlencodedParser,function(req,res) {//change 
     console.log(e);
     res.send("Error in sendingMailer")
   }
-});
+});*/
 
 app.post('/updateSentNotification',urlencodedParser,function(req,res) {//change the status of the product
   console.log(getTimeStamp() + 'UpdateNotification|' + req.connection.remoteAddress)
