@@ -68,14 +68,26 @@ function processData(xml,batch) {
     if (resJSON.ItemLookupResponse.Items[0].Request[0].IsValid == "True") {
       xitems = resJSON.ItemLookupResponse.Items[0].Item;
       WaterfallOver(xitems, function (x,subreport) {
-        var name,desc,imageURL,price,asin;
+        var name,desc,imageURL,price,asin,offerPrice;
         try {
           if (typeof x.ItemAttributes[0].ListPrice !== 'undefined') {
-            if (typeof x.ItemAttributes[0].ListPrice[0] !== 'undefined' || x.ItemAttributes[0].ListPrice[0] === null) {
+            //changed below line -- sonic
+            //if (typeof x.ItemAttributes[0].ListPrice[0] !== 'undefined' || x.ItemAttributes[0].ListPrice[0] === null) {
+            if (typeof x.ItemAttributes[0].ListPrice[0] !== 'undefined' && x.ItemAttributes[0].ListPrice[0] !== null) {
                 price = parseInt(x.ItemAttributes[0].ListPrice[0].Amount)/100;
             } else {
               price = parseInt(x.OfferSummary[0].LowestNewPrice[0].Amount)/100;
             }
+            //get offer price if item is on offer -- changed by sonic
+            if (typeof x.OfferSummary !== 'undefined' && x.OfferSummary[0] != 'undefined') {
+              if (typeof x.OfferSummary[0].LowestNewPrice !== 'undefined' && x.OfferSummary[0].LowestNewPrice[0] !== 'undefined') {
+                offerPrice = parseInt(x.OfferSummary[0].LowestNewPrice[0].Amount)/100;
+              }
+              else {
+                offerPrice = 0;
+              }
+            }
+            //end offer price changes
             //console.log('price done');
             name = x.ItemAttributes[0].Title[0];
             desc = x.DetailPageURL[0];
@@ -92,8 +104,8 @@ function processData(xml,batch) {
             asin = x.ASIN;
             //console.log(desc + name + image_url + price + asin);
             var prdCollection = bmgDB.collection('Product');
-
-            prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"ProdNm":name,"ProdDsc":desc,"ImageURL":image_url,"MRP":price,"InStock":1,"UpdDate":new Date()}}, function(err) {
+            //added Offer price
+            prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"ProdNm":name,"ProdDsc":desc,"ImageURL":image_url,"MRP":price,"OfferPrice":offerPrice,"InStock":1,"UpdDate":new Date()}}, function(err) {
               if (err) {
                 console.log("Error in updating product status")
               }
@@ -104,6 +116,7 @@ function processData(xml,batch) {
              });
            } else if (typeof x.OfferSummary[0].LowestNewPrice !== 'undefined') {
              price = parseInt(x.OfferSummary[0].LowestNewPrice[0].Amount)/100;
+             offerPrice = 0; //if no list price then offer price is the price itself
              name = x.ItemAttributes[0].Title[0];
              desc = x.DetailPageURL[0];
              if (typeof x.MediumImage === 'undefined') {
@@ -118,8 +131,8 @@ function processData(xml,batch) {
              asin = x.ASIN;
              //console.log(desc + name + image_url + price + asin);
              var prdCollection = bmgDB.collection('Product');
-
-             prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"ProdNm":name,"ProdDsc":desc,"ImageURL":image_url,"MRP":price,"InStock":1,"UpdDate":new Date()}}, function(err) {
+             //added OfferPrice -- sonic
+             prdCollection.update({"_id" : new ObjectId(batch['BMG' + asin])},{$set :{"ProdNm":name,"ProdDsc":desc,"ImageURL":image_url,"MRP":price,"OfferPrice":offerPrice,"InStock":1,"UpdDate":new Date()}}, function(err) {
                if (err) {
                  console.log("Error in updating product status")
                }
