@@ -1,0 +1,81 @@
+.invite-header {
+  font-family: Rochester;
+  font-size: 144px;
+  text-align: center;
+  text-shadow: 2px 2px #7a2b43;
+}
+
+.invite-title {
+  font-family: Droid Serif cursive;
+  font-size: 36px;
+  text-align: center;
+}
+
+.invite-address {
+  font-family: Droid Serif cursive;
+  font-size: 24px;
+  text-align: center;
+}
+
+.invite-wishlist {
+  font-family: Droid Serif cursive;
+  font-size: 18px;
+  text-align: center;
+}
+
+.invite-wishlist-url {
+  font-family: Droid Serif cursive;
+  font-size: 20px;
+  color:#33144b;
+}
+
+.invite-wishlist-id {
+  font-family: Droid Serif cursive;
+  font-size: 20px;
+  text-align: left;
+  color:#33144b;
+}
+
+.invite-row-header {
+  position: absolute;
+  width:90%;
+  top:20px;
+  left:100px;
+  color:#454282;
+  visibility: hidden;
+}
+.invite-row-title {
+  position: absolute;
+  width: 90%;
+  top:270px;
+  left:80px;
+  color:#7a2b43;
+}
+.invite-row-address {
+  position: absolute;
+  width: 100%;
+  top:320px;
+  left:30px;
+  color:#7a2b43;
+}
+.invite-row-wishlist-head {
+  position: absolute;
+  width: 100%;
+  top:440px;
+  left:150px;
+  color: #7a2b43;
+}
+.invite-row-footer {
+  position: absolute;
+  width: 100%;
+  top:500px;
+  left:150px;
+  color:#33144b;
+}
+.bmg-logo-row {
+  position: absolute;
+  left : 420px;
+  text-align: right;
+  top:90px;
+  color: #7a2b43;
+}
