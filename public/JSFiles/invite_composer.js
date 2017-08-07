@@ -29,7 +29,7 @@ function startComposing(){
   $.ajax({
     type : 'POST',
     url :"/updateEventDetailsForWishList",
-    data : {"EventUID":uid,"EventWID":wid,"inviteGreeting": $('#event_greeting').val(),"addr":$('#event_address').val(),"invite_date":$('#event_date').val(),"invite_time":$('#event_time').val()},
+    data : {"EventUID":uid,"EventWID":wid,"inviteGreeting": clean($('#event_greeting').val()),"addr":clean($('#event_address').val()),"invite_date":clean($('#event_date').val()),"invite_time":clean($('#event_time').val())},
     success : function(res) {
       window.location.href = "/invite.html"
     },

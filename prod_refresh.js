@@ -62,11 +62,15 @@ function WaterfallOverRetry(list, iterator, callback) {
 }
 
 
-function processData(xml,batch) {
-  //console.log(JSON.stringify(batch));
+function processData(xml,batch,requests) {
+  //console.log('batch is ' + JSON.stringify(batch));
+  //console.log("Requests in " + requests.split(',').length);
+  var requestsIn = requests.split(',').length;
+  var requestsInArray = requests.split(',');
   parseString(xml,function(err,resJSON) {
     if (resJSON.ItemLookupResponse.Items[0].Request[0].IsValid == "True") {
-      xitems = resJSON.ItemLookupResponse.Items[0].Item;
+      var processing = resJSON.ItemLookupResponse.Items[0].Item.length;
+      var xitems = resJSON.ItemLookupResponse.Items[0].Item;
       WaterfallOver(xitems, function (x,subreport) {
         var name,desc,imageURL,price,asin,offerPrice;
         try {
@@ -162,6 +166,29 @@ function processData(xml,batch) {
          }
 
       }, function () {
+        if(requestsIn != processing) {
+          for (var i = 0; i < requestsInArray.length; i++) {
+            var found = false;
+            //console.log('xitems in loop is ' + JSON.stringify(xitems[0].));
+            for (var j = 0;j < xitems.length;j++) {
+              //console.log(requestsInArray[i] + ' - ' + xitems[j].ASIN);
+            if (requestsInArray[i] == xitems[j].ASIN){
+              found = true;
+            }
+          }
+          if (!found) {
+            var prdCollection = bmgDB.collection('Product');
+            prdCollection.update({"_id" : new ObjectId(batch['BMG' + requestsInArray[i]])},{$set :{"InStock":0}}, function(err) {
+              if (err) {
+                console.log("Error in updating product status")
+              }
+               else {
+                 console.log('Invalid ASIN - marking as out of stock');
+               }
+             });
+          }
+        }
+      }
         console.log('All updated');
       });
     } else {
@@ -283,8 +310,8 @@ mongoclient.connect("mongodb://worker:" + process.argv[2] + "@localhost:27017/bm
               response.on('end', () => {
                 try {
                   //let parsedData = XML.parse(rawData);
-                  //console.log("Raw data is :" +  rawData);
-                  processData(rawData,request.batch);
+                  console.log("Processing ASINS " +  JSON.stringify(request.asin));
+                  processData(rawData,request.batch,request.asin);
                   setTimeout(function () {
                       console.log('Reporting');
                       report();

@@ -110,31 +110,7 @@
   </div>
 </div>
 
-<body class="admin-body">
 
-  <div class="modal" id="bmgNotificationModal" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">BMG Registry Notification System</h4>
-        </div>
-        <div class="modal-body">
-          <p>
-            Please provide the list of email addresses to which you would like us to send the email. Do note that we can only send upto a maximum of 50 email addresses. Please use a comma to seperate each email address.</p>
-            <textarea class="form-control" rows="5" id="notification_message" placeholder="guest@example.com,guest1@example.com,guest2@example.com,guest3@example.com,guest4@example.com,guest5@example.com"></textarea>
-            <br />
-            <p>
-              Note: This notification system can be used only once per wishlist.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" data-dismiss="modal" class="btn btn-success" style="float:left" onclick="sendNotification()")>Send Notification</button>
-        <button type="button" data-dismiss="modal" class="btn btn-primary">Cancel</button>
-      </div>
-
-    </div>
-  </div>
-</div>
 
 <body class="admin-body">
 
@@ -164,7 +140,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-success" data-dismiss="modal" style="float:left" onclick="showSendNotification()" id="sendNotificationButton" disabled>Send BMG Notification</button>
+            <button class="btn btn-success" data-dismiss="modal" style="float:left;display:none" id="sendNotificationButton" disabled>Send BMG Notification</button>
             <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
           </div>
         </div>

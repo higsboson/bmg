@@ -680,7 +680,7 @@ function showDisclaimer() {
 }
 
 function showSendNotification() {
-  $('#bmgNotificationModal').modal('show');
+  //$('#bmgNotificationModal').modal('show');
 }
 
 function sendNotification() {
@@ -724,7 +724,16 @@ function sendNotification() {
       data: {event_id_num: getCookie('eventID'), email_adds: realmails, username: $('#username').val()},
       success: function (res) {
         if (res == "AllSaved"){
-          $('#options').html('<div class="col-sm-12" style="text-align:center;font-size:30px;">Sending Emails...<br>Thank You for using bemygenie invites!<br><button class="btn btn-default" onclick="location.href=\'/home\'">Home</button>  </div>')
+          $.ajax({
+            type : 'POST',
+            url :"/updateSentNotification",
+            data : {"EventUID":getCookie('eventUID'),"EventWID":getCookie('eventWID')},
+            success : function(res) {
+              if (res == "NotificationUpdated")
+                  $('#options').html('<div class="col-sm-12" style="text-align:center;font-size:30px;">Sending Emails...<br>Thank You for using bemygenie invites!<br><button class="btn btn-default" onclick="location.href=\'/home\'">Home</button>  </div>')
+            },
+            error : function(res) {alert("Error addint!")}
+          })
         }
       },
       error: function (err) {
@@ -882,8 +891,14 @@ function getUserProfileDetails(user,div) {
                for (i = 0; i < res.length ;i++) {
                  var d = new Date(res[i].EventDate);
                  var datestring = d.getDate()  + "-" + (d.getMonth()+1) + "-" + d.getFullYear();
-                 if (mode)
-                  table_text += '<tr ><th scope="row" data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + (i + 1) + '</th><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + res[i].EventName + '</td><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + res[i].EventType + '</td><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + datestring + '</td><td><a href="/invite_composer" onclick="setCookie(\'eventID\',\'' + res[i].event_id +  '\',2);setCookie(\'eventUID\',\'' + res[i].uid +  '\',2);setCookie(\'eventWID\',\'' + res[i].wid +  '\',2);setCookie(\'event_date\',\'' + datestring +  '\',2);">Send Invite</a></td></tr>';
+                  if (mode) {
+                    if (res[i].notification_sent == 0) {
+                      table_text += '<tr ><th scope="row" data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + (i + 1) + '</th><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + res[i].EventName + '</td><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + res[i].EventType + '</td><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + datestring + '</td><td><a href="/invite_composer" onclick="setCookie(\'eventID\',\'' + res[i].event_id +  '\',2);setCookie(\'eventUID\',\'' + res[i].uid +  '\',2);setCookie(\'eventWID\',\'' + res[i].wid +  '\',2);setCookie(\'event_date\',\'' + datestring +  '\',2);">Send Invite</a></td></tr>';
+                    } else {
+                      table_text += '<tr ><th scope="row" data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + (i + 1) + '</th><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + res[i].EventName + '</td><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + res[i].EventType + '</td><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;">' + datestring + '</td><td data-toggle="modal" data-target="#viewWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',\'' + res[i].notification_sent +  '\',1)" style="cursor:pointer;"> Invite Sent </td></tr>';
+
+                    }
+                  }
                  else
                   table_text += '<tr data-toggle="modal" data-target="#viewOldWishListModal" onclick="$(\'#sendNotificationButton\').prop(\'disabled\', true);getListData(\'' + res[i].wid + '\',\'' + res[i].uid + '\',\'' + res[i].EventName +  '\',\'' + res[i].event_id +  '\',,\'' + res[i].notification_sent +  '\'0)" style="cursor:pointer;" ><th scope="row">' + (i + 1) + '</th><td>' + res[i].EventName + '</td><td>' + res[i].EventType + '</td><td>' + datestring + '</td><td><a href="#" onclick="alert(\'test\')">Send Invite</a></td></tr>';
                }
@@ -1648,12 +1663,18 @@ function getAmazonSearchCode(val) {
 }
 
 
+function clean(input) {
+  var regEx = /<|>/g;
+  return input.replace(regEx," ");
+}
+
 function saveMessage(id,uid) {
   //alert('Saving Message for ' + id);
+  var message = clean($('#message').val());
   $.ajax({
     url: '/saveMessage',
     method: 'POST',
-    data: {message: $('#message').val(),id :id,uid: uid},
+    data: {message: message,id :id,uid: uid},
     success :  function (res) {
       //alert("Message Saved " + res);
     },

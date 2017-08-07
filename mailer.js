@@ -43,6 +43,15 @@ function WaterfallOver(list, iterator, callback) {
     callback();
 }
 
+function RCR(iterator,interval) {
+  function report() {
+      console.log('next' + interval);
+      setTimeout(function(){iterator(report);},interval);
+  }
+  iterator(report);
+}
+
+
 function WaterfallOverRetry(list, iterator, callback) {
   var nextItemIndex = 0;
   function report() {
@@ -64,11 +73,18 @@ function WaterfallOverRetry(list, iterator, callback) {
 
 
 function sendEmailFor(item,report,retry) {
-  var templateDir = __dirname + '/email_templates/saved/';
-  bmgaux.mailerWithAttachments(emailPassword,'support',item.email,item.username + ' has invited you to a party!','<b>This is the body</b><br><br> - Team Bemygenie.com',templateDir + item.event_id + ".png", function(message,response) {
-    console.log('mail reponse is ' + response);
-    report();
-  });
+  try {
+    var templateDir = __dirname + '/email_templates/saved/';
+    bmgaux.mailerWithAttachments(emailPassword,'support',item.email,item.username + ' has invited you to a party!','<b>This is the body</b><br><br> - Team Bemygenie.com',templateDir + item.event_id + ".png", function(message,response) {
+      console.log('mail reponse is ' + response);
+      report();
+    });
+  }
+  catch(e) {
+    console.log('e');
+    console.log('Retrying...');
+    retry();
+  }
 }
 
 function updateAUXMAiler(item2,report2) {
@@ -101,27 +117,30 @@ mongoclient.connect("mongodb://worker:" + process.argv[2] + "@localhost:27017/bm
           urlHost = "dev.bemygenie.com";
         }
 
-        var package = [];
-        var packet = {};
-
-
 
         var aux_mailers = bmgDB.collection('AUX_INVITE_MAILER');
 
-        aux_mailers.find({"sent":0}).toArray(function(err,prods) {
-          if (!err) {
-            WaterfallOverRetry(prods,function(item,report,retry){
-                sendEmailFor(item,report,retry);
-              },function(){
-                WaterfallOver(prods,function(item2,report2){
-                    updateAUXMAiler(item2,report2);
-                  },function(){
-                    console.log("alldone");
-                })
-            })
-          }
+        RCR(function(reportRCR){aux_mailers.find({"sent":0}).toArray(function(err,prods) {
+            console.log('Starting..');
+            if (!err) {
+              WaterfallOverRetry(prods,function(item,report,retry){
+                  sendEmailFor(item,report,retry);
+                },function(){
+                  WaterfallOver(prods,function(item2,report2){
+                      updateAUXMAiler(item2,report2);
+                    },function(){
+                      console.log("Ending");
+                      reportRCR();
+                  })
+              })
+            }
+          })
+        },600000);
 
-        });
+
+
+
+
         //console.log('host is ' + urlHost)
 
 
