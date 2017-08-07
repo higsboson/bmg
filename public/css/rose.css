@@ -9,6 +9,8 @@
   font-family: Droid Serif cursive;
   font-size: 36px;
   text-align: right;
+  width: 30%;
+  float: right;
 
 }
 
@@ -31,10 +33,14 @@
 }
 
 .invite-wishlist-id {
+  position: absolute;
+  top: 70px;
+  width:100%;
   font-family: Droid Serif cursive;
   font-size: 20px;
-  text-align: left;
+  text-align: center;
   color:#7a2b43;
+
 }
 
 .invite-row-header {
@@ -62,10 +68,20 @@
 .invite-row-wishlist-head {
   position: absolute;
   width: 100%;
-  top:600px;
+  top:650px;
   left:20px;
   color: #454282;
 }
+
+.bemygenie {
+    position: absolute;
+    top: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 95%;
+    text-align: center;
+}
+
 .invite-row-footer {
   position: absolute;
   width: 100%;

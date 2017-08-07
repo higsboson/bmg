@@ -1,3 +1,14 @@
+function calcLength(div,max) {
+  var length = $('#' + div).val().length;
+  if (length > max) {
+    $('#' + div + "_count").text(length + '/' + max + ' characters');
+    $('#' + div + "_count").css('color','#FF0000');
+  } else {
+    $('#' + div + "_count").text(length + '/' + max + ' characters');
+    $('#' + div + "_count").css('color','#000000');
+  }
+}
+
 function startComposing(){
   if ($('#event_greeting').val() == "") {
     $('#warning_modal-title-id').text('Warning');
@@ -5,9 +16,21 @@ function startComposing(){
     $('#warning_modal').modal('show');
     return false;
   }
+  if ($('#event_greeting').val().length > 100) {
+    $('#warning_modal-title-id').text('Warning');
+    $('#warning_modal-p-id').text('The greeting for the invite needs to be less that 100 characters.');
+    $('#warning_modal').modal('show');
+    return false;
+  }
   if ($('#event_address').val() == "") {
     $('#warning_modal-title-id').text('Warning');
     $('#warning_modal-p-id').text('Please provide the address/venue for your event.');
+    $('#warning_modal').modal('show');
+    return false;
+  }
+  if ($('#event_address').val().length > 120) {
+    $('#warning_modal-title-id').text('Warning');
+    $('#warning_modal-p-id').text('The address location for the invite needs to be less that 120 characters.');
     $('#warning_modal').modal('show');
     return false;
   }

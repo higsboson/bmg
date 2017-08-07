@@ -228,7 +228,8 @@
       </div>
 
       <div class="col-sm-6" style="text-align:center">
-        <input type="text" class="form-control" name="event_name" id="event_greeting" placeholder="eg. We are setting up an amazing party!" />
+        <input type="text" class="form-control" name="event_name" id="event_greeting" placeholder="eg. We are setting up an amazing party!" onkeyup="calcLength('event_greeting',100)"/>
+        <p class="counter" id="event_greeting_count">0/100 characters</p
       </div>
       <div class="col-sm-2" style="text-align:center">
       </div>
@@ -241,7 +242,8 @@
       </div>
 
       <div class="col-sm-6" style="text-align:center">
-        <input type="text" class="form-control" name="event_name" id="event_address" />
+        <input type="text" class="form-control" name="event_name" id="event_address" onkeyup="calcLength('event_address',120)"/>
+        <p class="counter" id="event_address_count">0/120 characters</p>
       </div>
       <div class="col-sm-2" style="text-align:center">
       </div>
