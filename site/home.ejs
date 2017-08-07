@@ -18,6 +18,10 @@
 
       //alert("hi there" + $('#user').val());
       getUserWishLists($('#user').val(),'active_lists',1);
+      deleteCookie('eventID');
+      deleteCookie('eventUID');
+      deleteCookie('eventWID');
+      deleteCookie('event_date');
 
       window.onbeforeunload = function() { alert("Your work will be lost."); };
 
