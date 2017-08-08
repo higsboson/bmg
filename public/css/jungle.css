@@ -7,14 +7,25 @@
 
 .invite-title {
   font-family: Droid Serif cursive;
-  font-size: 48px;
+  font-size: 24px;
   text-align: center;
+  float: none;
+  width: 100%;
 }
 
 .invite-address {
   font-family: Droid Serif cursive;
-  font-size: 22px;
+  font-size: 18px;
   text-align: center;
+  float: none;
+  width: 100%;
+}
+.bemygenie {
+    font-size: 18px;
+    font-weight:bold;
+    width: 100%;
+    text-align: center;
+    color:#454282;
 }
 
 .invite-wishlist {
@@ -31,7 +42,7 @@
 
 .invite-wishlist-id {
   font-family: Droid Serif cursive;
-  font-size: 20px;
+  font-size: 18px;
   text-align: left;
   color: #454282;
 }
@@ -45,35 +56,36 @@
 }
 .invite-row-title {
   position: absolute;
-  width: 80%;
-  top:240px;
-  left:170px;
+  width: 50%;
+  top:260px;
+  left:390px;
+  float: right;
   color: #7a2b43;
 }
 .invite-row-address {
   position: absolute;
   width: 90%;
-  top:300px;
+  top:330px;
   left:170px;
   color: #7a2b43;
 }
 .invite-row-wishlist-head {
   position: absolute;
   width: 90%;
-  top:420px;
+  top:440px;
   left:120px;
   color: #7a2b43;
 }
 .invite-row-footer {
   position: absolute;
   width: 90%;
-  top:470px;
+  top:490px;
   left:120px;
   color: #7a2b43;
 }
 .bmg-logo-row {
   align-content: center;
-  top:90px;
+  top : 70px;
   left:350px;
   color: #7a2b43;
 }

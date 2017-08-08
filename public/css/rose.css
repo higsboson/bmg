@@ -18,6 +18,8 @@
   font-family: Droid Serif cursive;
   font-size: 24px;
   text-align: center;
+  float: none;
+  width: 100%;
 }
 
 .invite-wishlist {
@@ -28,21 +30,26 @@
 
 .invite-wishlist-url {
   font-family: Droid Serif cursive;
-  font-size: 20px;
+  font-size: 18px;
   color:#7a2b43;
 }
-
+.bemygenie {
+    top: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    color:#7a2b43;
+}
 .invite-wishlist-id {
-  position: absolute;
   top: 70px;
   width:100%;
   font-family: Droid Serif cursive;
-  font-size: 20px;
+  font-size: 18px;
   text-align: center;
   color:#7a2b43;
 
 }
-
 .invite-row-header {
   position: absolute;
   width:100%;
@@ -68,20 +75,10 @@
 .invite-row-wishlist-head {
   position: absolute;
   width: 100%;
-  top:650px;
+  top:600px;
   left:20px;
   color: #454282;
 }
-
-.bemygenie {
-    position: absolute;
-    top: 50px;
-    font-size: 16px;
-    font-weight: bold;
-    width: 95%;
-    text-align: center;
-}
-
 .invite-row-footer {
   position: absolute;
   width: 100%;
@@ -93,6 +90,6 @@
   position: absolute;
   left : 400px;
   align-content: center;
-  top:90px;
+  top:75px;
   color: #color: #454282;
 }

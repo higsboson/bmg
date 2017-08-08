@@ -7,40 +7,47 @@
 
 .invite-title {
   font-family: Droid Serif cursive;
-  font-size: 30px;
+  font-size: 22px;
   text-align: center;
+  float: none;
+  width: 80%;
 }
 
 .bemygenie {
-  font-family: Droid Serif cursive;
-  font-size: 24px;
-  text-align: center;
+    top: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    color:#33144b;
 }
 
 .invite-address {
   font-family: Droid Serif cursive;
-  font-size: 20px;
+  font-size: 16px;
   text-align: center;
+  float: right;
+  width: 80%;
 }
 
 .invite-wishlist {
   font-family: Droid Serif cursive;
-  font-size: 18px;
+  font-size: 16px;
   text-align: center;
-  color: #1b3c88;
+  color: #3c2a4d;
 }
 
 .invite-wishlist-url {
   font-family: Droid Serif cursive;
-  font-size: 20px;
-  color:#1b3c88;
+  font-size: 16px;
+  color:#3c2a4d;
 }
 
 .invite-wishlist-id {
   font-family: Droid Serif cursive;
-  font-size: 20px;
+  font-size: 16px;
   text-align: left;
-  color:#1b3c88;
+  color:#3c2a4d;
 }
 
 .invite-row-header {
@@ -53,29 +60,29 @@
 }
 .invite-row-title {
   position: absolute;
-  width: 90%;
+  width: 80%;
   top:370px;
-  left:170px;
+  left:250px;
   color:#3c2a4d;
 }
 .invite-row-address {
   position: absolute;
-  width: 100%;
-  top:390px;
-  left:120px;
+  width: 80%;
+  top:420px;
+  left:200px;
   color:#3c2a4d;
 }
 .invite-row-wishlist-head {
   position: absolute;
   width: 100%;
-  top:500px;
+  top:510px;
   left:170px;
   color: #3c2a4d;
 }
 .invite-row-footer {
   position: absolute;
   width: 100%;
-  top:550px;
+  top:560px;
   left:150px;
   color:#1b3c88;
 }
@@ -83,6 +90,6 @@
   position: absolute;
   left : 400px;
   align-content: center;
-  top:70px;
+  top:50px;
   color: #3c2a4d;
 }
