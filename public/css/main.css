@@ -1,3 +1,23 @@
+.quicksearch {
+  padding-top: 120px;
+  font-family: 'Merriweather', serif;
+  font-size: 24px;
+  color: #2B6A7A;
+  width: 100%;
+  text-align: center;
+}
+
+.quicksearch-title {
+  padding:20px;
+  font-family: 'Rochester', cursive;
+  font-size: 20px;
+  color: #FFFFFF;
+  background-color: #2B6A7A;
+  width: 100%;
+  text-align: center;
+}
+
+
 .counter {
   font-size: 12px;
   text-align: right;
