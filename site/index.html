@@ -63,6 +63,15 @@ function msieversion() {
 
 $(document).ready(function () {
 
+
+
+  $('#processingModal').modal({
+     backdrop: 'static',
+     keyboard: false
+ })
+ $('#processingModal').modal('hide');
+ $('#qSearchResults').hide();
+
   $('#datepicker').datepicker({dateFormat: 'dd/mm/yy'});
 
   $( window ).resize(function() {
@@ -75,6 +84,7 @@ $(document).ready(function () {
     //alert("resized" + newh);
     $('#Floating').css('top',newh + 'px');
   });
+
 
 // device detection
 
@@ -466,6 +476,20 @@ $(document).ready(function () {
            </div><!-- /.carousel -->
          </div> <!-- /.carousel holder -->
 
+         <div class="container-fluid" style="padding-bottom:20px;background-color:#FFFFFF;">
+           <div class="row">
+              <div class="col-lg-12">
+                 <p class="heading-title">
+                   Gift registries for every occassion...
+                 </p>
+                 <p style="text-align:center;width:100%;font-size:30px;color:#7a2b43;font-weight:bold">
+                  and you can set it up for FREE!
+                 </p>
+              </div>
+
+           </div>
+         </div>
+
          <div id="Floating">
            <p style="opacity:1.0;font-size:12px">
              Remind me in time for my next event.
@@ -473,52 +497,8 @@ $(document).ready(function () {
            <button class="btn btn-success" style="opacity:1.0;text-shadow:1px 1px 2px black" onclick="setReminder()">Set Reminder</button>
          </div>
 
-         <div class="container" style="padding-top:20px;padding-bottom:40px;color:#000000;border-radius:10px 10px 10px 10px;">
-
-         </div>
 
 
-         <div class="container" style="padding-top:20px;padding-bottom:40px;background-color:#FFFFFF;border-radius:10px 10px 10px 10px;">
-           <div class="row" style="border: 4px; border-style: solid;border-color: #2B6A7A;">
-
-             <div class="col-lg-6">
-               <p class="quicksearch-title" style="font-size:48px">
-                 Let's make<br>
-                 your wish
-                 come true!
-               </p>
-             </div>
-             <div class="col-lg-6" >
-               <p class="quicksearch">
-                 What gift would you like to get for your next special occasion?
-                 <div class="input-group">
-                   <input type="text" class="form-control input-lg" >
-                   <span class="input-group-btn">
-                     <button class="btn btn-default btn-lg" type="button">Quick Search!</button>
-                   </span>
-                 </div><!-- /input-group -->
-               </p>
-             </div>
-
-           </div>
-           <div class="row">
-             <div class="col-lg-2">
-             </div>
-
-             <div class="col-lg-2">
-             </div>
-           </div>
-           <div class="row">
-            <div class="col-lg-2">
-            </div>
-            <div class="col-lg-8">
-
-            </div><!-- /.col-lg-6 -->
-            <div class="col-lg-2">
-            </div>
-          </div><!-- /.row -->
-
-         </div>
 
          <div class="container marketing" style="padding-top:40px">
 
@@ -618,6 +598,50 @@ $(document).ready(function () {
 
              </div>
            </div>
+
+           <div class="container-fluid" style="padding-bottom:40px;background-color:#AA7787;">
+             <div class="row">
+
+               <div class="col-lg-6" >
+                 <p class="quicksearch">
+                   <p class="quicksearch" style="font-size:36px;padding-top:20px"> What gift would you really love to get on your next special occasion? </p>
+                 </p>
+               </div>
+               <div class="col-lg-6" >
+                 <p class="quicksearch">
+                   <p class="quicksearch" style="font-size:84px;padding-top:45px"></p>
+                   <div class="input-group">
+                     <input type="text" class="form-control input-lg" id="quickSearchVal">
+                     <span class="input-group-btn">
+                       <button class="btn btn-default btn-lg" type="button" onclick="quickSearch()">Quick Search!</button>
+                     </span>
+                   </div><!-- /input-group -->
+                 </p>
+               </div>
+
+             </div>
+             <div class="row" style="text-align:center;color:#ffffff">
+               <div class="col-lg-12" id="qSearchResults">
+                 <i class="fa fa-circle-o-notch fa-spin" style="font-size:72px"></i>
+               </div>
+             </div>
+          </div>
+
+
+           <div class="container" style="padding-bottom:40px;background-color:#FFFFFF;">
+             <div class="row">
+                <div class="col-lg-12">
+                   <p class="invite-title">
+                     And now... <br />Introducing Bemygenie e-vites!
+                   </p>
+                </div>
+             </div>
+             <div class="row">
+               <div class="col-lg-6 description" style="padding-top:80px">Now you can send out beautiful <b style="color:#7a2b43">e-vite cards for free</b> when you set up a gift registry with us. Choose from a large variety of invites. We have one for every occasion! <br /><br /> <b style="color:#7a2b43">Customize your free e-vite</b>  and share it via whatsapp, social media or just let us know your guest list and we will gladly email it out for you.</div>
+               <div class="col-lg-6"><img src="/images/invites_preview.png" /></div>
+             </div>
+           </div>
+
 
 
                  <footer>

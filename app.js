@@ -1820,6 +1820,17 @@ app.get('/checkIfEmailExists',function (req,res) {
 
 });
 
+
+function SimpleRetry(iterator, callback) {
+  function report() {
+      callback();
+  }
+  function retry() {
+    iterator(report);
+  }
+  iterator(report);
+}
+
 app.get('/get_amazon',function (req,res) {
   //console.log("Page is " + req.query.pageNumber);
   //console.log("String is " + req.query.searchString);
@@ -1870,44 +1881,52 @@ app.get('/get_amazon',function (req,res) {
   ///////////// Signing the web service call string with our secret key using sha256////
   var hash = crypto.createHmac('sha256', aws_secret_key).update(string_to_sign).digest('base64');
   var signed_url = amazon_end_point + uri + "\?" + canonical_query_string + "\&Signature=" + encodeURIComponent(hash);
-  //console.log(signed_url);
+  console.log(signed_url);
   ///////////////////////////////////////////////////////////////////////////////////////
   var rawData = '';
 
-  http.get(signed_url, (response) => {
-    const statusCode = response.statusCode;
-    const contentType = response.headers['content-type'];
+  SimpleRetry(function(report) {
+    http.get(signed_url, (response) => {
+      const statusCode = response.statusCode;
+      const contentType = response.headers['content-type'];
 
-    let error;
-    if (statusCode !== 200) {
-      error = new Error(`Request Failed.\n` +
-                        `Status Code: ${statusCode}`);
-                        res.end("Error");
-    } else if (!/^text\/xml/.test(contentType)) {
-      error = new Error(`Invalid content-type.\n` +
-                        `Expected text/xml but received ${contentType}`);
-    }
-    if (error) {
-      console.log(error.message);
-      // consume response data to free up memory
-      response.resume();
-      return;
-    }
-
-    response.setEncoding('utf8');
-
-    response.on('data', (chunk) => rawData += chunk);
-    response.on('end', () => {
-      try {
-        //let parsedData = XML.parse(rawData);
-        //console.log("Raw data is :" +  rawData);
-        res.end(rawData);
-      } catch (e) {
-        console.log(e.message);
+      let error;
+      if (statusCode !== 200) {
+        error = new Error(`Request Failed.\n` +
+                          `Status Code: ${statusCode}`);
+                          res.end("Error");
+      } else if (!/^text\/xml/.test(contentType)) {
+        error = new Error(`Invalid content-type.\n` +
+                          `Expected text/xml but received ${contentType}`);
       }
+      if (error) {
+        console.log(error.message);
+        // consume response data to free up memory
+        setTimeout(function () {
+            console.log('Re-trying');
+            retry();
+        }, 1000);
+        response.resume();
+        return;
+      }
+
+      response.setEncoding('utf8');
+
+      response.on('data', (chunk) => rawData += chunk);
+      response.on('end', () => {
+        try {
+          //let parsedData = XML.parse(rawData);
+          //console.log("Raw data is :" +  rawData);
+          report();
+        } catch (e) {
+          console.log(e.message);
+        }
+      });
+    }).on('error', (e) => {
+      console.log(`Got error: ${e.message}`);
     });
-  }).on('error', (e) => {
-    console.log(`Got error: ${e.message}`);
+  }, function() {
+    res.end(rawData);
   });
 
 

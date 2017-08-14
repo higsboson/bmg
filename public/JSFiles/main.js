@@ -6,6 +6,62 @@
     $('#set_reminder').modal('show');
   }
 
+  function quickSearch() {
+    $('#qSearchResults').show();
+    if ($('#quickSearchVal').val() == "") {
+      $('#modalMessage').html('Please type in the name of the item that you are looking for.');
+      $('#validateModal').modal('show');
+    }
+    else {
+      doAWSSearch(clean($('#quickSearchVal').val()));
+    }
+    //alert('searching' + $('#quickSearchVal').val());
+  }
+
+  function doAWSSearch(item) {
+    $.get(
+      "/get_amazon",{pageNumber: 1,searchString: item, searchCat: "All", min: 0, max: 10000000},
+      function(data) {
+          if (data === "error") {
+            $('#preview').html('');
+            //alert("There has been an error loading the search results. Please try again");
+          } else {
+            txt = "";
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(data,"text/xml");
+            if (xmlDoc.getElementsByTagName("IsValid")[0].childNodes[0].nodeValue !== "True") {
+              $('#preview').html('');
+              //alert("The amazon search request was invalid." + xmlDoc.getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+              showErrorModal('Serious Error',"The search request was invalid. Error Code: " + xmlDoc.getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+            } else {
+              if (typeof xmlDoc.getElementsByTagName("Error")[0] !== 'undefined') {
+                $('#preview').html('');
+                //alert(xmlDoc.getElementsByTagName("Error")[0].getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+                showErrorModal('General Error',xmlDoc.getElementsByTagName("Error")[0].getElementsByTagName("Message")[0].childNodes[0].nodeValue);
+                $('#preview').html('<a href="/product_loader" style="color:#FFFFFF;font-size:30px;"><button class="btn btn-default btn-lg">Try a new Search!</button></a>');
+                $('#amazon_search').hide();
+                //window.location.href = "/product_loader";
+              } else {
+                alert('data is ' + xmlDoc);
+                var x = xmlDoc.getElementsByTagName("Item");
+                alert('Total items is ' + x.length);
+                var results = "";
+                for (var i = 0; i < x.length; i++) {
+                  results += '<div style="background-color:#ffffff">';
+                  if (typeof x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0] !== 'undefined') {
+                    results += '<br>' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Title")[0].childNodes[0].nodeValue;
+                    results += '<br><img src="' + x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue + '" >';
+                    results += '<br>' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0].getElementsByTagName("FormattedPrice")[0].childNodes[0].nodeValue;
+                  }
+                  results += '<div>';
+                }
+                $('#qSearchResults').html(results);
+              }
+            }
+          }
+        });
+  }
+
   function showReminderDate(){
     $('#datepicker').focus();
     setTimeout(function(){
@@ -384,6 +440,7 @@
 
   function doLogin(action) {
     $('#processingModal').modal('show');
+    $('#processingMessage').html('Logging in...');
     try {
       //alert("logging in with " + $(login_username).val() + " and " + $(login_password).val());
       var t_sha256 = new jsSHA('SHA-256', 'TEXT');
@@ -1305,7 +1362,7 @@ function getDateFromUTC(date) {
 
 }
 
-function getFeaturedProducts(event_type,div) {
+function getFeaturedProducts(event_type,div,holder) {
   $.ajax({
     type: 'GET',
     url: '/getFeaturedProducts',
@@ -1341,6 +1398,7 @@ function getFeaturedProducts(event_type,div) {
         htmlContent += "<br/><div class=\"amz-note\">(as of " + getDateFromUTC(res[i].UpdDate) + " IST - <a data-toggle='modal' href='#amzDisclaimer'>Details</a>)</div></div>"
 
       }
+      $('#' + holder).addClass("featured-container");
       $('#' + div).html(htmlContent);
     },
     error : function(res) {
@@ -1396,10 +1454,9 @@ function showBdayProducts() {
   $('html, body').animate({
         scrollTop: $("#marketing-row").offset().top - 100
     }, 400);
-  $("#bdayProducts").addClass("featured-container");
   if($("#bdayProducts").css('display') == 'none') {
     $('#marketing-row2').css("display","none");
-    getFeaturedProducts("Birthday","bdayProductsInfo");
+    getFeaturedProducts("Birthday","bdayProductsInfo","bdayProducts");
     $("#bdayProducts").slideDown();
     $("#house-marketing").slideUp();
     $("#baby-marketing").slideUp('fast', function() {
@@ -1425,10 +1482,9 @@ function showHomeProducts() {
   $('html, body').animate({
         scrollTop: $("#marketing-row").offset().top - 100
     }, 400);
-  $("#homeProducts").addClass("featured-container");
   if($("#homeProducts").css('display') == 'none') {
     $('#marketing-row2').css("display","none");
-    getFeaturedProducts("House Warming","homeProductsInfo");
+    getFeaturedProducts("House Warming","homeProductsInfo","homeProducts");
     $("#homeProducts").slideDown();
     $("#baby-marketing").slideUp();
   //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
@@ -1456,10 +1512,9 @@ function showBabyProducts() {
   $('html, body').animate({
         scrollTop: $("#marketing-row").offset().top - 100
     }, 400);
-  $("#babyProducts").addClass("featured-container");
   if($("#babyProducts").css('display') == 'none') {
     $('#marketing-row2').css("display","none");
-    getFeaturedProducts("Baby Shower","babyProductsInfo");
+    getFeaturedProducts("Baby Shower","babyProductsInfo","babyProducts");
     $("#babyProducts").slideDown();
     $("#bday-marketing").slideUp();
   //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
@@ -1491,10 +1546,9 @@ function showWeddingProducts() {
   $('html, body').animate({
         scrollTop: $("#marketing-row2").offset().top - 100
     }, 400);
-  $("#wedProducts").addClass("featured-container");
   if($("#wedProducts").css('display') == 'none') {
     $('#marketing-row').css("display","none");
-    getFeaturedProducts("Wedding","wedProductsInfo");
+    getFeaturedProducts("Wedding","wedProductsInfo","wedProducts");
     $("#wedProducts").slideDown();
   //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
   //  $("#house-marketing").css("transform","translateX(-200px)");
@@ -1524,10 +1578,9 @@ function showSpclProducts() {
   $('html, body').animate({
         scrollTop: $("#marketing-row2").offset().top - 100
     }, 400);
-  $("#spclProducts").addClass("featured-container");
   if($("#spclProducts").css('display') == 'none') {
     $('#marketing-row').css("display","none");
-    getFeaturedProducts("Special Category","spclProductsInfo");
+    getFeaturedProducts("Special Category","spclProductsInfo","spclProducts");
     $("#spclProducts").slideDown();
   //  $("#house-marketing").css("-webkit-transform","translateX(-200px)");
   //  $("#house-marketing").css("transform","translateX(-200px)");

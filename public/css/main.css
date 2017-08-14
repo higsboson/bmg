@@ -1,8 +1,7 @@
 .quicksearch {
-  padding-top: 120px;
   font-family: 'Merriweather', serif;
   font-size: 24px;
-  color: #2B6A7A;
+  color: #FFFFFF;
   width: 100%;
   text-align: center;
 }
@@ -17,6 +16,33 @@
   text-align: center;
 }
 
+.invite-title {
+  padding-top: 40px;
+  font-family: 'Rochester', cursive;
+  font-size: 64px;
+  color: #2B6A7A;
+  background-color: #FFFFFF;
+  width: 100%;
+  text-align: center;
+}
+
+.description {
+  font-family: 'Merriweather', serif;
+  font-size: 20px;
+  color: #000000;
+  background-color: #FFFFFF;
+  text-align: center;
+  float:left;
+}
+
+.heading-title {
+  font-family: 'Rochester', cursive;
+  font-size: 84px;
+  color: #2B6A7A;
+  background-color: #FFFFFF;
+  width: 100%;
+  text-align: center;
+}
 
 .counter {
   font-size: 12px;
