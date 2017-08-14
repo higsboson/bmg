@@ -42,20 +42,44 @@
                 $('#amazon_search').hide();
                 //window.location.href = "/product_loader";
               } else {
-                alert('data is ' + xmlDoc);
+                //alert('data is ' + xmlDoc);
                 var x = xmlDoc.getElementsByTagName("Item");
-                alert('Total items is ' + x.length);
-                var results = "";
+                //alert('Total items is ' + x.length);
+                var results = "<table class='findProd'><tr>";
                 for (var i = 0; i < x.length; i++) {
-                  results += '<div style="background-color:#ffffff">';
+                  results += '<td><div class="findProd" style="background-color:#ffffff;margin:10px;color:#2B6A7A;">';
                   if (typeof x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0] !== 'undefined') {
-                    results += '<br>' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Title")[0].childNodes[0].nodeValue;
-                    results += '<br><img src="' + x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue + '" >';
+                    var updatedTitle = "";
+                    var title = x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Title")[0].childNodes[0].nodeValue;
+                    if (title.length > 30) {
+                      //alert('size greater than 30');
+                      var dislaydata = title.substring(0,27);
+                      dislaydata += "...";
+                      var condensed_array = title.split(' ').join('_ ').split(' ');
+                      var condensed = "";
+                      var linelength = 0;;
+                      for (var n = 0;n < condensed_array.length;n++) {
+                        if ((condensed_array[n].length + linelength) < 30) {
+                          condensed += condensed_array[n];
+                          linelength += condensed_array[n].length;
+                        } else {
+                          linelength = condensed_array[n].length;
+                          condensed = condensed + '<br>' + condensed_array[n];
+                        }
+                      }
+                      updatedTitle += '<div class="tooltip2">' + dislaydata + '<span class="tooltiptext">' + condensed.split('_').join(' ') + '</span></div>'
+                    } else {
+                      updatedTitle += "<div>" + title + "</div>";
+                    }
+
+                    results += '<br>' + updatedTitle;
+                    results += '<div style="padding:10px;"></div><div class="featured-image" style="background:url(\'' + x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue + '\') no-repeat center center;display:inline-block" ></div>';
                     results += '<br>' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0].getElementsByTagName("FormattedPrice")[0].childNodes[0].nodeValue;
                   }
-                  results += '<div>';
+                  results += '</div></td>';
                 }
-                $('#qSearchResults').html(results);
+                $('#qSearchResults').html(results + '</tr></table>');
+                $('#qSearchResults').css('overflow','scroll');
               }
             }
           }
