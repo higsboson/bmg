@@ -7,18 +7,22 @@
   }
 
   function quickSearch() {
-    $('#qSearchResults').show();
+    $('#createRegHolder').html('');
     if ($('#quickSearchVal').val() == "") {
       $('#modalMessage').html('Please type in the name of the item that you are looking for.');
       $('#validateModal').modal('show');
     }
     else {
+      $('#qSearchResults').html('<i class="fa fa-circle-o-notch fa-spin" style="font-size:100px;"></i>');
+      $('#qSearchResults').css('overflow','hidden');
+      $('#qSearchResults').show();
       doAWSSearch(clean($('#quickSearchVal').val()));
     }
     //alert('searching' + $('#quickSearchVal').val());
   }
 
   function doAWSSearch(item) {
+    $('#quickSearchButton').prop('disabled',true);
     $.get(
       "/get_amazon",{pageNumber: 1,searchString: item, searchCat: "All", min: 0, max: 10000000},
       function(data) {
@@ -35,20 +39,22 @@
               showErrorModal('Serious Error',"The search request was invalid. Error Code: " + xmlDoc.getElementsByTagName("Message")[0].childNodes[0].nodeValue);
             } else {
               if (typeof xmlDoc.getElementsByTagName("Error")[0] !== 'undefined') {
-                $('#preview').html('');
-                //alert(xmlDoc.getElementsByTagName("Error")[0].getElementsByTagName("Message")[0].childNodes[0].nodeValue);
-                showErrorModal('General Error',xmlDoc.getElementsByTagName("Error")[0].getElementsByTagName("Message")[0].childNodes[0].nodeValue);
-                $('#preview').html('<a href="/product_loader" style="color:#FFFFFF;font-size:30px;"><button class="btn btn-default btn-lg">Try a new Search!</button></a>');
-                $('#amazon_search').hide();
+                $('#qSearchResults').html('<p style="font-size:20px">Unfortunately, we were unable to find any results for that search. Why not search for something else.</p>');
+                //$('#qSearchResults').css('overflow','scroll');
+                //$('#createRegHolder').html('<a class="btn btn-lg btn-warning" style="font-family: \'Rochester\', cursive;font-size:24px;font-weight:bold;text-shadow: 1px 1px 2px black" href="#" role="button" onclick="checkEvents();">Create my Registry!</a>');
+                setTimeout(function(){ $('#quickSearchButton').prop('disabled',false); }, 1000);
                 //window.location.href = "/product_loader";
               } else {
                 //alert('data is ' + xmlDoc);
                 var x = xmlDoc.getElementsByTagName("Item");
                 //alert('Total items is ' + x.length);
                 var results = "<table class='findProd'><tr>";
-                for (var i = 0; i < x.length; i++) {
-                  results += '<td><div class="findProd" style="background-color:#ffffff;margin:10px;color:#2B6A7A;">';
+                var i = 0;
+                for (i = 0; i < x.length; i++) {
+                  //alert('loop ' + i);
                   if (typeof x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0] !== 'undefined') {
+                    //alert('reg-loop');
+                    results += '<td><div class="findProd" style="background-color:#ffffff;margin:10px;color:#2B6A7A;">';
                     var updatedTitle = "";
                     var title = x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Title")[0].childNodes[0].nodeValue;
                     if (title.length > 30) {
@@ -73,13 +79,77 @@
                     }
 
                     results += '<br>' + updatedTitle;
-                    results += '<div style="padding:10px;"></div><div class="featured-image" style="background:url(\'' + x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue + '\') no-repeat center center;display:inline-block" ></div>';
-                    results += '<br>' + x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0].getElementsByTagName("FormattedPrice")[0].childNodes[0].nodeValue;
+                    var image_url;
+                    if (typeof x[i].getElementsByTagName("MediumImage") === 'undefined') {
+                        console.log('This is severe image problem');
+                        image_url = x[i].getElementsByTagName("ImageSets")[0].getElementsByTagName("ImageSet")[0].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue;
+                    } else if (typeof x[i].getElementsByTagName("MediumImage")[0] !== 'undefined' || x[i].getElementsByTagName("MediumImage")[0] === null) {
+                        image_url = x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue;
+                    } else {
+                      image_url = '/images/no_image_available.png';
+                    }
+                    results += '<div style="padding:10px;"></div><div class="featured-image" style="background:url(\'' + image_url + '\') no-repeat center center;display:inline-block" ></div>';
+                    var price = x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("ListPrice")[0].getElementsByTagName("FormattedPrice")[0].childNodes[0].nodeValue.split(' ');
+                    results += '<br> &#8377;' + price[1];
+                    results += '</div></td>';
                   }
-                  results += '</div></td>';
+                  else if (typeof x[i].getElementsByTagName("OfferSummary")[0] !== 'undefined') {
+                    //alert('irreg-loop' + x[i].getElementsByTagName("OfferSummary"));
+                    results += '<td><div class="findProd" style="background-color:#ffffff;margin:10px;color:#2B6A7A;">';
+                    var updatedTitle = "";
+                    var title = x[i].getElementsByTagName("ItemAttributes")[0].getElementsByTagName("Title")[0].childNodes[0].nodeValue;
+                    //alert(title);
+                    if (title.length > 30) {
+                      //alert('size greater than 30');
+                      var dislaydata = title.substring(0,27);
+                      dislaydata += "...";
+                      var condensed_array = title.split(' ').join('_ ').split(' ');
+                      var condensed = "";
+                      var linelength = 0;;
+                      for (var n = 0;n < condensed_array.length;n++) {
+                        if ((condensed_array[n].length + linelength) < 30) {
+                          condensed += condensed_array[n];
+                          linelength += condensed_array[n].length;
+                        } else {
+                          linelength = condensed_array[n].length;
+                          condensed = condensed + '<br>' + condensed_array[n];
+                        }
+                      }
+                      updatedTitle += '<div class="tooltip2">' + dislaydata + '<span class="tooltiptext">' + condensed.split('_').join(' ') + '</span></div>'
+                    } else {
+                      updatedTitle += "<div>" + title + "</div>";
+                    }
+
+                    results += '<br>' + updatedTitle;
+                    var image_url;
+                    if (typeof x[i].getElementsByTagName("MediumImage") === 'undefined') {
+                        console.log('This is severe image problem');
+                        image_url = x[i].getElementsByTagName("ImageSets")[0].getElementsByTagName("ImageSet")[0].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue;
+                    } else if (typeof x[i].getElementsByTagName("MediumImage")[0] !== 'undefined' || x[i].getElementsByTagName("MediumImage")[0] === null) {
+                        image_url = x[i].getElementsByTagName("MediumImage")[0].getElementsByTagName("URL")[0].childNodes[0].nodeValue;
+                    } else {
+                      image_url = '/images/no_image_available.png';
+                    }
+                    results += '<div style="padding:10px;"></div><div class="featured-image" style="background:url(\'' + image_url + '\') no-repeat center center;display:inline-block" ></div>';
+                    var price = x[i].getElementsByTagName("OfferSummary")[0].getElementsByTagName("LowestNewPrice")[0].getElementsByTagName("FormattedPrice")[0].childNodes[0].nodeValue.split(' ');
+                    results += '<br> &#8377;' + price[1];
+                    results += '</div></td>';
+                  } else {
+                    continue;
+                  }
+
                 }
-                $('#qSearchResults').html(results + '</tr></table>');
-                $('#qSearchResults').css('overflow','scroll');
+                if (i == 0) {
+                  $('#qSearchResults').html('<p style="font-size:20px">Unfortunately, we were unable to find any results for that search. Why not search for something else.</p>');
+                  //$('#qSearchResults').css('overflow','scroll');
+                  //$('#createRegHolder').html('<a class="btn btn-lg btn-warning" style="font-family: \'Rochester\', cursive;font-size:24px;font-weight:bold;text-shadow: 1px 1px 2px black" href="#" role="button" onclick="checkEvents();">Create my Registry!</a>');
+                  setTimeout(function(){ $('#quickSearchButton').prop('disabled',false); }, 1000);
+                } else {
+                  $('#qSearchResults').html(results + '</tr></table>');
+                  $('#qSearchResults').css('overflow','scroll');
+                  $('#createRegHolder').html('<a class="btn btn-lg btn-warning" style="font-family: \'Rochester\', cursive;font-size:24px;font-weight:bold;text-shadow: 1px 1px 2px black" href="#" role="button" onclick="checkEvents();">Create my Registry!</a>');
+                  setTimeout(function(){ $('#quickSearchButton').prop('disabled',false); }, 1000);
+                }
               }
             }
           }
