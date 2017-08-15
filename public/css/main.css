@@ -9,6 +9,7 @@
 div.findProd {
     height: 300px;
     width: 300px;
+    border-radius: 10px;
 }
 
 
