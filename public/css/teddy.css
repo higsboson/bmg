@@ -1,0 +1,95 @@
+.invite-header {
+  font-family: Rochester;
+  font-size: 120px;
+  text-align: center;
+  text-shadow: 2px 2px #7a2b43;
+}
+
+.invite-title {
+  font-family: Droid Serif cursive;
+  font-size: 24px;
+  text-align: center;
+  float: right;
+  width: 70%;
+}
+
+.bemygenie {
+    top: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    color:#1b3c88;
+}
+
+.invite-address {
+  font-family: Droid Serif cursive;
+  font-size: 20px;
+  text-align: center;
+  float: none;
+  width: 100%;
+}
+
+.invite-wishlist {
+  font-family: Droid Serif cursive;
+  font-size: 18px;
+  text-align: center;
+  color: #1b3c88;
+}
+
+.invite-wishlist-url {
+  font-family: Droid Serif cursive;
+  font-size: 20px;
+  color:#1b3c88;
+}
+
+.invite-wishlist-id {
+  font-family: Droid Serif cursive;
+  font-size: 20px;
+  text-align: left;
+  color:#1b3c88;
+}
+
+.invite-row-header {
+  position: absolute;
+  width:90%;
+  top:20px;
+  left:100px;
+  color:#3c2a4d;
+  visibility: hidden;
+}
+.invite-row-title {
+  position: absolute;
+  width: 80%;
+  top:320px;
+  left:155px;
+  color:#3c2a4d;
+}
+.invite-row-address {
+  position: absolute;
+  width: 100%;
+  top:350px;
+  left:160px;
+  color:#3c2a4d;
+}
+.invite-row-wishlist-head {
+  position: absolute;
+  width: 100%;
+  top:470px;
+  left:120px;
+  color: #3c2a4d;
+}
+.invite-row-footer {
+  position: absolute;
+  width: 100%;
+  top:530px;
+  left:80px;
+  color:#1b3c88;
+}
+.bmg-logo-row {
+  position: absolute;
+  left : 440px;
+  align-content: center;
+  top:65px;
+  color: #3c2a4d;
+}
