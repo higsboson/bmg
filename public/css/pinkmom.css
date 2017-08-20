@@ -72,20 +72,20 @@
 .invite-row-wishlist-head {
   position: absolute;
   width: 90%;
-  top:440px;
+  top:470px;
   left:20px;
   color: #7a2b43;
 }
 .invite-row-footer {
   position: absolute;
   width: 90%;
-  top:510px;
+  top:530px;
   left:20px;
   color: #7a2b43;
 }
 .bmg-logo-row {
   align-content: center;
-  top : 90px;
+  top : 80px;
   left:350px;
   color: #7a2b43;
 }

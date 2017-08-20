@@ -24,7 +24,7 @@
 
 .invite-address {
   font-family: Droid Serif cursive;
-  font-size: 20px;
+  font-size: 18px;
   text-align: center;
   float: none;
   width: 100%;
@@ -68,21 +68,21 @@
 .invite-row-address {
   position: absolute;
   width: 100%;
-  top:350px;
+  top:370px;
   left:160px;
   color:#3c2a4d;
 }
 .invite-row-wishlist-head {
   position: absolute;
   width: 100%;
-  top:470px;
+  top:510px;
   left:120px;
   color: #3c2a4d;
 }
 .invite-row-footer {
   position: absolute;
   width: 100%;
-  top:530px;
+  top:560px;
   left:80px;
   color:#1b3c88;
 }
